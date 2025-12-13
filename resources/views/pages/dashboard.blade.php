@@ -51,7 +51,7 @@
                 </div>
                 <div class="text-sm text-slate-400">▸ {{ $stats['open_change'] ?? '+0' }}</div>
             </div>
-            <p class="mt-3 text-xs text-slate-400">Tiket yang belum ditangani</p>
+            <p class="mt-3 text-xs text-slate-400">Unchecked tickets</p>
         </div>
 
         <div class="bg-white/5 backdrop-blur-sm p-4 rounded-lg shadow-sm flex flex-col">
@@ -62,7 +62,7 @@
                 </div>
                 <div class="text-sm text-slate-400">▸ {{ $stats['in_progress_change'] ?? '+0' }}</div>
             </div>
-            <p class="mt-3 text-xs text-slate-400">Sedang dikerjakan oleh tim</p>
+            <p class="mt-3 text-xs text-slate-400">Currently being worked on by the team</p>
         </div>
 
         <div class="bg-white/5 backdrop-blur-sm p-4 rounded-lg shadow-sm flex flex-col">
@@ -73,7 +73,7 @@
                 </div>
                 <div class="text-sm text-slate-400">▸ {{ $stats['closed_change'] ?? '+0' }}</div>
             </div>
-            <p class="mt-3 text-xs text-slate-400">Tiket terselesaikan</p>
+            <p class="mt-3 text-xs text-slate-400">Ticket resolved</p>
         </div>
 
         <div class="bg-white/5 backdrop-blur-sm p-4 rounded-lg shadow-sm flex flex-col">
@@ -91,16 +91,16 @@
     {{-- QUICK ACTIONS + FILTERS --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div class="flex items-center gap-3">
-            <a href="#" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold shadow">
             {{-- <a href="{{ route('tickets.create') }}" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold shadow"> --}}
+            {{-- <a href="#" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold shadow">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/></svg>
                 Buat Ticket
-            </a>
+            </a> --}}
 
-            <a href="#" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg font-medium shadow-sm">
             {{-- <a href="{{ route('tickets.import') }}" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg font-medium shadow-sm"> --}}
+            {{-- <a href="#" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg font-medium shadow-sm">
                 Import CSV
-            </a>
+            </a> --}}
 
         </div>
 
@@ -124,7 +124,7 @@
                     <table class="min-w-full text-sm">
                         <thead class="text-slate-300/80 text-left">
                             <tr>
-                                <th class="px-3 py-2">#</th>
+                                <th class="px-3 py-2">No</th>
                                 <th class="px-3 py-2">Title</th>
                                 <th class="px-3 py-2">Priority</th>
                                 <th class="px-3 py-2">Status</th>
@@ -143,14 +143,14 @@
                                     <td class="px-3 py-2">{{ $ticket->updated_at->diffForHumans() }}</td>
                                 </tr>
                             @empty
-                                <tr><td colspan="6" class="px-3 py-4 text-slate-400">Tidak ada tiket terbaru.</td></tr>
+                                <tr><td colspan="6" class="px-3 py-4 text-slate-400">There are no recent tickets.</td></tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
 
                 <div class="mt-3 text-right">
-                    <a href="#" class="text-sm text-slate-300 hover:underline">Lihat semua tiket &rarr;</a>
+                    <a href="#" class="text-sm text-slate-300 hover:underline">View all tickets &rarr;</a>
                     {{-- <a href="{{ route('tickets.index') }}" class="text-sm text-slate-300 hover:underline">Lihat semua tiket &rarr;</a> --}}
                 </div>
             </div>
@@ -169,7 +169,7 @@
                         </li>
                     @endforeach
                     @if(empty($activities))
-                        <li class="text-slate-400">Tidak ada aktivitas.</li>
+                        <li class="text-slate-400">No activity</li>
                     @endif
                 </ul>
             </div>
@@ -177,7 +177,7 @@
 
         {{-- RIGHT: Announcements + Small Stats --}}
         <div class="space-y-4">
-            <div class="bg-white/3 p-4 rounded-lg shadow-sm">
+            {{-- <div class="bg-white/3 p-4 rounded-lg shadow-sm">
                 <h4 class="font-semibold text-white">Announcements</h4>
                 <div class="mt-3 text-sm text-slate-300 space-y-2">
                     @forelse($announcements ?? [] as $ann)
@@ -189,7 +189,7 @@
                         <div class="text-slate-400">Tidak ada pengumuman.</div>
                     @endforelse
                 </div>
-            </div>
+            </div> --}}
 
             <div class="bg-white/3 p-4 rounded-lg shadow-sm">
                 <h4 class="font-semibold text-white">SLA Compliance</h4>
@@ -218,13 +218,17 @@
                         <div class="font-medium text-white">{{ $stats['high'] ?? 0 }}</div>
                     </div>
                     <div>
-                        <div class="text-xs">Waiting Customer</div>
+                        <div class="text-xs">Waiting Tikets</div>
                         <div class="font-medium text-white">{{ $stats['waiting_customer'] ?? 0 }}</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+     {{-- <div class="text-center pb-4">
+        <p class="text-xs text-slate-500">Ticketing v.1.0</p>
+        <p class="text-xs text-slate-600 mt-1">&copy; 2025 IT Departments, Developed by Edwin Sirait</p>
+    </div> --}}
 
 </div>
 

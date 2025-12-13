@@ -30,7 +30,7 @@
     <div class="grid grid-cols-4 text-xs">
 
         {{-- Home --}}
-        <a href="#"
+        <a href="{{ route('dashboard') }}"
         {{-- <a href="{{ route('dashboard') }}" --}}
            class="relative flex flex-col items-center py-3 transition-all duration-300 {{ request()->routeIs('dashboard') ? 'text-blue-400' : 'text-slate-500 hover:text-slate-300' }}">
             
@@ -69,7 +69,7 @@
         </a>
 
         {{-- Create New Ticket - Featured Button --}}
-        <a href="#"
+        <a href="{{ route('openticket') }}"
         {{-- <a href="{{ route('tickets.create') }}" --}}
            class="relative flex flex-col items-center py-3 transition-all duration-300 group">
             
@@ -82,28 +82,23 @@
                 </div>
             </div>
             
-            <span class="mt-5 font-medium text-slate-500 group-hover:text-blue-400 transition-colors">New</span>
+            <span class="mt-5 font-medium text-slate-500 group-hover:text-blue-400 transition-colors">New Tickets</span>
         </a>
-
         {{-- Profile --}}
-        <a href="#"
+        <a href="{{ route('profile') }}"
         {{-- <a href="{{ route('profile') }}" --}}
            class="relative flex flex-col items-center py-3 transition-all duration-300 {{ request()->routeIs('profile') ? 'text-blue-400' : 'text-slate-500 hover:text-slate-300' }}">
-            
             @if(request()->routeIs('profile'))
                 <div class="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-b-full"></div>
-            @endif
-            
+            @endif        
             <div class="relative {{ request()->routeIs('profile') ? 'scale-110' : '' }} transition-transform duration-300">
                 <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                </svg>
+           </svg>
             </div>
             <span class="font-medium">Profile</span>
         </a>
-
     </div>
-
     {{-- Safe Area untuk iPhone dengan notch --}}
     <div class="h-safe-area-inset-bottom bg-slate-900"></div>
 </nav>

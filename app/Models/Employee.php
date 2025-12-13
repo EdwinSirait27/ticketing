@@ -19,7 +19,6 @@ class Employee extends Model
         'store_id',
         'department_id',
         'position_id',
-        'position_id',
     ];
 
     // relasi ke Department
@@ -32,6 +31,14 @@ class Employee extends Model
     public function position()
     {
         return $this->belongsTo(Position::class, 'position_id');
+    }
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
+    public function store()
+    {
+        return $this->belongsTo(Store::class, 'store_id');
     }
 
     // relasi ke User (HRIS)

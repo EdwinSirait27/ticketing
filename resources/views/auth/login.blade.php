@@ -1,68 +1,84 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
-    <title>Login - IT Departments Ticketing</title>
+    <title>IT Departments Ticketing</title>
+    <link rel="icon" type="image/png" href="https://cloud.mjm-bali.co.id/index.php/s/J3Wob5N5LjzHwik/download">
 
     {{-- Tailwind --}}
     @vite('resources/css/app.css')
-
     {{-- PWA --}}
     <meta name="theme-color" content="#0F172A">
-
     {{-- CSRF --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script src="//unpkg.com/alpinejs" defer></script>
+
 </head>
 
 <body class="bg-slate-950 text-gray-100">
     {{-- APP CONTAINER --}}
-    <div class="max-w-md mx-auto min-h-screen bg-slate-900 shadow-2xl flex flex-col">
+    {{-- <div class="max-w-md mx-auto min-h-screen bg-slate-900 shadow-2xl flex flex-col"> --}}
+        {{-- <div class="min-h-screen bg-slate-900 flex flex-col 
+            max-w-md mx-auto md:max-w-5xl md:w-full md:px-6"> --}}
+            <div class="min-h-screen bg-slate-900 flex flex-col 
+            mx-auto w-full 
+            max-w-md md:max-w-4xl lg:max-w-5xl xl:max-w-6xl 
+            px-4 md:px-8">
+
+
         {{-- HEADER SECTION --}}
+
         <div
             class="relative px-6 pt-12 pb-8 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border-b border-slate-800">
-            {{-- Logo & Branding --}}
+
+            <!-- Navigation Top Right -->
+            <div class="absolute top-3 right-3 flex items-center space-x-2">
+
+                <!-- About -->
+                <a href="{{ route('about')}}" class="text-slate-300 hover:text-white text-sm font-medium transition-colors">
+                    About
+                </a>                
+                <a href="{{ route('lang.switch', 'id') }}"
+                   class="text-slate-300 hover:text-white text-sm font-medium transition-colors">
+                    Indonesia
+                </a>
+                <a href="{{ route('lang.switch', 'en') }}"
+                   class="text-slate-300 hover:text-white text-sm font-medium transition-colors">
+                    English
+                </a>
+            </div>
+
             <div class="flex flex-col items-center space-y--1">
-                {{-- Company Logo --}}
                 <div class="relative">
-                    {{-- <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-2xl shadow-blue-500/30 animate-pulse-slow"> --}}
-                    {{-- <svg class="w-11 h-11 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                        </svg> --}}
                     <img src="https://cloud.mjm-bali.co.id/index.php/s/7ixWakyMn8JCe9F/download"
                         class="w-25 h-25 select-none pointer-events-none" draggable="false" alt="icon">
-
-                    {{-- </div> --}}
-                    {{-- <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-3 border-slate-900"></div> --}}
                 </div>
 
-                {{-- Company Name --}}
                 <div class="text-center">
-                    <h1 class="text-2xl font-bold text-white tracking-tight">Information Technology</h1>
-                    <p class="text-sm text-slate-400 font-medium mt-1">Ticketing</p>
+                    <h1 class="text-2xl font-bold text-white tracking-tight">{{ __('auth.it') }}</h1>
+                    <p class="text-sm text-slate-400 font-medium mt-1">{{ __('auth.tiket') }}</p>
                 </div>
             </div>
 
-            {{-- Decorative Elements --}}
             <div class="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 rounded-full blur-3xl"></div>
             <div class="absolute bottom-0 left-0 w-32 h-32 bg-cyan-600/10 rounded-full blur-3xl"></div>
-        </div>
-        
 
-        {{-- LOGIN FORM SECTION --}}
+        </div>
+
+
+
         <div class="flex-1 px-6 py-8">
             <div class="mb-8">
-                <h2 class="text-xl font-bold text-white mb-2">Welcome Back</h2>
-                <p class="text-sm text-slate-400">Log in to access the ticket system</p>
+                <h2 class="text-xl font-bold text-white mb-2">{{ __('auth.welcome') }}</h2>
+                <p class="text-sm text-slate-400">{{ __('auth.login_desc') }}</p>
             </div>
 
-            {{-- <form method="POST" action="#" class="space-y-5"> --}}
-                <form method="POST" action="{{ route('login') }}" class="space-y-5">
+            <form method="POST" action="{{ route('login.post') }}" class="space-y-5">
                 @csrf
-
-                {{-- Email Input --}}
+                @if ($errors->any())
+                    <div class="bg-red-600 text-white p-3 rounded mb-3"> {{ $errors->first() }} </div>
+                @endif
                 <div>
                     <label for="username" class="block text-sm font-medium text-slate-300 mb-2">
                         Username
@@ -77,37 +93,12 @@
                         </div>
                         <input type="text" id="username" name="username" required
                             class="w-full pl-12 pr-4 py-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                            placeholder="your hr system username" value="{{ old('username') }}">
+                            placeholder="Insert your NIP or Username" value="{{ old('username') }}">
                     </div>
                     @error('username')
                         <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
                     @enderror
                 </div>
-
-                {{-- Password Input --}}
-                {{-- <div>
-                    <label for="password" class="block text-sm font-medium text-slate-300 mb-2">
-                        Password
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                            </svg>
-                        </div>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password" 
-                            required
-                            class="w-full pl-12 pr-4 py-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                            placeholder="••••••••"
-                        >
-                    </div>
-                    @error('password')
-                        <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
-                    @enderror
-                </div> --}}
                 <div>
                     <label for="password" class="block text-sm font-medium text-slate-300 mb-2">
                         Password
@@ -127,7 +118,7 @@
                         <!-- INPUT PASSWORD -->
                         <input type="password" id="password" name="password" required
                             class="w-full pl-12 pr-12 py-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                            placeholder="••••••••">
+                            placeholder="********">
 
                         <!-- ICON SHOW / HIDE -->
                         <button type="button" id="togglePassword"
@@ -173,23 +164,6 @@
                     });
                 </script>
 
-
-                {{-- Remember Me & Forgot Password --}}
-                <div class="flex items-center justify-between">
-                    {{-- <label class="flex items-center cursor-pointer group">
-                        <input 
-                            type="checkbox" 
-                            name="remember" 
-                            class="w-4 h-4 rounded border-slate-700 bg-slate-800 text-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 focus:ring-offset-slate-900"
-                        >
-                        <span class="ml-2 text-sm text-slate-400 group-hover:text-slate-300 transition-colors">Ingat saya</span>
-                    </label> --}}
-
-                    <a href="#" class="text-sm text-blue-400 hover:text-blue-300 transition-colors font-medium">
-                        {{-- <a href="{{ route('password.request') }}" class="text-sm text-blue-400 hover:text-blue-300 transition-colors font-medium"> --}}
-                        Forgot Password?
-                    </a>
-                </div>
                 {{-- Login Button --}}
                 <button type="submit"
                     class="w-full py-3.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center space-x-2">
@@ -209,15 +183,7 @@
                 </div>
 
                 {{-- SSO Login (Optional) --}}
-                {{-- <button 
-                    type="button" 
-                    class="w-full py-3.5 bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-300 font-medium rounded-xl transition-all duration-200 flex items-center justify-center space-x-2"
-                >
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"/>
-                    </svg>
-                    <span>Masuk dengan Google SSO</span>
-                </button> --}}
+
 
             </form>
         </div>
@@ -225,13 +191,9 @@
         {{-- FOOTER --}}
         <div class="px-6 py-6 border-t border-slate-800">
             <p class="text-center text-sm text-slate-500">
-                &copy; 2025 IT Department, Developed by Edwin Sirait
+                &copy; 2025 IT Departments, Developed by Edwin Sirait
             </p>
-            {{-- <div class="flex justify-center space-x-4 mt-3">
-                <a href="#" class="text-xs text-slate-500 hover:text-slate-400 transition-colors">Kebijakan Privasi</a>
-                <span class="text-slate-700">•</span>
-                <a href="#" class="text-xs text-slate-500 hover:text-slate-400 transition-colors">Syarat & Ketentuan</a>
-            </div> --}}
+
         </div>
 
     </div>
