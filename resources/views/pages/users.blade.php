@@ -1,0 +1,439 @@
+{{-- @extends('layouts.app')
+@section('title', 'Users')
+@section('header', 'Users')
+@section('content')
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped w-100" id="users-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Employee ID</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+@endsection
+@push('scripts')
+<script>
+$(function () {
+    $('#users-table').DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        ajax: "{{ route('users.users') }}",
+        columns: [
+            { data: 'id_hashed', name: 'id_hashed' },
+            { data: 'username', name: 'username' },
+            { data: 'employee_id', name: 'employee_id' },
+            { data: 'action', name: 'action', orderable: false, searchable: false },
+        ]
+    });
+});
+</script>
+@endpush
+ --}}
+ @extends('layouts.app')
+@section('title', 'Users Management')
+@section('header', 'Users')
+@section('subtitle', 'Manage system users and permissions')
+
+@section('content')
+<div class="space-y-6">
+    {{-- Stats Cards --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {{-- Total Users --}}
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-sm font-semibold opacity-90">Total Users</h3>
+                <svg class="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+            </div>
+            <p class="text-3xl font-bold mb-1" id="total-users">0</p>
+            <p class="text-blue-100 text-xs">Active accounts</p>
+        </div>
+
+        {{-- Active Today --}}
+        <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-6 text-white shadow-lg">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-sm font-semibold opacity-90">Active Today</h3>
+                <svg class="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <p class="text-3xl font-bold mb-1">24</p>
+            <p class="text-emerald-100 text-xs">Users online</p>
+        </div>
+
+        {{-- New This Week --}}
+        <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-sm font-semibold opacity-90">New This Week</h3>
+                <svg class="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                </svg>
+            </div>
+            <p class="text-3xl font-bold mb-1">8</p>
+            <p class="text-purple-100 text-xs">New registrations</p>
+        </div>
+
+        {{-- Admin Users --}}
+        <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-6 text-white shadow-lg">
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-sm font-semibold opacity-90">Administrators</h3>
+                <svg class="w-8 h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                </svg>
+            </div>
+            <p class="text-3xl font-bold mb-1">5</p>
+            <p class="text-orange-100 text-xs">Admin accounts</p>
+        </div>
+    </div>
+
+    {{-- Users Table Card --}}
+    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+        {{-- Card Header --}}
+        <div class="px-6 py-5 border-b border-slate-200 dark:border-slate-700">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">All Users</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Manage and view all system users</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    {{-- Search Input --}}
+                    <div class="relative">
+                        <input type="text" 
+                               id="table-search"
+                               placeholder="Search users..." 
+                               class="pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64">
+                        <svg class="absolute left-3 top-2.5 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    {{-- Add User Button --}}
+                    <button class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg font-semibold shadow-md shadow-blue-500/30 hover:shadow-lg hover:shadow-blue-500/40 transition-all text-sm">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Add User
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {{-- Card Body --}}
+        <div class="p-6">
+            {{-- Loading State --}}
+            <div id="loading-state" class="flex items-center justify-center py-12">
+                <div class="text-center">
+                    <svg class="animate-spin h-10 w-10 text-blue-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm">Loading users...</p>
+                </div>
+            </div>
+
+            {{-- DataTable Wrapper --}}
+            <div class="overflow-x-auto">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped w-full" id="users-table" >
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Employee ID</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Custom DataTables Styling --}}
+<style>
+/* DataTables Custom Styling */
+.dataTables_wrapper {
+    font-family: inherit;
+}
+
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_info,
+/* .dataTables_wrapper .dataTables_paginate */
+ {
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.dark .dataTables_wrapper .dataTables_length,
+.dark .dataTables_wrapper .dataTables_filter,
+.dark .dataTables_wrapper .dataTables_info,
+/* .dark .dataTables_wrapper .dataTables_paginate  */
+{
+    color: #94a3b8;
+}
+
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    margin: 0 0.5rem;
+}
+
+.dark .dataTables_wrapper .dataTables_length select,
+.dark .dataTables_wrapper .dataTables_filter input {
+    border-color: #475569;
+    background-color: #334155;
+    color: #f1f5f9;
+}
+
+#users-table {
+    width: 100% !important;
+}
+
+#users-table thead {
+    background: linear-gradient(to right, #3b82f6, #06b6d4);
+    color: white;
+}
+
+#users-table thead th {
+    padding: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    border: none;
+}
+
+.dark #users-table thead {
+    background: linear-gradient(to right, #2563eb, #0891b2);
+}
+
+#users-table tbody tr {
+    border-bottom: 1px solid #e2e8f0;
+    transition: background-color 0.2s;
+}
+
+.dark #users-table tbody tr {
+    border-bottom-color: #334155;
+}
+
+#users-table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+.dark #users-table tbody tr:hover {
+    background-color: #1e293b;
+}
+
+#users-table tbody td {
+    padding: 1rem;
+    color: #334155;
+    font-size: 0.875rem;
+}
+
+.dark #users-table tbody td {
+    color: #cbd5e1;
+}
+
+.dataTables_wrapper 
+/* .dataTables_paginate  */
+/* .paginate_button  */
+{
+    padding: 0.5rem 0.75rem;
+    margin: 0 0.25rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: #64748b;
+    transition: all 0.2s;
+}
+
+.dark .dataTables_wrapper 
+/* .dataTables_paginate .paginate_button  */
+{
+    border-color: #475569;
+    background: #334155;
+    color: #94a3b8;
+}
+
+.dataTables_wrapper 
+/* .dataTables_paginate .paginate_button:hover  */
+{
+    background: linear-gradient(to right, #3b82f6, #06b6d4);
+    color: white;
+    border-color: transparent;
+}
+
+.dataTables_wrapper 
+/* .dataTables_paginate .paginate_button.current  */
+{
+    background: linear-gradient(to right, #3b82f6, #06b6d4);
+    color: white;
+    border-color: transparent;
+}
+
+/* Action Buttons */
+.btn-action {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-edit {
+    background: linear-gradient(to right, #3b82f6, #06b6d4);
+    color: white;
+    border: none;
+}
+
+.btn-edit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.btn-delete {
+    background: linear-gradient(to right, #ef4444, #dc2626);
+    color: white;
+    border: none;
+}
+
+.btn-delete:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+/* Tambahkan CSS ini untuk membuat pagination horizontal */
+
+/* Override default DataTables pagination styling */
+.dataTables_wrapper .dataTables_paginate {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 1rem;
+    gap: 0.5rem;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    display: inline-block;
+    padding: 0.5rem 0.75rem;
+    margin: 0 0.125rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    background-color: white;
+    color: #475569;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #1e293b;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: linear-gradient(to right, #3b82f6, #06b6d4);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.previous,
+.dataTables_wrapper .dataTables_paginate .paginate_button.next {
+    font-weight: 600;
+}
+
+/* Dark mode support */
+.dark .dataTables_wrapper .dataTables_paginate .paginate_button {
+    background-color: #1e293b;
+    border-color: #334155;
+    color: #cbd5e1;
+}
+
+.dark .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: #334155;
+    border-color: #475569;
+    color: #f1f5f9;
+}
+
+.dark .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: linear-gradient(to right, #3b82f6, #06b6d4);
+    color: white;
+}
+
+/* Responsive: Stack on very small screens if needed */
+@media (max-width: 640px) {
+    .dataTables_wrapper .dataTables_paginate {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+</style>
+
+@endsection
+
+@push('scripts')
+<script>
+$(function () {
+    var table = $('#users-table').DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        ajax: "{{ route('users.users') }}",
+        columns: [
+            { data: 'id_hashed', name: 'id_hashed' },
+            { data: 'username', name: 'username' },
+            { data: 'employee_id', name: 'employee_id' },
+            { data: 'action', name: 'action', orderable: false, searchable: false },
+        ],
+        initComplete: function() {
+            // Hide loading, show table
+            $('#loading-state').hide();
+            $('#users-table').fadeIn();
+            
+            // Update total users count
+            var info = this.api().page.info();
+            $('#total-users').text(info.recordsTotal);
+        },
+        drawCallback: function() {
+            // Update total users count on redraw
+            var info = this.api().page.info();
+            $('#total-users').text(info.recordsTotal);
+        }
+    });
+
+    // Custom search functionality
+    $('#table-search').on('keyup', function() {
+        table.search(this.value).draw();
+    });
+});
+</script>
+@endpush
