@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
 class Employee extends Model
 {
      protected $connection = 'hrx'; // sesuai koneksi HRIS kamu
@@ -46,4 +45,6 @@ class Employee extends Model
     {
         return $this->hasOne(User::class, 'employee_id');
     }
+ 
+
 }

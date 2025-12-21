@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" href="https://cloud.mjm-bali.co.id/index.php/s/J3Wob5N5LjzHwik/download">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
 
     {{-- Tailwind --}}
     @vite('resources/css/app.css')
@@ -245,6 +246,8 @@
     </div>
 
     {{-- THEME SCRIPT --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
     <script>
         // Apply saved theme on load
         if (localStorage.theme === 'dark' ||

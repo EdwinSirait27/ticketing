@@ -22,7 +22,6 @@ class AuthController extends Controller
 {
     $credentials = $request->only('username', 'password');
 
-    // Log credentials (hati-hati, jangan log password di production!)
     Log::info('Login attempt', [
         'username' => $credentials['username'] ?? null,
         'password_filled' => isset($credentials['password']) ? true : false,
@@ -30,11 +29,12 @@ class AuthController extends Controller
 
     if (Auth::attempt($credentials)) {
         Log::info('Login success', ['username' => $credentials['username']]);
-        return redirect()->route('dashboard');
+        return redirect()->route('dashboard')->with('success', 'login successfull');;
     }
 
     Log::warning('Login failed', ['username' => $credentials['username'] ?? null]);
-    return back()->withErrors(['msg' => 'Wrong Username or password']);
+    // return back()->withErrors(['msg' => 'Wrong Username or password']);
+     return back()->with('error', 'Wrong username or password');
 }
     public function logout()
     {

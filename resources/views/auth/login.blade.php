@@ -1,32 +1,50 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>IT Departments Ticketing</title>
     <link rel="icon" type="image/png" href="https://cloud.mjm-bali.co.id/index.php/s/J3Wob5N5LjzHwik/download">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    {{-- <script>
+@if(session('success'))
+    toastr.success("{{ session('success') }}");
+@endif
+
+@if(session('error'))
+    toastr.error("{{ session('error') }}");
+@endif --}}
+</script>
     <script src="https://cdn.tailwindcss.com"></script>
     <meta name="theme-color" content="#0F172A">
     <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 
 <body class="bg-slate-950 text-gray-100">
-  
-    <div class="min-h-screen bg-slate-900 flex flex-col 
+
+    <div
+        class="min-h-screen bg-slate-900 flex flex-col 
         mx-auto w-full 
         max-w-md md:max-w-full
         px-4 md:px-0">
 
-        <div class="relative px-6 pt-12 pb-8 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border-b border-slate-800">
+        <div
+            class="relative px-6 pt-12 pb-8 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border-b border-slate-800">
 
             <div class="absolute top-3 right-3 flex items-center space-x-2">
-                <a href="{{ route('about')}}" class="text-slate-300 hover:text-white text-sm font-medium transition-colors">
+                <a href="{{ route('about') }}"
+                    class="text-slate-300 hover:text-white text-sm font-medium transition-colors">
                     About
-                </a>                
-                <a href="{{ route('lang.switch', 'id') }}" class="text-slate-300 hover:text-white text-sm font-medium transition-colors">
+                </a>
+                <a href="{{ route('lang.switch', 'id') }}"
+                    class="text-slate-300 hover:text-white text-sm font-medium transition-colors">
                     Indonesia
                 </a>
-                <a href="{{ route('lang.switch', 'en') }}" class="text-slate-300 hover:text-white text-sm font-medium transition-colors">
+                <a href="{{ route('lang.switch', 'en') }}"
+                    class="text-slate-300 hover:text-white text-sm font-medium transition-colors">
                     English
                 </a>
             </div>
@@ -55,7 +73,10 @@
                 </div>
 
                 <form method="POST" action="{{ route('login.post') }}" class="space-y-5">
-                       @csrf
+                    @csrf
+                    {{-- @if ($errors->any())
+                    <div class="bg-red-600 text-white p-3 rounded mb-3"> {{ $errors->first() }} </div>
+                @endif --}}
                     <div>
                         <label for="username" class="block text-sm font-medium text-slate-300 mb-2">
                             Username
@@ -135,22 +156,23 @@
             </p>
         </div> --}}
         <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 mt-auto">
-    <div class="px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            {{-- Company Info --}}
-            <div class="space-y-3">
-                <div class="flex items-center space-x-2">
-                    <img src="https://cloud.mjm-bali.co.id/index.php/s/7ixWakyMn8JCe9F/download"
-                        class="w-8 h-8 select-none pointer-events-none" draggable="false" alt="icon">
-                    <h3 class="text-sm font-bold text-slate-900 dark:text-white">{{ __('auth.departemen') }}</h3>
-                </div>
-                <p class="text-xs text-slate-600 dark:text-slate-400">
-                   {{ __('auth.departemennote') }}
-                </p>
-            </div>
+            <div class="px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+                    {{-- Company Info --}}
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-2">
+                            <img src="https://cloud.mjm-bali.co.id/index.php/s/7ixWakyMn8JCe9F/download"
+                                class="w-8 h-8 select-none pointer-events-none" draggable="false" alt="icon">
+                            <h3 class="text-sm font-bold text-slate-900 dark:text-white">{{ __('auth.departemen') }}
+                            </h3>
+                        </div>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">
+                            {{ __('auth.departemennote') }}
+                        </p>
+                    </div>
 
-            {{-- Quick Links --}}
-            {{-- <div class="space-y-3">
+                    {{-- Quick Links --}}
+                    {{-- <div class="space-y-3">
                 <h4 class="text-sm font-semibold text-slate-900 dark:text-white">Quick Links</h4>
                 <ul class="space-y-2">
                     <li>
@@ -174,8 +196,8 @@
                 </ul>
             </div> --}}
 
-            {{-- Contact & Theme Toggle --}}
-            {{-- <div class="space-y-3">
+                    {{-- Contact & Theme Toggle --}}
+                    {{-- <div class="space-y-3">
                 <h4 class="text-sm font-semibold text-slate-900 dark:text-white">Settings</h4>
                 <div class="flex items-center space-x-3">
                     <button onclick="toggleTheme()" 
@@ -191,15 +213,15 @@
                     Need help? Contact IT support team
                 </p>
             </div> --}}
-        </div>
+                </div>
 
-        {{-- Bottom Bar --}}
-        <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
-            <div class="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
-                <p class="text-xs text-slate-500 dark:text-slate-400">
-                    © {{ date('Y') }} IT Departments. Developed by Edwin Sirait
-                </p>
-                {{-- <div class="flex items-center space-x-4">
+                {{-- Bottom Bar --}}
+                <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+                    <div class="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+                        <p class="text-xs text-slate-500 dark:text-slate-400">
+                            © {{ date('Y') }} IT Departments. Developed by Edwin Sirait
+                        </p>
+                        {{-- <div class="flex items-center space-x-4">
                     <a href="#" class="text-xs text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                         Privacy Policy
                     </a>
@@ -208,10 +230,10 @@
                         Terms of Service
                     </a>
                 </div> --}}
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</footer>
+        </footer>
     </div>
 
     <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
@@ -222,7 +244,7 @@
     <div class="fixed inset-0 -z-10 opacity-[0.02] pointer-events-none"
         style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 50px 50px;">
     </div>
-
+    
     <script>
         document.getElementById('togglePassword').addEventListener('click', function() {
             const input = document.getElementById('password');
@@ -239,13 +261,17 @@
                 iconHide.classList.add('hidden');
             }
         });
+    
     </script>
 
     <style>
         @keyframes pulse-slow {
-            0%, 100% {
+
+            0%,
+            100% {
                 opacity: 1;
             }
+
             50% {
                 opacity: 0.8;
             }
@@ -255,8 +281,28 @@
             animation: pulse-slow 3s ease-in-out infinite;
         }
     </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script>
+toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: "toast-top-right",
+    timeOut: "3000"
+};
+
+@if (session('success'))
+    toastr.success(@json(session('success')));
+@endif
+
+@if (session('error'))
+    toastr.error(@json(session('error')));
+@endif
+</script>
 
 </body>
+
 </html>
 {{-- <!DOCTYPE html>
 <html lang="id">
@@ -470,6 +516,6 @@
 </body>
 
 </html> --}}
-  {{-- <div class="max-w-md mx-auto min-h-screen bg-slate-900 shadow-2xl flex flex-col"> --}}
-        {{-- <div class="min-h-screen bg-slate-900 flex flex-col 
+{{-- <div class="max-w-md mx-auto min-h-screen bg-slate-900 shadow-2xl flex flex-col"> --}}
+{{-- <div class="min-h-screen bg-slate-900 flex flex-col 
             max-w-md mx-auto md:max-w-5xl md:w-full md:px-6"> --}}

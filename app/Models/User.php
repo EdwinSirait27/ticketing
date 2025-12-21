@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -31,6 +34,31 @@ class User extends Authenticatable
     {
         return $this->where('username', $username)->first();
     }
+    //   public function scopeEmployeeActiveOrPending(Builder $query)
+    // {
+    //     return $query->whereHas('employee', function ($q) {
+    //         $q->whereIn('status', ['Active', 'Pending']);
+    //     });
+    // }
+//     public function scopeEmployeeActiveOrPending(Builder $query)
+// {
+//     return $query->whereHas('employee', function ($q) {
+//         $q->whereIn(
+//             DB::raw("LOWER(TRIM(status))"),
+//             ['active', 'pending']
+//         );
+//     });
+// }
+public function scopeEmployeeActiveOrPending(Builder $query)
+{
+    return $query->whereHas('employee', function ($q) {
+        $q->whereIn(
+            DB::raw("LOWER(TRIM(employees_tables.status))"),
+            ['active', 'pending']
+        );
+    });
+}
+
 }
   // /**
     //  * The attributes that are mass assignable.

@@ -210,7 +210,7 @@
             </div>
 
             {{-- Quick Links --}}
-            <div class="space-y-3">
+            {{-- <div class="space-y-3">
                 <h4 class="text-sm font-semibold text-slate-900 dark:text-white">Quick Links</h4>
                 <ul class="space-y-2">
                     <li>
@@ -232,10 +232,10 @@
                         </a>
                     </li>
                 </ul>
-            </div>
+            </div> --}}
 
             {{-- Contact & Theme Toggle --}}
-            <div class="space-y-3">
+            {{-- <div class="space-y-3">
                 <h4 class="text-sm font-semibold text-slate-900 dark:text-white">Settings</h4>
                 <div class="flex items-center space-x-3">
                     <button onclick="toggleTheme()" 
@@ -250,7 +250,7 @@
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">
                     Need help? Contact IT support team
                 </p>
-            </div>
+            </div> --}}
         </div>
 
         {{-- Bottom Bar --}}

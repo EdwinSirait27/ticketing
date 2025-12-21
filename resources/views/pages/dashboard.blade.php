@@ -87,7 +87,6 @@
             <p class="mt-3 text-xs text-slate-400">Tiket melewati SLA</p>
         </div>
     </div>
-
     {{-- QUICK ACTIONS + FILTERS --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div class="flex items-center gap-3">
@@ -104,13 +103,11 @@
 
         </div>
 
-        <div class="flex items-center gap-2">
-            {{-- Quick filter chips (expects $quickFilters array) --}}
+        {{-- <div class="flex items-center gap-2">
             @foreach($quickFilters ?? ['All','Open','In Progress','Overdue','My Tickets'] as $filter)
                 <a href="#" class="px-3 py-1 rounded-full text-sm bg-white/5 hover:bg-white/10 text-slate-200">{{ $filter }}</a>
-                {{-- <a href="{{ route('tickets.index', ['filter' => Str::lower($filter)]) }}" class="px-3 py-1 rounded-full text-sm bg-white/5 hover:bg-white/10 text-slate-200">{{ $filter }}</a> --}}
             @endforeach
-        </div>
+        </div> --}}
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -237,5 +234,23 @@
 {{-- <a href="{{ route('tickets.create') }}" class="fixed right-4 bottom-6 sm:bottom-10 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg flex items-center justify-center md:hidden"> --}}
     {{-- <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"/></svg> --}}
 {{-- </a> --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
+<script>
+toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: "toast-top-right",
+    timeOut: "3000"
+};
+
+@if (session('success'))
+    toastr.success(@json(session('success')));
+@endif
+
+@if (session('error'))
+    toastr.error(@json(session('error')));
+@endif
+</script>
 @endsection
