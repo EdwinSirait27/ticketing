@@ -13,9 +13,8 @@ use App\Http\Controllers\UserController;
 //     return view('pages.dashboard');
 // });
 Route::middleware('throttle:15,1')->group(function () {
-    Route::get('/', [AuthController::class, 'loginPage'])->name('login');
-    // Route::get('/login', [AuthController::class, 'loginPage'])->name('login');
-
+    Route::get('/', [AuthController::class, 'loginPage'])->name('login')->middleware('guest');
+    
     Route::get('/lang/{lang}', function ($lang) {
         session(['applocale' => $lang]);
         return back();

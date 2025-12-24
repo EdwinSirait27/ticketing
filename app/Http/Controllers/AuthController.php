@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+
 class AuthController extends Controller
 {
     public function loginPage()
@@ -19,28 +21,25 @@ class AuthController extends Controller
     //     return back()->withErrors(['msg' => 'Wrong Username or password']);
     // }
     public function login(Request $request)
-{
-    $credentials = $request->only('username', 'password');
+    {
+        $credentials = $request->only('username', 'password');
 
-    Log::info('Login attempt', [
-        'username' => $credentials['username'] ?? null,
-        'password_filled' => isset($credentials['password']) ? true : false,
-    ]);
+        Log::info('Login attempt', [
+            'username' => $credentials['username'] ?? null,
+            'password_filled' => isset($credentials['password']) ? true : false,
+        ]);
 
-    if (Auth::attempt($credentials)) {
-        Log::info('Login success', ['username' => $credentials['username']]);
-        return redirect()->route('dashboard')->with('success', 'login successfull');;
+        if (Auth::attempt($credentials)) {
+            Log::info('Login success', ['username' => $credentials['username']]);
+            return redirect()->route('dashboard')->with('success', 'login successfull');;
+        }
+
+        Log::warning('Login failed', ['username' => $credentials['username'] ?? null]);
+        return back()->with('error', 'Wrong username or password');
     }
-
-    Log::warning('Login failed', ['username' => $credentials['username'] ?? null]);
-    // return back()->withErrors(['msg' => 'Wrong Username or password']);
-     return back()->with('error', 'Wrong username or password');
-}
     public function logout()
     {
         Auth::logout();
-        // return redirect('/');
         return redirect()->route('login');
-
     }
 }
