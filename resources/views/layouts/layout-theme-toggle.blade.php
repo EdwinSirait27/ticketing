@@ -20,7 +20,7 @@
     {{-- DESKTOP SIDEBAR (Hidden on mobile) --}}
     <aside class="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
         <div
-            class="flex grow flex-col gap-y-5 overflow-y-auto bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 px-6 pb-4">
+            class="flex grow flex-col gap-y-5 overflow-y-auto bg-dark dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 px-6 pb-4">
             {{-- Logo & Company --}}
             <div class="flex h-24 shrink-0 items-center border-b border-slate-200 dark:border-slate-800">
                 <img src="https://cloud.mjm-bali.co.id/index.php/s/7ixWakyMn8JCe9F/download"
@@ -131,10 +131,10 @@
     <div class="lg:pl-72">
         {{-- APP CONTAINER --}}
         <div
-            class="max-w-md lg:max-w-none mx-auto min-h-screen bg-white dark:bg-slate-900 lg:bg-slate-100 lg:dark:bg-slate-950 shadow-2xl lg:shadow-none transition-colors duration-300">
+            class="max-w-md lg:max-w-none mx-auto min-h-screen bg-dark dark:bg-slate-900 lg:bg-slate-100 lg:dark:bg-slate-950 shadow-2xl lg:shadow-none transition-colors duration-300">
             {{-- HEADER --}}
             <header
-                class="sticky top-0 z-40 bg-white dark:bg-slate-900 lg:backdrop-blur-sm lg:bg-white/80 lg:dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+                class="sticky top-0 z-40 bg-dark dark:bg-slate-900 lg:backdrop-blur-sm lg:bg-dark/80 lg:dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
                 <div class="px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
                     {{-- Mobile: Logo & Company Name --}}
                     <div class="flex items-center justify-between mb-4 lg:hidden">
@@ -194,7 +194,7 @@
             <!-- Tambahkan sebelum tag penutup </div> dari main content area (setelah </main>) -->
 
 {{-- FOOTER --}}
-<footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 mt-auto">
+<footer class="bg-dark dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 mt-auto">
     <div class="px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             {{-- Company Info --}}

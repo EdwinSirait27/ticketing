@@ -8,16 +8,7 @@
     <link rel="icon" type="image/png" href="https://cloud.mjm-bali.co.id/index.php/s/J3Wob5N5LjzHwik/download">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
-    {{-- <script>
-@if(session('success'))
-    toastr.success("{{ session('success') }}");
-@endif
-
-@if(session('error'))
-    toastr.error("{{ session('error') }}");
-@endif --}}
-</script>
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <meta name="theme-color" content="#0F172A">
     <script src="//unpkg.com/alpinejs" defer></script>
@@ -74,9 +65,7 @@
 
                 <form method="POST" action="{{ route('login.post') }}" class="space-y-5">
                     @csrf
-                    {{-- @if ($errors->any())
-                    <div class="bg-red-600 text-white p-3 rounded mb-3"> {{ $errors->first() }} </div>
-                @endif --}}
+                 
                     <div>
                         <label for="username" class="block text-sm font-medium text-slate-300 mb-2">
                             Username
@@ -150,12 +139,8 @@
             </div>
         </div>
 
-        {{-- <div class="px-6 py-6 border-t border-slate-800">
-            <p class="text-center text-sm text-slate-500">
-                &copy; 2025 IT Departments, Developed by Edwin Sirait
-            </p>
-        </div> --}}
-        <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 mt-auto">
+     
+        <footer class="bg-dark dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 mt-auto">
             <div class="px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
                     {{-- Company Info --}}
@@ -171,7 +156,99 @@
                         </p>
                     </div>
 
-                    {{-- Quick Links --}}
+                   
+                </div>
+
+                {{-- Bottom Bar --}}
+                <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+                    <div class="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+                        <p class="text-xs text-slate-500 dark:text-slate-400">
+                            © {{ date('Y') }} IT Departments. Developed by Edwin Sirait
+                        </p>
+                    
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-blue-900/20 rounded-full filter blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-cyan-900/20 rounded-full filter blur-3xl"></div>
+    </div>
+
+    <div class="fixed inset-0 -z-10 opacity-[0.02] pointer-events-none"
+        style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 50px 50px;">
+    </div>
+
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const input = document.getElementById('password');
+            const iconShow = document.getElementById('iconShow');
+            const iconHide = document.getElementById('iconHide');
+
+            if (input.type === "password") {
+                input.type = "text";
+                iconShow.classList.add('hidden');
+                iconHide.classList.remove('hidden');
+            } else {
+                input.type = "password";
+                iconShow.classList.remove('hidden');
+                iconHide.classList.add('hidden');
+            }
+        });
+    </script>
+
+    <style>
+        @keyframes pulse-slow {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .animate-pulse-slow {
+            animation: pulse-slow 3s ease-in-out infinite;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script>
+        toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            positionClass: "toast-top-right",
+            timeOut: "3000"
+        };
+
+        @if (session('success'))
+            toastr.success(@json(session('success')));
+        @endif
+
+        @if (session('error'))
+            toastr.error(@json(session('error')));
+        @endif
+    </script>
+
+</body>
+
+</html>
+    {{-- <div class="flex items-center space-x-4">
+                    <a href="#" class="text-xs text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                        Privacy Policy
+                    </a>
+                    <span class="text-slate-300 dark:text-slate-700">|</span>
+                    <a href="#" class="text-xs text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                        Terms of Service
+                    </a>
+                </div> --}}
+ {{-- Quick Links --}}
                     {{-- <div class="space-y-3">
                 <h4 class="text-sm font-semibold text-slate-900 dark:text-white">Quick Links</h4>
                 <ul class="space-y-2">
@@ -213,97 +290,14 @@
                     Need help? Contact IT support team
                 </p>
             </div> --}}
-                </div>
-
-                {{-- Bottom Bar --}}
-                <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
-                    <div class="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
-                        <p class="text-xs text-slate-500 dark:text-slate-400">
-                            © {{ date('Y') }} IT Departments. Developed by Edwin Sirait
-                        </p>
-                        {{-- <div class="flex items-center space-x-4">
-                    <a href="#" class="text-xs text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                        Privacy Policy
-                    </a>
-                    <span class="text-slate-300 dark:text-slate-700">|</span>
-                    <a href="#" class="text-xs text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                        Terms of Service
-                    </a>
-                </div> --}}
-                    </div>
-                </div>
-            </div>
-        </footer>
-    </div>
-
-    <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div class="absolute top-0 right-0 w-96 h-96 bg-blue-900/20 rounded-full filter blur-3xl"></div>
-        <div class="absolute bottom-0 left-0 w-96 h-96 bg-cyan-900/20 rounded-full filter blur-3xl"></div>
-    </div>
-
-    <div class="fixed inset-0 -z-10 opacity-[0.02] pointer-events-none"
-        style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 50px 50px;">
-    </div>
-    
-    <script>
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const input = document.getElementById('password');
-            const iconShow = document.getElementById('iconShow');
-            const iconHide = document.getElementById('iconHide');
-
-            if (input.type === "password") {
-                input.type = "text";
-                iconShow.classList.add('hidden');
-                iconHide.classList.remove('hidden');
-            } else {
-                input.type = "password";
-                iconShow.classList.remove('hidden');
-                iconHide.classList.add('hidden');
-            }
-        });
-    
-    </script>
-
-    <style>
-        @keyframes pulse-slow {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.8;
-            }
-        }
-
-        .animate-pulse-slow {
-            animation: pulse-slow 3s ease-in-out infinite;
-        }
-    </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
-<script>
-toastr.options = {
-    closeButton: true,
-    progressBar: true,
-    positionClass: "toast-top-right",
-    timeOut: "3000"
-};
-
-@if (session('success'))
-    toastr.success(@json(session('success')));
-@endif
-
-@if (session('error'))
-    toastr.error(@json(session('error')));
-@endif
-</script>
-
-</body>
-
-</html>
+   {{-- @if ($errors->any())
+                    <div class="bg-red-600 text-white p-3 rounded mb-3"> {{ $errors->first() }} </div>
+                @endif --}}
+   {{-- <div class="px-6 py-6 border-t border-slate-800">
+            <p class="text-center text-sm text-slate-500">
+                &copy; 2025 IT Departments, Developed by Edwin Sirait
+            </p>
+        </div> --}}
 {{-- <!DOCTYPE html>
 <html lang="id">
 <head>

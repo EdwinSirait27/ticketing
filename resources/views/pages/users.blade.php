@@ -426,19 +426,18 @@
             var table = $('#users-table').DataTable({
                 processing: true,
                 serverSide: true,
-                responsive: false,
+                responsive: true,
+                lengthMenu: [
+                    [10, 25, 50, 100, -1],
+                    [10, 25, 50, 100, "All"]
+                ],
                 ajax: "{{ route('users.users') }}",
                 columns: [{
                         data: 'username',
                         name: 'username',
                         width: '10%'
                     },
-                    // {
-                    //     data: 'employee_name',
-                    //     name: 'employee_name',
-                    //     width: '25%',
-                    //     className: 'hidden md:table-cell'
-                    // },
+                    
                        { data: 'employee_name', name: 'employees_tables.employee_name', width: '25%', className: 'hidden md:table-cell' },
                     {
                         data: 'company_name',
