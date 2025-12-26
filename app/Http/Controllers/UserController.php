@@ -200,10 +200,8 @@ public function getUsers(Request $request)
             'users.id',
             'users.username',
             'users.employee_id',
-
             'employees_tables.status',
             'employees_tables.employee_name',
-
             'employees_tables.employee_name as employee_name',
             'company_tables.name as company_name',
             'departments_tables.department_name',
@@ -217,23 +215,19 @@ public function getUsers(Request $request)
         ->leftJoin('position_tables', 'position_tables.id', '=', 'employees_tables.position_id')
         ->whereIn('employees_tables.status', ['Active', 'Pending', 'Mutation']);
     return DataTables::eloquent($query)
-
         ->addColumn('action', function ($user) {
             $idHashed = substr(hash('sha256', $user->id . env('APP_KEY')), 0, 8);
-
-            return '
-                <a href="' . route('editusers', $idHashed) . '" 
-                   title="Edit User: ' . e($user->username) . '">
-                    <i class="fas fa-user-edit text-secondary"></i>
-                </a>';
-        })
-
+        return '
+        <a href="'.route('editusers', $idHashed).'"
+           class="btn btn-sm btn-outline-secondary"
+           title="Edit Roles: '.e($user->employee->employee_name).'">
+           <i class="fas fa-edit"></i> Edit
+        </a>
+    ';
+})
         ->rawColumns(['action'])
         ->make(true);
 }
-
-
-
     public function edit($hashedId)
     {
         $user = User::get()->first(function ($u) use ($hashedId) {
@@ -245,15 +239,12 @@ public function getUsers(Request $request)
         }
         $userStatus = ['Active', 'Inactive'];
         $selectedStatus = old('status', $user->Employee->status ?? '');
-        // $roles = Role::pluck('name', 'name')->all();
-        // Change selectedRole to use name instead of id
         $selectedRole = old('role', optional($user->roles->first())->name ?? '');
-        return view('pages.dashboardAdmin.edit', [
+        return view('pages.editusers', [
             'user' => $user,
             'hashedId' => $hashedId,
             'userStatus' => $userStatus,
             'selectedStatus' => $selectedStatus,
-            // 'roles' => $roles,
             'selectedRole' => $selectedRole
         ]);
     }

@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>@yield('title', 'IT Departments Ticketing')</title>
     <link rel="icon" type="image/png" href="https://cloud.mjm-bali.co.id/index.php/s/J3Wob5N5LjzHwik/download">
-
     {{-- Tailwind --}}
     @vite('resources/css/app.css')
     {{-- PWA --}}
@@ -14,9 +12,7 @@
     {{-- CSRF --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
-
 <body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-gray-100 transition-colors duration-300">
-
     {{-- DESKTOP SIDEBAR (Hidden on mobile) --}}
     <aside class="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
         <div
@@ -30,7 +26,6 @@
                     <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Ticketing System</p>
                 </div>
             </div>
-
             {{-- Navigation Menu --}}
             @auth
             <nav class="flex flex-1 flex-col">
@@ -259,23 +254,12 @@
                 <p class="text-xs text-slate-500 dark:text-slate-400">
                     © {{ date('Y') }} IT Departments. Developed by Edwin Sirait.
                 </p>
-                {{-- <div class="flex items-center space-x-4">
-                    <a href="#" class="text-xs text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                        Privacy Policy
-                    </a>
-                    <span class="text-slate-300 dark:text-slate-700">|</span>
-                    <a href="#" class="text-xs text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                        Terms of Service
-                    </a>
-                </div> --}}
             </div>
         </div>
     </div>
 </footer>
-
         </div>
     </div>
-
     {{-- Background Decoration (Desktop Only) --}}
     <div class="hidden lg:block fixed inset-0 -z-10 overflow-hidden pointer-events-none">
         <div
@@ -285,7 +269,6 @@
             class="absolute bottom-0 left-72 w-[600px] h-[600px] bg-cyan-300/10 dark:bg-cyan-900/10 rounded-full filter blur-3xl transition-colors">
         </div>
     </div>
-
     {{-- THEME SCRIPT --}}
     <script>
         // Apply saved theme on load
