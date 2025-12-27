@@ -92,11 +92,157 @@ public function getAlltickets(Request $request)
         ->make(true);
 }
 
+// public function store(Request $request)
+// {
+//     Log::info('Ticket store request masuk', [
+//         'user_id' => auth()->id(),
+//         'ip'      => $request->ip(),
+//     ]);
+
+//     $validated = $request->validate([
+//         'request_uuid'  => 'required|uuid|unique:ticket_tables,request_uuid',
+//         'title'         => 'required|string|min:5|max:150',
+//         'category'      => 'required|string',
+//         'description'   => 'required|string|min:5|max:500',
+//         'attachments'   => 'nullable|array|min:1|max:3',
+//         'attachments.*' => 'file|max:5120|mimes:jpg,jpeg,png,pdf,doc,docx',
+//     ]);
+
+//     try {
+//         DB::transaction(function () use ($request, $validated, &$ticket) {
+
+//             $queueNumber = Tickets::whereDate('created_at', Carbon::today())
+//                 ->lockForUpdate()
+//                 ->count() + 1;
+
+//             $ticket = Tickets::create([
+//                 'id'           => (string) Str::uuid(),
+//                 'request_uuid' => $validated['request_uuid'],
+//                 'user_id'      => auth()->id(),
+//                 'queue_number' => $queueNumber,
+//                 'title'        => $validated['title'],
+//                 'category'     => $validated['category'],
+//                 'description'  => $validated['description'],
+//                 'status'       => 'Open',
+//             ]);
+
+//             // ==============================
+//             // 📎 NEXTCLOUD ATTACHMENTS
+//             // ==============================
+//             Log::info('HAS FILE CHECK', [
+//     'hasFile' => $request->hasFile('attachments'),
+//     'files'   => $request->file('attachments'),
+// ]);
+
+//             if ($request->hasFile('attachments')) {
+
+//                 $categoryFolder = Str::slug($ticket->category);
+//                 $userFolder     = Str::slug(auth()->user()->username);
+//                 $ticketFolder   = $ticket->id;
+
+//                 $basePath = "ticket/{$categoryFolder}/{$userFolder}/{$ticketFolder}";
+
+//                 // pastikan folder ada
+//                 NextcloudService::makeDir('ticket');
+//                 NextcloudService::makeDir("ticket/{$categoryFolder}");
+//                 NextcloudService::makeDir("ticket/{$categoryFolder}/{$userFolder}");
+//                 NextcloudService::makeDir($basePath);
+
+//                 foreach ($request->file('attachments') as $file) {
+//                     $filename = time() . '_' . $file->getClientOriginalName();
+
+//                     NextcloudService::upload(
+//                         $basePath,
+//                         $filename,
+//                         file_get_contents($file->getRealPath()),
+//                         $file->getMimeType()
+//                     );
+
+//                     Ticketattachments::create([
+//                         'id'        => (string) Str::uuid(),
+//                         'ticket_id' => $ticket->id,
+//                         'file_name' => $filename,
+//                         'file_path' => "{$basePath}/{$filename}",
+//                     ]);
+//                 }
+
+//                 // 🔗 SHARE FOLDER (INI YANG PENTING)
+//                 $shareUrl = NextcloudService::shareFolder($basePath);
+//                 Log::info('NEXTCLOUD SHARE CREATED', [
+//     'url' => $shareUrl,
+// ]);
+
+
+//                 $ticket->update([
+//                     'attachment_folder' => $basePath,
+//                     'attachment_url'    => $shareUrl,
+//                 ]);
+//             }
+//         });
+//         $ticket->refresh();
+
+//         // ==============================
+//         // 📲 WHATSAPP NOTIFICATION
+//         // ==============================
+//         $attachmentText = '';
+//         if (!empty($ticket->attachment_url)) {
+//             $attachmentText =
+//                 "\n Attachments:\n" .
+//                 $ticket->attachment_url;
+//         }
+
+//         try {
+//             Http::timeout(15)->post('http://127.0.0.1:3000/send-message', [
+//                 'group_id' => '120363405189832865@g.us',
+//                 'text' =>
+//                     "*New Ticket*\n" .
+//                     "Queue: {$ticket->queue_number}\n" .
+//                     "Date: " . $ticket->created_at
+//                         ->timezone('Asia/Makassar')
+//                         ->format('d-m-Y H:i') . "\n" .
+//                     "Title: {$ticket->title}\n" .
+//                     "Category: {$ticket->category}\n" .
+//                     "Description: {$ticket->description}\n" .
+//                     "User: " . (
+//                         auth()->user()->employee->employee_name
+//                         ?? auth()->user()->employee->store->name
+//                     ) .
+//                     $attachmentText,
+//             ]);
+//             Log::info('WA MESSAGE FINAL', [
+//     'attachment_url' => $ticket->attachment_url
+// ]);
+
+//         } catch (\Throwable $e) {
+//             Log::warning('Gagal kirim WA notification', [
+//                 'error' => $e->getMessage(),
+//             ]);
+//         }
+
+//         return redirect()
+//             ->route('openticket')
+//             ->with('success', 'Ticket successfully submitted');
+
+//     } catch (\Throwable $e) {
+//         Log::error('failed to submitted ticket', [
+//             'message' => $e->getMessage(),
+//             'user_id' => auth()->id(),
+//         ]);
+
+//         return redirect()
+//             ->route('openticket')
+//             ->with('error', 'Ticket failed to submitted');
+//     }
+// }
+
+
 public function store(Request $request)
 {
-    Log::info('Ticket store request masuk', [
-        'user_id' => auth()->id(),
-        'ip'      => $request->ip(),
+    Log::info('TICKET REQUEST START', [
+        'user_id'        => auth()->id(),
+        'ip'             => $request->ip(),
+        'content_length' => $request->server('CONTENT_LENGTH'),
+        // 'octane'         => app()->runningInOctane(),
     ]);
 
     $validated = $request->validate([
@@ -108,131 +254,171 @@ public function store(Request $request)
         'attachments.*' => 'file|max:5120|mimes:jpg,jpeg,png,pdf,doc,docx',
     ]);
 
+    $ticket = null;
+
     try {
-        DB::transaction(function () use ($request, $validated, &$ticket) {
+        DB::beginTransaction();
+        Log::info('DB TRANSACTION START');
 
-            $queueNumber = Tickets::whereDate('created_at', Carbon::today())
-                ->lockForUpdate()
-                ->count() + 1;
+        // ==============================
+        // 🎫 CREATE TICKET
+        // ==============================
+        $queueNumber = Tickets::whereDate('created_at', Carbon::today())
+            ->lockForUpdate()
+            ->count() + 1;
 
-            $ticket = Tickets::create([
-                'id'           => (string) Str::uuid(),
-                'request_uuid' => $validated['request_uuid'],
-                'user_id'      => auth()->id(),
-                'queue_number' => $queueNumber,
-                'title'        => $validated['title'],
-                'category'     => $validated['category'],
-                'description'  => $validated['description'],
-                'status'       => 'Open',
-            ]);
+        $ticket = Tickets::create([
+            'id'           => (string) Str::uuid(),
+            'request_uuid' => $validated['request_uuid'],
+            'user_id'      => auth()->id(),
+            'queue_number' => $queueNumber,
+            'title'        => $validated['title'],
+            'category'     => $validated['category'],
+            'description'  => $validated['description'],
+            'status'       => 'Open',
+        ]);
 
-            // ==============================
-            // 📎 NEXTCLOUD ATTACHMENTS
-            // ==============================
-            Log::info('HAS FILE CHECK', [
-    'hasFile' => $request->hasFile('attachments'),
-    'files'   => $request->file('attachments'),
-]);
+        Log::info('TICKET CREATED', [
+            'ticket_id' => $ticket->id,
+            'queue'     => $queueNumber,
+        ]);
 
-            if ($request->hasFile('attachments')) {
+        // ==============================
+        // 📎 ATTACHMENTS (NEXTCLOUD)
+        // ==============================
+        $this->handleAttachments($request, $ticket);
 
-                $categoryFolder = Str::slug($ticket->category);
-                $userFolder     = Str::slug(auth()->user()->username);
-                $ticketFolder   = $ticket->id;
+        DB::commit();
+        Log::info('DB TRANSACTION COMMIT', [
+            'ticket_id' => $ticket->id,
+        ]);
 
-                $basePath = "ticket/{$categoryFolder}/{$userFolder}/{$ticketFolder}";
-
-                // pastikan folder ada
-                NextcloudService::makeDir('ticket');
-                NextcloudService::makeDir("ticket/{$categoryFolder}");
-                NextcloudService::makeDir("ticket/{$categoryFolder}/{$userFolder}");
-                NextcloudService::makeDir($basePath);
-
-                foreach ($request->file('attachments') as $file) {
-                    $filename = time() . '_' . $file->getClientOriginalName();
-
-                    NextcloudService::upload(
-                        $basePath,
-                        $filename,
-                        file_get_contents($file->getRealPath()),
-                        $file->getMimeType()
-                    );
-
-                    Ticketattachments::create([
-                        'id'        => (string) Str::uuid(),
-                        'ticket_id' => $ticket->id,
-                        'file_name' => $filename,
-                        'file_path' => "{$basePath}/{$filename}",
-                    ]);
-                }
-
-                // 🔗 SHARE FOLDER (INI YANG PENTING)
-                $shareUrl = NextcloudService::shareFolder($basePath);
-                Log::info('NEXTCLOUD SHARE CREATED', [
-    'url' => $shareUrl,
-]);
-
-
-                $ticket->update([
-                    'attachment_folder' => $basePath,
-                    'attachment_url'    => $shareUrl,
-                ]);
-            }
-        });
         $ticket->refresh();
 
-        // ==============================
-        // 📲 WHATSAPP NOTIFICATION
-        // ==============================
-        $attachmentText = '';
-        if (!empty($ticket->attachment_url)) {
-            $attachmentText =
-                "\n Attachments:\n" .
-                $ticket->attachment_url;
-        }
-
-        try {
-            Http::timeout(15)->post('http://127.0.0.1:3000/send-message', [
-                'group_id' => '120363405189832865@g.us',
-                'text' =>
-                    "*New Ticket*\n" .
-                    "Queue: {$ticket->queue_number}\n" .
-                    "Date: " . $ticket->created_at
-                        ->timezone('Asia/Makassar')
-                        ->format('d-m-Y H:i') . "\n" .
-                    "Title: {$ticket->title}\n" .
-                    "Category: {$ticket->category}\n" .
-                    "Description: {$ticket->description}\n" .
-                    "User: " . (
-                        auth()->user()->employee->employee_name
-                        ?? auth()->user()->employee->store->name
-                    ) .
-                    $attachmentText,
-            ]);
-            Log::info('WA MESSAGE FINAL', [
-    'attachment_url' => $ticket->attachment_url
-]);
-
-        } catch (\Throwable $e) {
-            Log::warning('Gagal kirim WA notification', [
-                'error' => $e->getMessage(),
-            ]);
-        }
-
-        return redirect()
-            ->route('openticket')
-            ->with('success', 'Ticket successfully submitted');
-
     } catch (\Throwable $e) {
-        Log::error('failed to submitted ticket', [
-            'message' => $e->getMessage(),
-            'user_id' => auth()->id(),
+        DB::rollBack();
+
+        Log::error('TICKET STORE FAILED', [
+            'error'   => $e->getMessage(),
+            'trace'   => $e->getTraceAsString(),
+            'user_id'=> auth()->id(),
         ]);
 
         return redirect()
             ->route('openticket')
             ->with('error', 'Ticket failed to submitted');
     }
+
+    // ==============================
+    // 📲 WHATSAPP NOTIFICATION
+    // ==============================
+    $this->sendWhatsappNotification($ticket);
+
+    return redirect()
+        ->route('openticket')
+        ->with('success', 'Ticket successfully submitted');
+}
+private function handleAttachments(Request $request, Tickets $ticket): void
+{
+    if (! $request->hasFile('attachments')) {
+        Log::info('NO ATTACHMENTS UPLOADED');
+        return;
+    }
+
+    $files = $request->file('attachments');
+
+    Log::info('ATTACHMENT START', [
+        'count'      => count($files),
+        'total_size' => collect($files)->sum(fn ($f) => $f->getSize()),
+    ]);
+
+    $categoryFolder = Str::slug($ticket->category);
+    $userFolder     = Str::slug(auth()->user()->username);
+    $basePath       = "ticket/{$categoryFolder}/{$userFolder}/{$ticket->id}";
+
+    foreach ([
+        'ticket',
+        "ticket/{$categoryFolder}",
+        "ticket/{$categoryFolder}/{$userFolder}",
+        $basePath,
+    ] as $dir) {
+        NextcloudService::makeDir($dir);
+    }
+
+    foreach ($files as $index => $file) {
+
+        Log::info('UPLOADING FILE', [
+            'index' => $index,
+            'name'  => $file->getClientOriginalName(),
+            'size'  => $file->getSize(),
+            'mime'  => $file->getMimeType(),
+        ]);
+
+        $filename = time() . '_' . $file->getClientOriginalName();
+
+        NextcloudService::upload(
+            $basePath,
+            $filename,
+            file_get_contents($file->getRealPath()),
+            $file->getMimeType()
+        );
+
+        Ticketattachments::create([
+            'id'        => (string) Str::uuid(),
+            'ticket_id' => $ticket->id,
+            'file_name' => $filename,
+            'file_path' => "{$basePath}/{$filename}",
+        ]);
+    }
+
+    $shareUrl = NextcloudService::shareFolder($basePath);
+
+    Log::info('NEXTCLOUD SHARE CREATED', [
+        'url' => $shareUrl,
+    ]);
+
+    $ticket->update([
+        'attachment_folder' => $basePath,
+        'attachment_url'    => $shareUrl,
+    ]);
+}
+private function sendWhatsappNotification(Tickets $ticket): void
+{
+    try {
+        $attachmentText = $ticket->attachment_url
+            ? "\nAttachments:\n{$ticket->attachment_url}"
+            : '';
+
+        $response = Http::timeout(15)->post('http://127.0.0.1:3000/send-message', [
+            'group_id' => '120363405189832865@g.us',
+            'text' =>
+                "*New Ticket*\n" .
+                "Queue: {$ticket->queue_number}\n" .
+                "Date: " . $ticket->created_at
+                    ->timezone('Asia/Makassar')
+                    ->format('d-m-Y H:i') . "\n" .
+                "Title: {$ticket->title}\n" .
+                "Category: {$ticket->category}\n" .
+                "Description: {$ticket->description}\n" .
+                "User: " . (
+                    auth()->user()->employee->employee_name
+                    ?? auth()->user()->employee->store->name
+                ) .
+                $attachmentText,
+        ]);
+
+        Log::info('WA SENT', [
+            'status' => $response->status(),
+            'body'   => $response->body(),
+        ]);
+
+    } catch (\Throwable $e) {
+        Log::warning('WA FAILED', [
+            'error' => $e->getMessage(),
+        ]);
+    }
+}
+
 }
 
 // public function store(Request $request)
@@ -355,4 +541,3 @@ public function store(Request $request)
 //             ->with('error', 'Ticket failed to submitted');
 //     }
 // }
-}
