@@ -1,34 +1,6 @@
-{{-- <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t">
-    <div class="grid grid-cols-4 text-xs">
-
-        <a href="#"
-           class="flex flex-col items-center py-2 {{ request()->routeIs('dashboard') ? 'text-blue-600' : 'text-gray-400' }}">
-            🏠
-            <span>Home</span>
-        </a>
-
-        <a href="#"
-           class="flex flex-col items-center py-2 {{ request()->routeIs('tickets.*') ? 'text-blue-600' : 'text-gray-400' }}">
-            🎫
-            <span>Tickets</span>
-        </a>
-
-        <a href="#"
-           class="flex flex-col items-center py-2 text-gray-400">
-            ➕
-            <span>New</span>
-        </a>
-
-        <a href="#"
-           class="flex flex-col items-center py-2 {{ request()->routeIs('profile') ? 'text-blue-600' : 'text-gray-400' }}">
-            👤
-            <span>Profile</span>
-        </a>
-    </div>
-</nav> --}}
 <nav
     class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 shadow-2xl">
-    <div class="grid grid-cols-5 text-xs">
+    <div class="grid grid-cols-4 text-xs">
 
         {{-- Home --}}
         <a href="{{ route('dashboard') }}" {{-- <a href="{{ route('dashboard') }}" --}}
@@ -112,7 +84,7 @@
             <span class="mt-5 font-medium text-slate-500 group-hover:text-blue-400 transition-colors">New Tickets</span>
         </a>
         {{-- Profile --}}
-        <a href="{{ route('profile') }}" {{-- <a href="{{ route('profile') }}" --}}
+        {{-- <a href="{{ route('profile') }}"
             class="relative flex flex-col items-center py-3 transition-all duration-300 {{ request()->routeIs('profile') ? 'text-blue-400' : 'text-slate-500 hover:text-slate-300' }}">
             @if (request()->routeIs('profile'))
                 <div
@@ -127,7 +99,7 @@
                 </svg>
             </div>
             <span class="font-medium">Profile</span>
-        </a>
+        </a> --}}
     </div>
     {{-- Safe Area untuk iPhone dengan notch --}}
     <div class="h-safe-area-inset-bottom bg-slate-900"></div>

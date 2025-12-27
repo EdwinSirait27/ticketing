@@ -4,7 +4,6 @@
 @section('subtitle', 'Our Team')
 @section('content')
     <div class="px-4 space-y-6 pb-8">
-        {{-- Hero Section --}}
         <div
             class="relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 border border-slate-700 shadow-xl overflow-hidden">
             {{-- Background Decoration --}}
@@ -63,8 +62,6 @@
                                 </svg>
                             </div>
                         </div>
-
-                        {{-- Info --}}
                         <div class="flex-1 min-w-0">
                             <h4 class="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">Welky
                                 Setiawan</h4>
@@ -80,7 +77,6 @@
                                 </span>
                             </div>
                         </div>
-                        {{-- Arrow Icon --}}
                         <div class="flex-shrink-0">
                             <svg class="w-6 h-6 text-slate-600 group-hover:text-blue-400 group-hover:translate-x-1 transition-all"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -88,7 +84,6 @@
                             </svg>
                         </div>
                     </div>
-                    {{-- Skills & Bio --}}
                     <div class="mt-4 pt-4 border-t border-slate-700">
                         <p class="text-sm text-slate-400 leading-relaxed mb-3">
                             IT Manager specializing in network infrastructure and system security, with more than 8 years of
@@ -100,8 +95,6 @@
                             <span class="px-3 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-lg">Cloud</span>
                         </div>
                     </div>
-
-                    {{-- Contact --}}
                     <div class="mt-4 flex items-center space-x-3">
                         <a href="mailto:it@mjm-bali.co.id"
                             class="flex-1 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded-lg transition-colors flex items-center justify-center space-x-2">
@@ -122,8 +115,6 @@
                     </div>
                 </div>
             </div>
-
-            {{-- Team Member 2 --}}
             <div
                 class="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 overflow-hidden hover:border-cyan-500/50 transition-all duration-300 group">
                 <div class="p-5">
@@ -131,7 +122,6 @@
                         <div class="relative flex-shrink-0">
                             <div
                                 class="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-600 to-cyan-800 overflow-hidden ring-2 ring-cyan-500/30 group-hover:ring-cyan-500/60 transition-all">
-                                {{-- Ganti dengan <img src="{{ asset('images/team/member2.jpg') }}" alt="Jane Smith" class="w-full h-full object-cover"> --}}
                                 <div class="w-full h-full flex items-center justify-center text-3xl font-bold text-white">
                                     GA
                                 </div>
@@ -144,7 +134,6 @@
                                 </svg>
                             </div>
                         </div>
-
                         <div class="flex-1 min-w-0">
                             <h4 class="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors">Gede Arya
                             </h4>
@@ -160,7 +149,6 @@
                                 </span>
                             </div>
                         </div>
-
                         <div class="flex-shrink-0">
                             <svg class="w-6 h-6 text-slate-600 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -168,7 +156,6 @@
                             </svg>
                         </div>
                     </div>
-
                     <div class="mt-4 pt-4 border-t border-slate-700">
                         <p class="text-sm text-slate-400 leading-relaxed mb-3">
                             IT Support Specialist with over 8 years of experience in network infrastructure management,
@@ -182,7 +169,6 @@
                                 Support</span>
                         </div>
                     </div>
-
                     <div class="mt-4 flex items-center space-x-3">
                         <a href="mailto:it@mjm-bali.co.id"
                             class="flex-1 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded-lg transition-colors flex items-center justify-center space-x-2">
@@ -203,8 +189,6 @@
                     </div>
                 </div>
             </div>
-
-            {{-- Team Member 3 --}}
             <div
                 class="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 overflow-hidden hover:border-purple-500/50 transition-all duration-300 group">
                 <div class="p-5">
@@ -212,16 +196,11 @@
                         <div class="relative flex-shrink-0">
                             <div
                                 class="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-600 to-purple-800 overflow-hidden ring-2 ring-purple-500/30 group-hover:ring-purple-500/60 transition-all">
-                                {{-- Ganti dengan <img src="{{ asset('images/team/member3.jpg') }}" alt="Mike Johnson" class="w-full h-full object-cover"> --}}
                                 <div class="w-full h-full flex items-center justify-center text-3xl font-bold text-white">
                                     ES
                                 </div>
                             </div>
-                            {{-- <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-yellow-500 rounded-full border-3 border-slate-800 flex items-center justify-center">
-                            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div> --}}
+
                             <div
                                 class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-3 border-slate-800 flex items-center justify-center">
                                 <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor"
@@ -241,7 +220,6 @@
                                     class="px-2.5 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-lg border border-purple-500/30">
                                     Supervisor
                                 </span>
-                                {{-- <span class="px-2.5 py-1 bg-yellow-500/20 text-yellow-400 text-xs font-semibold rounded-lg border border-yellow-500/30"> --}}
                                 <span
                                     class="px-2.5 py-1 bg-green-500/20 text-green-400 text-xs font-semibold rounded-lg border border-green-500/30">
 
@@ -267,7 +245,6 @@
                         <div class="flex flex-wrap gap-2">
                             <span class="px-3 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-lg">Dev Ops</span>
                             <span class="px-3 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-lg">Full Stack Dev</span>
-                            {{-- <span class="px-3 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-lg">Helpdesk</span> --}}
                         </div>
                     </div>
 
@@ -292,8 +269,6 @@
                 </div>
             </div>
         </div>
-
-        {{-- Contact CTA --}}
         <div
             class="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/30 rounded-2xl p-5 text-center">
             <h3 class="text-lg font-bold text-white mb-2">{{ __('auth.help') }}</h3>
@@ -306,6 +281,31 @@
                 <span>Make new ticket</span>
             </a>
         </div>
-
     </div>
+    <footer class="bg-dark dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 mt-auto">
+        <div class="px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+                {{-- Company Info --}}
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-2">
+                        <img src="https://cloud.mjm-bali.co.id/index.php/s/fMMRXmq5cdkApNc/download"
+                            class="w-8 h-8 select-none pointer-events-none" draggable="false" alt="icon">
+                        <h3 class="text-sm font-bold text-slate-900 dark:text-white">{{ __('auth.departemen') }}
+                        </h3>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">
+                        {{ __('auth.departemennote') }}
+                    </p>
+                </div>
+            </div>
+            {{-- Bottom Bar --}}
+            <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+                <div class="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                        © {{ date('Y') }} IT Departments. Developed by Edwin Sirait
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
 @endsection

@@ -6,6 +6,8 @@ class Tickets extends Model
 {
     protected $table = 'ticket_tables';
     public $incrementing = false;
+        protected $connection = 'mysql';
+
     protected $keyType = 'string';
     protected $fillable = [
         'id',

@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>IT Departments Ticketing</title>
-    <link rel="icon" type="image/png" href="https://cloud.mjm-bali.co.id/index.php/s/J3Wob5N5LjzHwik/download">
+    <link rel="icon" type="image/png" href="https://cloud.mjm-bali.co.id/index.php/s/CHRczpYqozMHjoD/download">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     </script>
@@ -42,8 +42,12 @@
 
             <div class="flex flex-col items-center space-y--1">
                 <div class="relative">
-                    <img src="https://cloud.mjm-bali.co.id/index.php/s/7ixWakyMn8JCe9F/download"
-                        class="w-25 h-25 select-none pointer-events-none" draggable="false" alt="icon">
+                    <img src="https://cloud.mjm-bali.co.id/index.php/s/fMMRXmq5cdkApNc/download"
+                        class="w-40 h-40 select-none pointer-events-none" draggable="false" alt="icon">
+                   
+
+
+
                 </div>
 
                 <div class="text-center">
@@ -138,15 +142,13 @@
                 </form>
             </div>
         </div>
-
-     
         <footer class="bg-dark dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 mt-auto">
             <div class="px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
                     {{-- Company Info --}}
                     <div class="space-y-3">
                         <div class="flex items-center space-x-2">
-                            <img src="https://cloud.mjm-bali.co.id/index.php/s/7ixWakyMn8JCe9F/download"
+                            <img src="https://cloud.mjm-bali.co.id/index.php/s/fMMRXmq5cdkApNc/download"
                                 class="w-8 h-8 select-none pointer-events-none" draggable="false" alt="icon">
                             <h3 class="text-sm font-bold text-slate-900 dark:text-white">{{ __('auth.departemen') }}
                             </h3>
@@ -165,7 +167,6 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400">
                             © {{ date('Y') }} IT Departments. Developed by Edwin Sirait
                         </p>
-                    
                     </div>
                 </div>
             </div>

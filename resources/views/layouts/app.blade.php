@@ -23,7 +23,7 @@
     {{-- DESKTOP SIDEBAR (Hidden on mobile) --}}
     <aside class="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
         <div
-            class="flex grow flex-col gap-y-5 overflow-y-auto bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 px-6 pb-4">
+            class="flex grow flex-col gap-y-5 overflow-y-auto bg-dark dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 px-6 pb-4">
             {{-- Logo & Company --}}
             <div class="flex h-24 shrink-0 items-center border-b border-slate-200 dark:border-slate-800">
                 <img src="https://cloud.mjm-bali.co.id/index.php/s/7ixWakyMn8JCe9F/download"
@@ -51,6 +51,24 @@
                                             d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                                     </svg>
                                     Dashboard
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('alltickets') }}"
+                                    {{-- class="group flex gap-x-3 rounded-lg p-3 text-sm leading-6 font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"> --}}
+                                    class="group flex gap-x-3 rounded-lg p-3 text-sm leading-6 font-semibold transition-all
+                                   {{ request()->routeIs('alltickets')
+                                       ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-md'
+                                       : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
+                                    <svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                                        </path>
+                                    </svg>
+                                    All Tickets
+                                    {{-- <span
+                                        class="ml-auto inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900 px-2.5 py-0.5 text-xs font-bold text-blue-600 dark:text-blue-300">24</span> --}}
                                 </a>
                             </li>
                             <li>
@@ -193,10 +211,10 @@
     <div class="lg:pl-72">
         {{-- APP CONTAINER --}}
         <div
-            class="max-w-md lg:max-w-none mx-auto min-h-screen bg-white dark:bg-slate-900 lg:bg-slate-100 lg:dark:bg-slate-950 shadow-2xl lg:shadow-none transition-colors duration-300">
+            class="max-w-md lg:max-w-none mx-auto min-h-screen bg-dark dark:bg-slate-900 lg:bg-slate-100 lg:dark:bg-slate-950 shadow-2xl lg:shadow-none transition-colors duration-300">
             {{-- HEADER --}}
             <header
-                class="sticky top-0 z-40 bg-white dark:bg-slate-900 lg:backdrop-blur-sm lg:bg-white/80 lg:dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+                class="sticky top-0 z-40 bg-dark dark:bg-slate-900 lg:backdrop-blur-sm lg:bg-dark/80 lg:dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
                 <div class="px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
                     {{-- Mobile: Logo & Company Name --}}
                     <div class="flex items-center justify-between mb-4 lg:hidden">
@@ -277,7 +295,7 @@
     {{-- THEME SCRIPT --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-    <script>
+    {{-- <script>
         // Apply saved theme on load
         if (localStorage.theme === 'dark' ||
             (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -296,7 +314,7 @@
                 localStorage.theme = 'dark';
             }
         }
-    </script>
+    </script> --}}
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>

@@ -23,5 +23,7 @@ Route::get('/profile', [ProfileController::class, 'profile'])->name('profile')->
 Route::get('/openticket', [TicketController::class, 'openTicket'])->name('openticket')->middleware('auth');
 Route::get('/users', [UserController::class, 'users'])->name('users')->middleware('auth');
 Route::match(['GET', 'POST'], '/users/users', [UserController::class, 'getUsers'])->name('users.users')->middleware('auth');
+Route::get('/alltickets', [TicketController::class, 'allTickets'])->name('alltickets')->middleware('auth');
+Route::match(['GET', 'POST'], '/alltickets/alltickets', [TicketController::class, 'getAlltickets'])->name('alltickets.alltickets')->middleware('auth');
 Route::get('/editusers/{hashedId}', [UserController::class, 'edit'])->name('editusers');
 Route::post('/ticketreq', [TicketController::class, 'store'])->name('ticketreq');
