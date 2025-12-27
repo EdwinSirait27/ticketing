@@ -34,14 +34,4 @@ class User extends Authenticatable
     {
         return $this->where('username', $username)->first();
     }
-
-    // public function scopeEmployeeActiveOrPending(Builder $query)
-    // {
-    //     return $query->whereHas('employee', function ($q) {
-    //         $q->whereIn(
-    //             DB::raw("LOWER(TRIM(employees_tables.status))"),
-    //             ['active', 'pending']
-    //         );
-    //     });
-    // }
 }

@@ -24,3 +24,4 @@ Route::get('/openticket', [TicketController::class, 'openTicket'])->name('openti
 Route::get('/users', [UserController::class, 'users'])->name('users')->middleware('auth');
 Route::match(['GET', 'POST'], '/users/users', [UserController::class, 'getUsers'])->name('users.users')->middleware('auth');
 Route::get('/editusers/{hashedId}', [UserController::class, 'edit'])->name('editusers');
+Route::post('/ticketreq', [TicketController::class, 'store'])->name('ticketreq');

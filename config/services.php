@@ -34,5 +34,13 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+ 'nextcloud' => [
+    'base' => env('NEXTCLOUD_BASE'),
+    'dav' => env('NEXTCLOUD_DAV'),
+    'username' => env('NEXTCLOUD_USERNAME'),
+    'password' => env('NEXTCLOUD_PASSWORD'),
+],
+
+
 
 ];

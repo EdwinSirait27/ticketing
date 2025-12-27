@@ -4,7 +4,6 @@
 @section('subtitle', 'Report your problem or request')
 @section('content')
     <div class="px-4 space-y-6 pb-8">
-        {{-- Quick Info Banner --}}
         <div class="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/30 rounded-2xl p-4">
             <div class="flex items-start space-x-3">
                 <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0">
@@ -20,11 +19,11 @@
                 </div>
             </div>
         </div>
-        {{-- Form --}}
-        <form method="POST" action="#" enctype="multipart/form-data" class="space-y-5">
-            {{-- <form method="POST" action="{{ route('tickets.store') }}" enctype="multipart/form-data" class="space-y-5"> --}}
+        {{-- <form method="POST" action="#" enctype="multipart/form-data" class="space-y-5"> --}}
+            <form method="POST" action="{{ route('ticketreq') }}" enctype="multipart/form-data" class="space-y-5">
             @csrf
-            {{-- Ticket Title --}}
+            <input type="hidden" name="request_uuid" value="{{ Str::uuid() }}">
+
             <div>
                 <label for="title" class="block text-sm font-semibold text-slate-300 mb-2 flex items-center space-x-2">
                     <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,10 +62,10 @@
                     <select id="category" name="category" required
                         class="w-full px-4 py-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 appearance-none cursor-pointer">
                         <option value="" class="bg-slate-800">Choose Categories...</option>
-                        <option value="hardware" class="bg-slate-800">Hardware & Software</option>
-                        <option value="network" class="bg-slate-800">Network</option>
-                        <option value="account" class="bg-slate-800">Account & Access</option>
-                        <option value="other" class="bg-slate-800">Others</option>
+                        <option value="Hardware & Software" class="bg-slate-800">Hardware & Software</option>
+                        <option value="Network" class="bg-slate-800">Network</option>
+                        <option value="Account & Access" class="bg-slate-800">Account & Access</option>
+                        <option value="Others" class="bg-slate-800">Others</option>
                     </select>
                     <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
                         <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -168,10 +167,6 @@
             </div>
         </form>
     </div>
-
-
-
-
     <!-- Modal pilih sumber -->
     <div id="sourceModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
         <div class="bg-slate-900 rounded-xl p-6 w-80 text-center">
@@ -179,21 +174,22 @@
 
             <button onclick="openCamera()"
                 class="w-full mb-3 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white">
-                📷 Buka Kamera
+                Open Camera
             </button>
 
             <button onclick="openFilePicker()"
                 class="w-full mb-3 px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white">
-                📁 Upload File
+                Upload Files
             </button>
-
             <button onclick="closeModal()" class="w-full px-4 py-2 text-slate-400 hover:text-white">
-                Batal
+                Abort
             </button>
         </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-    <script>
+     <script>
         // Character counter for description
         const description = document.getElementById('description');
         const charCount = document.getElementById('charCount');
@@ -214,13 +210,14 @@
                 addAttachment();
             }
         }
-function addAttachment() {
-    if (attachmentCount >= maxAttachment) return;
 
-    attachmentCount++;
-    const id = "attachment_" + attachmentCount;
+        function addAttachment() {
+            if (attachmentCount >= maxAttachment) return;
 
-    const html = `
+            attachmentCount++;
+            const id = "attachment_" + attachmentCount;
+
+            const html = `
     <div class="relative mb-3" id="wrap_${id}">
         <input type="file"
             id="${id}"
@@ -251,116 +248,59 @@ function addAttachment() {
     </div>
     `;
 
-    document.getElementById("attachmentContainer")
-        .insertAdjacentHTML("beforeend", html);
+            document.getElementById("attachmentContainer")
+                .insertAdjacentHTML("beforeend", html);
 
-    if (attachmentCount >= maxAttachment) {
-        btnAddAttachment.disabled = true;
-        btnAddAttachment.classList.add("opacity-50", "cursor-not-allowed");
-        limitMessage.classList.remove("hidden");
-    }
-}
-let activeInputId = null;
+            if (attachmentCount >= maxAttachment) {
+                btnAddAttachment.disabled = true;
+                btnAddAttachment.classList.add("opacity-50", "cursor-not-allowed");
+                limitMessage.classList.remove("hidden");
+            }
+        }
+        let activeInputId = null;
 
-function showSourceModal(id) {
-    activeInputId = id;
-    sourceModal.classList.remove('hidden');
-    sourceModal.classList.add('flex');
-}
+        function showSourceModal(id) {
+            activeInputId = id;
+            sourceModal.classList.remove('hidden');
+            sourceModal.classList.add('flex');
+        }
 
-function closeModal() {
-    sourceModal.classList.add('hidden');
-    sourceModal.classList.remove('flex');
-    activeInputId = null;
-}
+        function closeModal() {
+            sourceModal.classList.add('hidden');
+            sourceModal.classList.remove('flex');
+            activeInputId = null;
+        }
 
-function openCamera() {
-    if (!activeInputId) return;
+        function openCamera() {
+            if (!activeInputId) return;
 
-    const input = document.getElementById(activeInputId);
-    input.setAttribute('capture', 'environment'); // kamera belakang HP
-    input.click();
-
-    closeModal();
-}
-
-function openFilePicker() {
-    if (!activeInputId) return;
-
-    const input = document.getElementById(activeInputId);
-    input.removeAttribute('capture');
-    input.click();
-
-    closeModal();
-}
-
-    //     function addAttachment() {
-    //         if (attachmentCount >= maxAttachment) return;
-
-    //         attachmentCount++;
-
-    //         const id = "attachment_" + attachmentCount;
-
-    //         // HTML input sesuai desain kamu
-    //         const html = `
-    //     <div class="relative mb-3" id="wrap_${id}">
-    //         <input type="file" 
-    //             id="${id}" 
-    //             name="attachments[]" 
-    //             accept="image/*,.pdf,.doc,.docx"
-    //             class="hidden" 
-    //             onchange="updateFileName('${id}')">
-
-    //         <label onclick="showSourceModal('${id}')"
-    //             class="flex items-center justify-center w-full px-4 py-8 bg-slate-800 border-2 border-dashed border-slate-700 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-slate-800/50 transition-all duration-200 group">
-    //             <div class="text-center">
-    //                 <svg class="w-12 h-12 mx-auto mb-3 text-slate-600 group-hover:text-blue-500" 
-    //                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    //                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-    //                         d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-    //                 </svg>
-    //                 <p id="fileName_${id}" 
-    //                     class="text-sm font-medium text-slate-400 group-hover:text-blue-400">
-    //                     Click to upload file
-    //                 </p>
-
-    //                 <p class="text-xs text-slate-600 mt-1">
-    //                     PNG, JPG, PDF, DOC (Max. 5MB)
-    //                 </p>
-    //             </div>
-    //         </label>
-    //     </div>
-    // `;
-    //         document.getElementById("attachmentContainer").insertAdjacentHTML("beforeend", html);
-    //         // Disable tombol jika mencapai batas maksimum
-    //         if (attachmentCount >= maxAttachment) {
-    //             document.getElementById("btnAddAttachment").disabled = true;
-    //             document.getElementById("btnAddAttachment").classList.add("opacity-50", "cursor-not-allowed");
-    //             // Tampilkan pesan limit
-    //             document.getElementById("limitMessage").classList.remove("hidden");
-    //         }
-    //     }
-
+            const input =document.getElementById(activeInputId);
+            input.setAttribute('capture', 'environment');
+            input.click();
+            closeModal();
+        }
+        function openFilePicker() {
+            if (!activeInputId) return;
+            const input = document.getElementById(activeInputId);
+            input.removeAttribute('capture');
+            input.click();
+            closeModal();
+        }
         function eraseAttachment() {
-            // Tidak boleh hapus kalau sudah minimum 1
             if (attachmentCount <= minAttachment) return;
-            // Hapus attachment terakhir
             const lastId = "wrap_attachment_" + attachmentCount;
             const lastElement = document.getElementById(lastId);
             if (lastElement) {
                 lastElement.remove();
                 attachmentCount--;
             }
-            // Re-enable tombol Add Attachment jika sebelumnya disabled
             if (attachmentCount < maxAttachment) {
                 const btnAdd = document.getElementById("btnAddAttachment");
                 btnAdd.disabled = false;
                 btnAdd.classList.remove("opacity-50", "cursor-not-allowed");
-                // Sembunyikan pesan limit
                 document.getElementById("limitMessage").classList.add("hidden");
             }
         }
-
         function updateFileName(id) {
             const input = document.getElementById(id);
             const label = document.getElementById("fileName_" + id);
@@ -368,6 +308,21 @@ function openFilePicker() {
                 input.files[0].name :
                 "Click to upload file";
         }
+    </script>
+    <script>
+        toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            positionClass: "toast-top-right",
+            timeOut: "3000"
+        };
+        @if (session('success'))
+            toastr.success(@json(session('success')));
+        @endif
+
+        @if (session('error'))
+            toastr.error(@json(session('error')));
+        @endif
     </script>
 @endsection
 {{-- Priority --}}

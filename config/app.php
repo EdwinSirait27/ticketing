@@ -104,6 +104,7 @@ return [
             explode(',', (string) env('APP_PREVIOUS_KEYS', ''))
         ),
     ],
+    'attachment_encrypt_key' => env('ATTACHMENT_ENCRYPT_KEY'),
 
     /*
     |--------------------------------------------------------------------------

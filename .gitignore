@@ -1,6 +1,7 @@
 *.log
 .DS_Store
 .env
+wa-bot
 .env.backup
 .env.production
 .phpactor.json
