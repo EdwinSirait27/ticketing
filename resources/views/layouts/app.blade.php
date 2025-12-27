@@ -277,7 +277,8 @@
 
             {{-- BOTTOM NAV (Mobile Only) --}}
             <div class="lg:hidden">
-                @include('components.bottom-nav')
+                @include('components.bottom-navguest')
+                {{-- @include('components.bottom-nav') --}}
             </div>
         </div>
     </div>
