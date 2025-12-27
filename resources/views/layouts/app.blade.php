@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>@yield('title', 'IT Departments Ticketing')</title>
     <link rel="icon" type="image/png" href="https://cloud.mjm-bali.co.id/index.php/s/J3Wob5N5LjzHwik/download">
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
- <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
 
     {{-- Tailwind --}}
     @vite('resources/css/app.css')
@@ -81,7 +81,7 @@
                                         class="ml-auto inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900 px-2.5 py-0.5 text-xs font-bold text-blue-600 dark:text-blue-300">24</span>
                                 </a>
                             </li> --}}
-                              <li>
+                            <li>
                                 <a href="{{ route('users') }}"
                                     class="group flex gap-x-3 rounded-lg p-3 text-sm leading-6 font-semibold transition-all
                                    {{ request()->routeIs('users')
@@ -138,7 +138,7 @@
                         <div class="text-xs font-semibold leading-6 text-slate-400 uppercase tracking-wider mb-2">
                             Settings</div>
                         <ul role="list" class="-mx-2 space-y-1">
-                         
+
                             <li>
                                 <a href="{{ route('profile') }}"
                                     class="group flex gap-x-3 rounded-lg p-3 text-sm leading-6 font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
@@ -154,11 +154,11 @@
                             <li>
                                 <a href="{{ route('about') }}"
                                     class="group flex gap-x-3 rounded-lg p-3 text-sm leading-6 font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
-                                   <svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor"
-    viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
-</svg>
+                                    <svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+                                    </svg>
 
                                     About
                                 </a>
@@ -166,22 +166,24 @@
                         </ul>
                     </li>
                     @auth
-                    <li class="mt-auto">
-                        <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
-                            <div class="flex items-center gap-x-3 min-w-0">
-                                {{-- <div
+                        <li class="mt-auto">
+                            <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                                <div class="flex items-center gap-x-3 min-w-0">
+                                    {{-- <div
                                     class="h-10 w-10 shrink-0 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold text-sm">
                                     JD
                                 </div> --}}
-                                <div class="min-w-0 flex-1">
-                                    <p class="text-sm font-semibold text-slate-900 dark:text-white truncate"> {{ Auth::user()->employee->employee_name ?? ' +62 812-3456-9999' }}
-                                    </p>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ Auth::user()->employee->email ?? ' +62 812-3456-9999' }}</p>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                                            {{ Auth::user()->employee->employee_name ?? ' +62 812-3456-9999' }}
+                                        </p>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400 truncate">
+                                            {{ Auth::user()->employee->email ?? ' +62 812-3456-9999' }}</p>
+                                    </div>
                                 </div>
+
                             </div>
-                           
-                        </div>
-                    </li>
+                        </li>
                     @endauth
                 </ul>
             </nav>
@@ -225,7 +227,7 @@
                                 </p>
                             </div>
                         </div>
-                      
+
                         @auth
                             <div class="hidden lg:flex items-center space-x-3">
                                 <form action="{{ route('logout.post') }}" method="POST">
@@ -297,11 +299,11 @@
     </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
-@stack('scripts')
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+    @stack('scripts')
 
 </body>
 

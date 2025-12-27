@@ -141,7 +141,7 @@
         .dataTables_wrapper .dataTables_filter,
         .dataTables_wrapper .dataTables_info,
         .dataTables_wrapper .dataTables_paginate {
-            color: #64748b;
+            color: #ffffff;
             font-size: 0.875rem;
         }
 
@@ -149,7 +149,7 @@
         .dark .dataTables_wrapper .dataTables_filter,
         .dark .dataTables_wrapper .dataTables_info,
         .dark .dataTables_wrapper .dataTables_paginate {
-            color: #94a3b8;
+            color: #ffffff;
         }
 
         .dataTables_wrapper .dataTables_length select,

@@ -27,6 +27,57 @@
                 </div>
             </div>
             {{-- Navigation Menu --}}
+             @guest
+            <nav class="flex flex-1 flex-col">
+              <li>
+                        <div class="text-xs font-semibold leading-6 text-slate-400 uppercase tracking-wider mb-2">
+                            Settings</div>
+                        <ul role="list" class="-mx-2 space-y-1">
+
+                            {{-- <li>
+                                <a href="{{ route('profile') }}"
+                                    class="group flex gap-x-3 rounded-lg p-3 text-sm leading-6 font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                                    <svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                        </path>
+                                    </svg>
+                                    Profile
+                                </a>
+                            </li> --}}
+                            {{-- <li>
+                                <a href="{{ route('about') }}"
+                                    class="group flex gap-x-3 rounded-lg p-3 text-sm leading-6 font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                                    <svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+                                    </svg>
+
+                                    About
+                                </a>
+                            </li> --}}
+                             <li>
+                        <ul role="list" class="-mx-2 space-y-1">
+                            <li>
+                                <a href="{{ route('about') }}"
+                                    class="group flex gap-x-3 rounded-lg p-3 text-sm leading-6 font-semibold transition-all
+                                   {{ request()->routeIs('about')
+                                       ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-md'
+                                       : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800' }}">
+                                     <svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+                                    </svg>
+                                    About
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+            </nav>
+            @endguest
             @auth
             <nav class="flex flex-1 flex-col">
                 <ul role="list" class="flex flex-1 flex-col gap-y-7">
