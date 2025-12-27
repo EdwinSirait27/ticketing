@@ -242,8 +242,18 @@ public function store(Request $request)
         'user_id'        => auth()->id(),
         'ip'             => $request->ip(),
         'content_length' => $request->server('CONTENT_LENGTH'),
-        // 'octane'         => app()->runningInOctane(),
     ]);
+
+    // 🛑 Guard khusus Swoole
+    if (
+        $request->isMethod('post') &&
+        is_null($request->server('CONTENT_LENGTH'))
+    ) {
+        Log::error('EMPTY REQUEST BODY - SWOOLE GUARD');
+        return back()->withErrors([
+            'attachments' => 'Upload gagal, silakan ulangi',
+        ]);
+    }
 
     $validated = $request->validate([
         'request_uuid'  => 'required|uuid|unique:ticket_tables,request_uuid',
@@ -257,12 +267,12 @@ public function store(Request $request)
     $ticket = null;
 
     try {
+        // ==============================
+        // 🎫 DB TRANSACTION (ONLY DB)
+        // ==============================
         DB::beginTransaction();
         Log::info('DB TRANSACTION START');
 
-        // ==============================
-        // 🎫 CREATE TICKET
-        // ==============================
         $queueNumber = Tickets::whereDate('created_at', Carbon::today())
             ->lockForUpdate()
             ->count() + 1;
@@ -283,17 +293,10 @@ public function store(Request $request)
             'queue'     => $queueNumber,
         ]);
 
-        // ==============================
-        // 📎 ATTACHMENTS (NEXTCLOUD)
-        // ==============================
-        $this->handleAttachments($request, $ticket);
-
         DB::commit();
         Log::info('DB TRANSACTION COMMIT', [
             'ticket_id' => $ticket->id,
         ]);
-
-        $ticket->refresh();
 
     } catch (\Throwable $e) {
         DB::rollBack();
@@ -301,7 +304,7 @@ public function store(Request $request)
         Log::error('TICKET STORE FAILED', [
             'error'   => $e->getMessage(),
             'trace'   => $e->getTraceAsString(),
-            'user_id'=> auth()->id(),
+            'user_id' => auth()->id(),
         ]);
 
         return redirect()
@@ -310,7 +313,12 @@ public function store(Request $request)
     }
 
     // ==============================
-    // 📲 WHATSAPP NOTIFICATION
+    // 📎 ATTACHMENTS (OUTSIDE DB)
+    // ==============================
+    $this->handleAttachments($request, $ticket);
+
+    // ==============================
+    // 📲 WHATSAPP
     // ==============================
     $this->sendWhatsappNotification($ticket);
 
@@ -318,6 +326,7 @@ public function store(Request $request)
         ->route('openticket')
         ->with('success', 'Ticket successfully submitted');
 }
+
 private function handleAttachments(Request $request, Tickets $ticket): void
 {
     if (! $request->hasFile('attachments')) {
@@ -356,12 +365,22 @@ private function handleAttachments(Request $request, Tickets $ticket): void
 
         $filename = time() . '_' . $file->getClientOriginalName();
 
+        // ✅ SWOOLE SAFE FLOW
+        $tmpPath = $file->store('tmp-uploads');
+        $stream  = Storage::readStream($tmpPath);
+
         NextcloudService::upload(
             $basePath,
             $filename,
-            file_get_contents($file->getRealPath()),
+            $stream,
             $file->getMimeType()
         );
+
+        if (is_resource($stream)) {
+            fclose($stream);
+        }
+
+        Storage::delete($tmpPath);
 
         Ticketattachments::create([
             'id'        => (string) Str::uuid(),
@@ -382,6 +401,7 @@ private function handleAttachments(Request $request, Tickets $ticket): void
         'attachment_url'    => $shareUrl,
     ]);
 }
+
 private function sendWhatsappNotification(Tickets $ticket): void
 {
     try {
