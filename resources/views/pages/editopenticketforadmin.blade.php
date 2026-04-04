@@ -89,6 +89,35 @@
             border-color: #3b82f6 !important;
             box-shadow: 0 0 0 2px rgba(59,130,246,0.3) !important;
         }
+
+        /* ✅ FIX: Samakan style dropdown duration_value_select dengan Select2 */
+        #duration_value_select {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            color: #e5e7eb;
+            height: 52px;
+            padding: 0 1rem;
+            font-size: 0.875rem;
+            width: 100%;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.25rem;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        #duration_value_select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59,130,246,0.3);
+        }
+        #duration_value_select option {
+            background-color: #1e293b;
+            color: #e5e7eb;
+        }
     </style>
 
     <div class="px-4 space-y-6 pb-8">
@@ -231,8 +260,10 @@
                         <span>Duration</span>
                         <span class="text-red-400">*</span>
                     </label>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-                        {{-- Choose Type → Select2 --}}
+
+                    {{-- ✅ FIX: Gunakan grid-cols-1 saja agar ukuran sama dengan kolom lain di mobile --}}
+                    <div class="space-y-3">
+                        {{-- Dropdown 1: Choose Type --}}
                         <div>
                             <select id="duration_type" name="duration_type"
                                 class="select2-duration w-full bg-slate-800 border border-slate-700 rounded-xl text-white" required>
@@ -252,20 +283,25 @@
                                 </p>
                             @enderror
                         </div>
+
+                        {{-- Dropdown 2: Choose Duration Value --}}
                         <div>
-                            {{-- Day/Week → Select dropdown --}}
-                            <select id="duration_value_select"
-                                class="w-full px-3 sm:px-4 py-2.5 sm:py-3.5 bg-slate-800 border border-slate-700 rounded-lg sm:rounded-xl text-sm sm:text-base text-white">
-                                <option value="">Choose type first...</option>
+                            {{-- Day/Week → Select dropdown (styled sama dengan Select2) --}}
+                            <select id="duration_value_select">
+                                <option value="">Choose duration...</option>
                             </select>
+
                             {{-- Hour → Flatpickr time picker --}}
                             <input type="text" id="duration_hour_time"
                                 class="hidden w-full bg-slate-800 border border-slate-700 rounded-xl text-white"
                                 placeholder="Pick a time...">
+
                             <p id="duration-hour-help" class="mt-2 text-xs text-slate-500 hidden">
-                                Pilih jam pengerjaan. Durasi dihitung otomatis dari waktu sekarang.
+                                Select the desired time. The duration is automatically calculated from the current time..
                             </p>
+
                             <input type="hidden" id="duration_value" name="duration_value" value="{{ old('duration_value') }}">
+
                             @error('duration_value')
                                 <p class="mt-2 text-sm text-red-400 flex items-center space-x-1">
                                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -278,7 +314,8 @@
                             @enderror
                         </div>
                     </div>
-                    {{-- Hidden fields untuk estimation (dihitung otomatis di JS, dikirim ke controller) --}}
+
+                    {{-- Hidden fields untuk estimation (dihitung otomatis di JS) --}}
                     <input type="datetime-local" id="estimation" name="estimation"
                         value="{{ old('estimation') }}" class="hidden">
                     <div class="hidden">
@@ -545,8 +582,8 @@
                     dropdownParent: $('#category').parent()
                 });
 
-                // ✅ FIX: Select2 duration_type — TANPA dispatch redundant yang menyebabkan double trigger
                 @if ($ticket->status === 'Open')
+                // Select2: Duration Type
                 $('#duration_type').select2({
                     placeholder: 'Choose Type...',
                     width: '100%',
@@ -556,6 +593,7 @@
                 @endif
 
                 @if ($ticket->status === 'Overdue')
+                // Select2: Status
                 $('#statusSelect').select2({
                     placeholder: 'Overdue — Choose action...',
                     width: '100%',
@@ -570,11 +608,17 @@
             document.addEventListener('DOMContentLoaded', function () {
                 const desc = document.getElementById('description');
                 const descCount = document.getElementById('descCharCount');
-                if (desc && descCount) { descCount.textContent = desc.value.length; desc.addEventListener('input', () => descCount.textContent = desc.value.length); }
+                if (desc && descCount) {
+                    descCount.textContent = desc.value.length;
+                    desc.addEventListener('input', () => descCount.textContent = desc.value.length);
+                }
 
                 const notes = document.getElementById('notes_executor');
                 const notesCount = document.getElementById('notesCharCount');
-                if (notes && notesCount) { notesCount.textContent = notes.value.length; notes.addEventListener('input', () => notesCount.textContent = notes.value.length); }
+                if (notes && notesCount) {
+                    notesCount.textContent = notes.value.length;
+                    notes.addEventListener('input', () => notesCount.textContent = notes.value.length);
+                }
             });
         </script>
 
@@ -595,22 +639,33 @@
                 const estimationInput     = document.getElementById('estimation');
                 const estimationToInput   = document.getElementById('estimation_to');
                 const durationHourHelp    = document.getElementById('duration-hour-help');
+
                 if (!durationType || !durationValueSelect || !durationHourTime || !durationValueInput || !estimationInput || !estimationToInput) return;
 
-                const ranges = { hour: { min:1, max:24, label:'Hour' }, day: { min:2, max:6, label:'Day' }, week: { min:1, max:4, label:'Week' } };
+                const ranges = {
+                    hour: { min: 1,  max: 24, label: 'Hour' },
+                    day:  { min: 2,  max: 6,  label: 'Day'  },
+                    week: { min: 1,  max: 4,  label: 'Week' }
+                };
+
                 const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}T${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 
                 // Estimation FROM = now() saat halaman dimuat (otomatis)
-                const setEstimationNow = () => { estimationInput.value = fmt(new Date()); };
-                setEstimationNow();
+                estimationInput.value = fmt(new Date());
 
                 const buildOpts = () => {
                     const type = durationType.value;
                     durationValueSelect.innerHTML = '';
-                    if (!ranges[type]) { durationValueSelect.appendChild(new Option('Choose type first...', '')); return; }
+                    if (!ranges[type]) {
+                        durationValueSelect.appendChild(new Option('Choose duration...', ''));
+                        return;
+                    }
                     durationValueSelect.appendChild(new Option('Choose duration...', ''));
                     for (let i = ranges[type].min; i <= ranges[type].max; i++) {
-                        durationValueSelect.appendChild(new Option(`${i} ${ranges[type].label}`, i));
+                        const opt = new Option(`${i} ${ranges[type].label}`, i);
+                        // ✅ Restore old value jika ada
+                        if (String(i) === String('{{ old('duration_value') }}')) opt.selected = true;
+                        durationValueSelect.appendChild(opt);
                     }
                 };
 
@@ -651,7 +706,7 @@
                     estimationToInput.value = fmt(new Date(start.getTime() + mins * 60000));
                 };
 
-                // Inisialisasi Flatpickr untuk input jam (Hour)
+                // Flatpickr untuk input jam (Hour)
                 const fpHour = flatpickr(durationHourTime, {
                     enableTime: true,
                     noCalendar: true,
@@ -667,9 +722,9 @@
                     }
                 });
 
-                // ✅ FIX: Hanya satu listener untuk duration_type via jQuery (tidak ada dispatch redundant)
-                $('#duration_type').on('change', function () {
-                    const type = this.value;
+                // ✅ FIX 1: Jadikan named function agar bisa dipanggil saat init
+                function onDurationTypeChange() {
+                    const type = durationType.value;
                     if (type === 'hour') {
                         durationValueSelect.classList.add('hidden');
                         durationHourTime.classList.remove('hidden');
@@ -681,14 +736,20 @@
                     syncReq();
                     syncVal();
                     calcEnd();
-                });
+                }
+
+                // ✅ FIX 2: Dengarkan 'select2:select' DAN 'change' agar trigger di mobile & desktop
+                $('#duration_type').on('select2:select change', onDurationTypeChange);
 
                 durationValueSelect.addEventListener('change', () => { syncVal(); calcEnd(); });
 
-                buildOpts();
-                syncReq();
+                // ✅ FIX 3: Panggil onDurationTypeChange() saat init agar state awal sinkron
+                onDurationTypeChange();
                 syncVal();
                 calcEnd();
+
+                // ✅ FIX 4: Trigger manual setelah Select2 selesai init (extra safety untuk mobile)
+                setTimeout(() => { $('#duration_type').trigger('change'); }, 100);
             });
         </script>
         @endif
@@ -794,7 +855,6 @@
                 const statusSelect = document.getElementById('statusSelect');
                 const btnLabel     = document.getElementById('btn-close-label');
 
-                // ✅ FIX: Bungkus dalam $(document).ready agar jQuery sudah siap saat listener dipasang
                 $(document).ready(function () {
                     $('#statusSelect').on('change', function () {
                         if (this.value === 'Progress') {

@@ -516,12 +516,12 @@ class TicketController extends Controller
             abort(403);
         }
 
-        // 🔐 Status valid
+        //  Status valid
         if (!in_array($ticket->status, ['Closed', 'Finished'])) {
             return back()->with('error', 'Ticket is not completed, cannot be reviewed.');
         }
 
-        // 🔐 Harus ada executor
+        //  Harus ada executor
         if (!$ticket->executor_id) {
             return back()->with('error', 'Ticket does not have an executor yet.');
         }
@@ -691,7 +691,7 @@ class TicketController extends Controller
             </span>';
                 } else {
 
-                    // ✏️ EDIT ICON (active)
+                    //  EDIT ICON (active)
                     $editBtn = '
             <a href="' . route('editopenticketforadmin', $idHashed) . '"
                class="inline-flex items-center justify-center p-2

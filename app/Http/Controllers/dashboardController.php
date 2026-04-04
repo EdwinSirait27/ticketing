@@ -33,13 +33,17 @@ class dashboardController extends Controller
 
         $totalSlaTickets = Tickets::whereNotNull('executor_id')
             ->whereNotNull('estimation')
+            ->whereNotNull('estimation_to')
             ->whereNotNull('finished')
             ->count();
 
+        // ✅ FIX: estimation_to tidak lagi ditimpa saat close,
+        // sehingga perbandingan finished <= estimation_to menjadi akurat
         $slaCompliantTickets = Tickets::whereNotNull('executor_id')
             ->whereNotNull('estimation')
+            ->whereNotNull('estimation_to')
             ->whereNotNull('finished')
-            ->whereColumn('finished', '<=', 'estimation')
+            ->whereColumn('finished', '<=', 'estimation_to')
             ->count();
 
         $slaCompliance = $totalSlaTickets > 0
@@ -564,10 +568,13 @@ class dashboardController extends Controller
                 }
 
             } else {
-                $estimation   = $ticket->estimation;
-                $estimationTo = ($oldStatus === 'Progress' && $status === 'Closed')
-                    ? now()
-                    : $ticket->estimation_to;
+                $estimation = $ticket->estimation;
+
+                // ✅ FIX SLA: estimation_to TIDAK boleh ditimpa saat Close
+                // estimation_to tetap menggunakan deadline awal yang dihitung saat Take Ticket
+                // Jika ditimpa dengan now(), maka finished selalu = estimation_to
+                // sehingga SLA tidak pernah bisa dihitung dengan benar
+                $estimationTo = $ticket->estimation_to;
             }
 
             $data = [
@@ -580,7 +587,7 @@ class dashboardController extends Controller
                 'executor_id'    => auth()->id(),
                 'duration_type'  => $durationType,
                 'duration_value' => $durationValue,
-                'priority'       => $autoPriority, // ✅ auto priority
+                'priority'       => $autoPriority,
             ];
 
             if ($oldStatus === 'Open' && $status === 'Progress') {
@@ -596,6 +603,7 @@ class dashboardController extends Controller
                 'priority'       => $autoPriority,
                 'estimation'     => $estimation,
                 'estimation_to'  => $estimationTo,
+                'finished'       => $finished,
             ]);
         });
 
