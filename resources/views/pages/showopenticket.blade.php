@@ -14,7 +14,6 @@
                     </h2>
                     <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
                         Ticket Queue Number {{ $ticket->queue_number ?? '-' }} • Created
-                        {{-- FIX 1: created_at bisa null --}}
                         {{ $ticket->created_at?->format('d F Y H:i') ?? '-' }}
                     </p>
                 </div>
@@ -31,7 +30,6 @@
             <div class="bg-white dark:bg-slate-900 rounded-xl p-5 shadow">
                 <p class="text-xs text-slate-500 uppercase">Created By</p>
                 <p class="font-semibold mt-1">
-                    {{-- FIX 2: relasi bertingkat null-safe --}}
                     {{ $ticket->user?->employee?->employee_name ?? $ticket->user?->email ?? '-' }}
                 </p>
             </div>
@@ -50,14 +48,12 @@
             <div class="bg-white dark:bg-slate-900 rounded-xl p-5 shadow">
                 <p class="text-xs text-slate-500 uppercase">Executor</p>
                 <p class="font-semibold mt-1">
-                    {{-- FIX 3: executor bisa null --}}
                     {{ $ticket->executor?->employee?->employee_name ?? '-' }}
                 </p>
             </div>
             <div class="bg-white dark:bg-slate-900 rounded-xl p-5 shadow">
                 <p class="text-xs text-slate-500 uppercase">Finished</p>
                 <p class="font-semibold mt-1">
-                    {{-- FIX 4: finished bisa null --}}
                     {{ $ticket->finished?->format('d F Y H:i') ?? '-' }}
                 </p>
             </div>
@@ -78,21 +74,28 @@
             </div>
         </div>
 
-        {{-- Attachments --}}
-        {{-- FIX 5: cek null sebelum count() --}}
+        {{-- Attachments — sama persis seperti show ticket user, bisa diklik & buka modal --}}
         @if ($ticket->attachments && $ticket->attachments->count())
             <div class="bg-white dark:bg-slate-900 rounded-2xl shadow p-6">
                 <h3 class="text-lg font-bold mb-4">Attachments</h3>
                 <ul class="space-y-2">
                     @foreach ($ticket->attachments as $file)
                         <li class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path
-                                    d="M8 2a4 4 0 00-4 4v8a6 6 0 0012 0V6a2 2 0 10-4 0v7a1 1 0 102 0V6a4 4 0 00-8 0v8a4 4 0 008 0V6" />
+                            <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M8 2a4 4 0 00-4 4v8a6 6 0 0012 0V6a2 2 0 10-4 0v7a1 1 0 102 0V6a4 4 0 00-8 0v8a4 4 0 008 0V6" />
                             </svg>
-                            <span class="text-blue-500 hover:underline text-sm">
-                                {{ $file->original_name ?? $file->file_name ?? '-' }}
-                            </span>
+                            @if ($file->drive_file_id && $file->status === 'uploaded')
+                                <button type="button"
+                                    onclick="openPreviewModal('https://drive.google.com/file/d/{{ $file->drive_file_id }}/preview', '{{ addslashes($file->original_name ?? $file->file_name) }}')"
+                                    class="text-sm text-blue-400 hover:underline text-left">
+                                    {{ $file->original_name ?? $file->file_name ?? '-' }}
+                                </button>
+                            @else
+                                <span class="text-sm text-slate-400">
+                                    {{ $file->original_name ?? $file->file_name ?? '-' }}
+                                    <span class="text-xs text-yellow-500">(processing...)</span>
+                                </span>
+                            @endif
                             @if (!empty($file->human_size))
                                 <span class="text-xs text-slate-500">({{ $file->human_size }})</span>
                             @endif
@@ -111,11 +114,9 @@
                         <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800">
                             <div class="flex justify-between items-center mb-2">
                                 <p class="text-sm font-semibold">
-                                    {{-- FIX 6: relasi bertingkat di replies --}}
                                     {{ $reply->user?->employee?->employee_name ?? $reply->user?->email ?? '-' }}
                                 </p>
                                 <p class="text-xs text-slate-500">
-                                    {{-- FIX 7: created_at di reply bisa null --}}
                                     {{ $reply->created_at?->diffForHumans() ?? '-' }}
                                 </p>
                             </div>
@@ -149,7 +150,6 @@
                     <div class="bg-slate-900/50 rounded-xl p-4 space-y-3">
                         <div>
                             <p class="text-xs text-slate-500 mb-2">Reviewed By :
-                                {{-- FIX 8: user->employee bisa null --}}
                                 {{ $ticket->user?->employee?->employee_name ?? $ticket->user?->email ?? '-' }}
                             </p>
                             <div class="flex items-center space-x-2">
@@ -189,4 +189,44 @@
             </a>
         </div>
     </div>
+
+    {{-- Modal Preview — sama persis seperti show ticket user --}}
+    <div id="previewModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 p-4">
+        <div class="bg-slate-900 rounded-2xl w-full max-w-3xl border border-slate-700 flex flex-col" style="max-height: 90vh">
+            <div class="flex items-center justify-between p-4 border-b border-slate-700 flex-shrink-0">
+                <h3 id="previewModalTitle" class="text-sm font-semibold text-slate-200 truncate pr-4"></h3>
+                <button type="button" onclick="closePreviewModal()" class="text-slate-400 hover:text-white flex-shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe id="previewModalIframe" src="" class="w-full" style="height: 75vh" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    @push('scripts')
+        <script>
+            function openPreviewModal(url, name) {
+                document.getElementById('previewModalTitle').textContent = name;
+                document.getElementById('previewModalIframe').src = url;
+                const modal = document.getElementById('previewModal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+
+            function closePreviewModal() {
+                const modal = document.getElementById('previewModal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.getElementById('previewModalIframe').src = '';
+            }
+
+            document.getElementById('previewModal')?.addEventListener('click', function(e) {
+                if (e.target === this) closePreviewModal();
+            });
+        </script>
+    @endpush
 @endsection
