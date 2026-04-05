@@ -40,7 +40,13 @@ return [
     'username' => env('NEXTCLOUD_USERNAME'),
     'password' => env('NEXTCLOUD_PASSWORD'),
 ],
-
-
+ 'google' => [
+    'root_folder_id' => env('GOOGLE_DRIVE_FOLDER_ID'),
+],
+ 'whatsapp' => [
+        'enabled' => env('WHATSAPP_ENABLED', false),
+        'endpoint' => env('WHATSAPP_ENDPOINT', 'http://127.0.0.1:3000/send-message'),
+        'group_id' => env('WHATSAPP_GROUP_ID', '120363405189832865@g.us'),
+    ],
 
 ];
