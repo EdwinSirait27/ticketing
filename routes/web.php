@@ -88,6 +88,8 @@ Route::middleware('throttle:15,1')->group(function () {
         return back();
     })->name('lang.switch');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    Route::get('/about', [dashboardController::class, 'aboutUs'])->name('about');
+
 });
 Route::middleware(['auth', 'role:admin|human|executor'])->group(function () {
     Route::get('/dashboard', [dashboardController::class, 'dashboardPage'])->name('dashboard');
