@@ -289,8 +289,8 @@
                 {{-- Company Info --}}
                 <div class="space-y-3">
                     <div class="flex items-center space-x-2">
-                        <img src="https://cloud.mjm-bali.co.id/index.php/s/fMMRXmq5cdkApNc/download"
-                            class="w-8 h-8 select-none pointer-events-none" draggable="false" alt="icon">
+                            <img src="{{ asset('img/AsianBay.png') }}"
+                                    class="w-8 h-8 select-none pointer-events-none" draggable="false" alt="icon">
                         <h3 class="text-sm font-bold text-slate-900 text-white">{{ __('auth.departemen') }}
                         </h3>
                     </div>

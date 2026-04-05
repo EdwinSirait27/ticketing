@@ -401,12 +401,27 @@
                 </a>
             </div>
         </div>
-      <form method="POST" action="{{ route('profile.update-active-role') }}">
+      {{-- <form method="POST" action="{{ route('profile.update-active-role') }}">
     @csrf
-    <label for="active_role_bdtix" class="text-sm text-white">Select Active Role</label>
-    <select name="role" id="active_role_bdtix" class="mt-1 block w-full rounded-lg bg-slate-800 text-white p-2 border border-slate-700">
-        @foreach ($user->all_roles_bdtix ?? [] as $role)
-            <option value="{{ $role }}" {{ $user->active_role_bdtix == $role ? 'selected' : '' }}>
+    <label for="active_role_tix" class="text-sm text-white">Select Active Role</label>
+    <select name="role" id="active_role_tix" class="mt-1 block w-full rounded-lg bg-slate-800 text-white p-2 border border-slate-700">
+        @foreach ($user->all_roles_tix ?? [] as $role)
+            <option value="{{ $role }}" {{ $user->active_role_tix == $role ? 'selected' : '' }}>
+                {{ ucfirst($role) }}
+            </option>
+        @endforeach
+    </select>
+    <button type="submit" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+        Update Active Role
+    </button>
+</form> --}}
+@if (count($user->all_roles_tix ?? []) > 1)
+<form method="POST" action="{{ route('profile.update-active-role') }}">
+    @csrf
+    <label for="active_role_tix" class="text-sm text-white">Select Active Role</label>
+    <select name="role" id="active_role_tix" class="mt-1 block w-full rounded-lg bg-slate-800 text-white p-2 border border-slate-700">
+        @foreach ($user->all_roles_tix ?? [] as $role)
+            <option value="{{ $role }}" {{ $user->active_role_tix == $role ? 'selected' : '' }}>
                 {{ ucfirst($role) }}
             </option>
         @endforeach
@@ -415,6 +430,7 @@
         Update Active Role
     </button>
 </form>
+@endif
         <form method="POST" action="{{ route('logout.post') }}">
             @csrf
             <button type="submit"
