@@ -336,16 +336,16 @@
                     <select id="category" name="category" required
                         class="select2 w-full bg-slate-800 border border-slate-700 rounded-xl text-white">
                         <option value="">Choose Categories...</option>
-                        <option value="Plumbing" {{ old('category', $ticket->category) == 'Plumbing' ? 'selected' : '' }}>
-                            Plumbing
+                        <option value="Hardware & Software" {{ old('category', $ticket->category) == 'Hardware & Software' ? 'selected' : '' }}>
+                            Hardware & Software
                         </option>
-                        <option value="Building"
-                            {{ old('category', $ticket->category) == 'Building' ? 'selected' : '' }}>
-                            Building
+                        <option value="Network"
+                            {{ old('category', $ticket->category) == 'Network' ? 'selected' : '' }}>
+                            Network
                         </option>
-                        <option value="Mechanical Engineering"
-                            {{ old('category', $ticket->category) == 'Mechanical Engineering' ? 'selected' : '' }}>
-                            Mechanical Engineering
+                        <option value="Account & Access"
+                            {{ old('category', $ticket->category) == 'Account & Access' ? 'selected' : '' }}>
+                            Account & Access
                         </option>
                        
                         <option value="Others" {{ old('category', $ticket->category) == 'Others' ? 'selected' : '' }}>
@@ -382,14 +382,37 @@
                     <select id="sub_category" name="sub_category" required
                         class="select2 w-full bg-slate-800 border border-slate-700 rounded-xl text-white">
                         <option value="">Choose Sub Categories...</option>
-                        <option value="Maintenance" {{ old('sub_category', $ticket->sub_category) == 'Maintenance' ? 'selected' : '' }}>
-                            Maintenance
+                        <option value="Hardware" {{ old('sub_category', $ticket->sub_category) == 'Hardware' ? 'selected' : '' }}>
+                            Hardware
                         </option>
-                        <option value="Renovation"
-                            {{ old('sub_category', $ticket->sub_category) == 'Renovation' ? 'selected' : '' }}>
-                            Renovation
+                        <option value="Software"
+                            {{ old('sub_category', $ticket->sub_category) == 'Software' ? 'selected' : '' }}>
+                            Software
                         </option>
                        
+                        <option value="Connectivity"
+                            {{ old('sub_category', $ticket->sub_category) == 'Connectivity' ? 'selected' : '' }}>
+                            Connectivity
+                        </option>
+                       
+                        <option value="Infrastructure"
+                            {{ old('sub_category', $ticket->sub_category) == 'Infrastructure' ? 'selected' : '' }}>
+                            Infrastructure
+                        </option>
+                       
+                        <option value="Account"
+                            {{ old('sub_category', $ticket->sub_category) == 'Account' ? 'selected' : '' }}>
+                            Account
+                        </option>
+                       
+                        <option value="Access"
+                            {{ old('sub_category', $ticket->sub_category) == 'Access' ? 'selected' : '' }}>
+                            Access
+                        </option>
+                        <option value="General"
+                            {{ old('sub_category', $ticket->sub_category) == 'General' ? 'selected' : '' }}>
+                            General
+                        </option>
                         <option value="Others" {{ old('sub_category', $ticket->sub_category) == 'Others' ? 'selected' : '' }}>
                             Others
                         </option>

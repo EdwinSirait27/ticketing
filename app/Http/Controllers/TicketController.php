@@ -1441,8 +1441,8 @@ class TicketController extends Controller
         ]);
         $validated = $request->validate([
             'title'        => 'required|string',
-            'category'        => 'required|in:Plumbing,Building,Mechanical Engineering,Others',
-            'sub_category'        => 'required|in:Maintenance,Renovation,Others',
+             'category'       => 'required|in:Hardware & Software,Network,Account & Access,Others',
+            'sub_category'       => 'required|in:Hardware,Sofware,Connectivity,Infrastructure,Account,Access,General,Others',
             'description'        => 'required|string|min:5|max:500',
 
         ]);
@@ -1601,8 +1601,8 @@ class TicketController extends Controller
         $validated = $request->validate([
             'request_uuid'  => 'required|uuid',
             'title'         => 'required|string|max:150',
-            'category'      => 'required|in:Plumbing,Building,Mechanical Engineering,Others',
-            'sub_category'      => 'required|in:Maintenance,Renovation,Others',
+             'category'       => 'required|in:Hardware & Software,Network,Account & Access,Others',
+            'sub_category'       => 'required|in:Hardware,Sofware,Connectivity,Infrastructure,Account,Access,General,Others',
             // 'remark'      => 'nullable',
             'description'   => 'required|string|max:500',
             'attachments'   => 'nullable|array|max:3',

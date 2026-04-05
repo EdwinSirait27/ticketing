@@ -2742,10 +2742,9 @@ buttons: [
 
                                     <select id="filterCategory" class="select2">
                                         <option value="">All Category</option>
-                                       
-                                    <option value="Plumbing">Plumbing</option>
-                                    <option value="Building">Building</option>
-                                    <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                    <option value="Hardware & Software">Hardware & Software</option>
+                                    <option value="Network" >Network</option>
+                                    <option value="Account & Access">Account & Access</option>
                                     <option value="Others">Others</option>
                                     </select>
                                 </div>
@@ -3553,11 +3552,13 @@ buttons: [
                                 <label for="filterCategory" class="text-xs text-slate-300">Category</label>
 
                                 <select id="filterCategory" class="select2">
-                                    <option value="">All Category</option>
-                                    <option value="Plumbing">Plumbing</option>
-                                    <option value="Building">Building</option>
-                                    <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                    <select id="filterCategory" class="select2">
+                                        <option value="">All Category</option>
+                                    <option value="Hardware & Software">Hardware & Software</option>
+                                    <option value="Network" >Network</option>
+                                    <option value="Account & Access">Account & Access</option>
                                     <option value="Others">Others</option>
+                                    </select>
                                 </select>
                             </div>
                             <div class="flex flex-col gap-1">

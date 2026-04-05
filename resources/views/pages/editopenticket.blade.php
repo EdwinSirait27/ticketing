@@ -382,10 +382,10 @@
                     <select id="category" name="category" required
                         class="w-full px-4 py-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 appearance-none cursor-pointer">
                         <option value="" class="bg-slate-800">Choose Categories...</option>
-                        <option value="Plumbing" class="bg-slate-800">Plumbing</option>
-                        <option value="Building" class="bg-slate-800">Building</option>
-                        <option value="Mechanical Engineering" class="bg-slate-800">Mechanical Engineering</option>
-                            <option value="Others" class="bg-slate-800">Others</option>
+                         <option value="Hardware & Software" class="bg-slate-800">Hardware & Software</option>
+                        <option value="Network" class="bg-slate-800">Network</option>
+                        <option value="Account & Access" class="bg-slate-800">Account & Access</option>
+                        <option value="Others" class="bg-slate-800">Others</option>
                     </select>
                     <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
                         <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -417,8 +417,13 @@
                     <select id="sub_category" name="sub_category" required
                         class="w-full px-4 py-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 appearance-none cursor-pointer">
                         <option value="" class="bg-slate-800">Choose Sub Categories...</option>
-                        <option value="Maintenance" class="bg-slate-800">Maintenance</option>
-                        <option value="Renovation" class="bg-slate-800">Renovation</option>
+                        <option value="Hardware" class="bg-slate-800">Hardware</option>
+                        <option value="Software" class="bg-slate-800">Software</option>
+                        <option value="Connectivity" class="bg-slate-800">Connectivity</option>
+                        <option value="Infrastructure" class="bg-slate-800">Infrastructure</option>
+                        <option value="Account" class="bg-slate-800">Account</option>
+                        <option value="Access" class="bg-slate-800">Access</option>
+                        <option value="General" class="bg-slate-800">General</option>
                             <option value="Others" class="bg-slate-800">Others</option>
                     </select>
                     <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">

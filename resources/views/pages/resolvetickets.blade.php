@@ -1594,9 +1594,9 @@
 
                                 <select id="filterCategory" class="select2">
                                     <option value="">All Category</option>
-                                    <option value="Plumbing">Plumbing</option>
-                                    <option value="Building">Building</option>
-                                    <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                  <option value="Hardware & Software">Hardware & Software</option>
+                                    <option value="Network" >Network</option>
+                                    <option value="Account & Access">Account & Access</option>
                                     <option value="Others">Others</option>
                                 </select>
                             </div>
