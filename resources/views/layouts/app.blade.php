@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>@yield('title', 'IT Departments Ticketing')</title>
-    <link rel="icon" type="image/png" href="{{ asset('img/AsianBay logomark.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('img/AsianBay logomark.ico') }}">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
     <script>
         (function() {

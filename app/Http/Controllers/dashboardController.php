@@ -40,7 +40,7 @@ class dashboardController extends Controller
         // ---------------------------------------------------------------------
         // Ticket Counts — Assigned to Current Executor
         // ---------------------------------------------------------------------
-        $assignedtoyou      = Tickets::where('executor_id', auth()->id())->count();
+        $assignedtoyou       = Tickets::where('executor_id', auth()->id())->count();
         $finishedtickettoyou = Tickets::whereNotNull('finished')
             ->where('executor_id', auth()->id())
             ->count();
@@ -70,11 +70,11 @@ class dashboardController extends Controller
         // ---------------------------------------------------------------------
         // Ticket Counts — Milik User (Human) yang Login
         // ---------------------------------------------------------------------
-        $alltickethuman      = Tickets::where('user_id', auth()->id())->count();
-        $overduetickethuman  = Tickets::where('user_id', auth()->id())->where('status', 'Overdue')->count();
-        $todaystickethuman   = Tickets::where('user_id', auth()->id())->whereDate('created_at', Carbon::today())->count();
+        $alltickethuman        = Tickets::where('user_id', auth()->id())->count();
+        $overduetickethuman    = Tickets::where('user_id', auth()->id())->where('status', 'Overdue')->count();
+        $todaystickethuman     = Tickets::where('user_id', auth()->id())->whereDate('created_at', Carbon::today())->count();
         $onprogresstickethuman = Tickets::where('user_id', auth()->id())->where('status', 'Progress')->count();
-        $closedtickethuman   = Tickets::where('user_id', auth()->id())->where('status', 'Closed')->count();
+        $closedtickethuman     = Tickets::where('user_id', auth()->id())->where('status', 'Closed')->count();
 
         // ---------------------------------------------------------------------
         // Filter Request Parameters
@@ -191,24 +191,24 @@ class dashboardController extends Controller
 
             $responseByPriority = collect($priorities)->mapWithKeys(fn($p) => [
                 $p => [
-                    'avg'   => round($responseRows[$p]->avg_minutes   ?? 0, 1),
-                    'total' => $responseRows[$p]->total_ticket         ?? 0,
+                    'avg'   => round($responseRows[$p]->avg_minutes  ?? 0, 1),
+                    'total' => $responseRows[$p]->total_ticket        ?? 0,
                 ],
             ]);
 
             $resolutionByPriority = collect($priorities)->mapWithKeys(fn($p) => [
                 $p => [
-                    'avg'   => round($resolutionRows[$p]->avg_minutes  ?? 0, 1),
-                    'total' => $resolutionRows[$p]->total_ticket        ?? 0,
+                    'avg'   => round($resolutionRows[$p]->avg_minutes ?? 0, 1),
+                    'total' => $resolutionRows[$p]->total_ticket       ?? 0,
                 ],
             ]);
 
             return [
-                'id'                    => $user->id,
-                'username'              => $user->username,
-                'name'                  => optional($user->employee)->employee_name ?? $user->username,
-                'response_by_priority'  => $responseByPriority,
-                'resolution_by_priority'=> $resolutionByPriority,
+                'id'                     => $user->id,
+                'username'               => $user->username,
+                'name'                   => optional($user->employee)->employee_name ?? $user->username,
+                'response_by_priority'   => $responseByPriority,
+                'resolution_by_priority' => $resolutionByPriority,
             ];
         });
 
@@ -281,9 +281,9 @@ class dashboardController extends Controller
         if ($request->filteroverdue  === 'Overdue')  $query->where('status', 'Overdue');
 
         // --- Other Filters ---
-        if ($request->filter === 'today')   $query->whereDate('created_at', Carbon::today());
-        if ($request->filled('category'))   $query->where('category', $request->category);
-        if ($request->filled('priority'))   $query->where('priority', $request->priority);
+        if ($request->filter === 'today')  $query->whereDate('created_at', Carbon::today());
+        if ($request->filled('category'))  $query->where('category', $request->category);
+        if ($request->filled('priority'))  $query->where('priority', $request->priority);
 
         if ($request->filled('date_from') && $request->filled('date_to')) {
             $query->whereBetween('created_at', [
@@ -338,7 +338,7 @@ class dashboardController extends Controller
                     : '-'
             )
             ->addColumn('action', function ($ticket) {
-                $idHashed = substr(hash('sha256', $ticket->id . env('APP_KEY')), 0, 8);
+                $idHashed = substr(hash('sha256', $ticket->id . config('app.key')), 0, 8);
                 $employee = e($ticket->user->employee->employee_name ?? '-');
                 $isClosed = $ticket->status === 'Closed';
                 $canEdit  = now()->greaterThanOrEqualTo($ticket->created_at->copy()->addMinute());
@@ -430,10 +430,10 @@ class dashboardController extends Controller
 
     public function edit($hash)
     {
-        $ticket = Tickets::with(['user.employee', 'executor.employee', 'attachments'])
+        $ticket = Tickets::with(['user.employee', 'executor.employee', 'attachments', 'executorAttachments'])
             ->get()
             ->first(fn($t) => hash_equals(
-                substr(hash('sha256', $t->id . env('APP_KEY')), 0, 8),
+                substr(hash('sha256', $t->id . config('app.key')), 0, 8),
                 $hash
             ));
 
@@ -463,10 +463,11 @@ class dashboardController extends Controller
 
     public function show($hash)
     {
-        $ticket = Tickets::with(['user.employee', 'executor.employee', 'attachments'])
+        // FIX: tambah executorAttachments agar bisa ditampilkan di blade
+        $ticket = Tickets::with(['user.employee', 'executor.employee', 'attachments', 'executorAttachments'])
             ->get()
             ->first(fn($t) => hash_equals(
-                substr(hash('sha256', $t->id . env('APP_KEY')), 0, 8),
+                substr(hash('sha256', $t->id . config('app.key')), 0, 8),
                 $hash
             ));
 
@@ -529,7 +530,7 @@ class dashboardController extends Controller
                 return back()->withErrors(['duration_value' => 'Duration tidak valid'])->withInput();
             }
 
-            // ✅ Auto Priority: hour = Low, day = Medium, week = High
+            // Auto Priority: hour = Low, day = Medium, week = High
             $autoPriority = match($durationType) {
                 'hour'  => 'Low',
                 'day'   => 'Medium',
@@ -592,7 +593,7 @@ class dashboardController extends Controller
                     default => $estimation->copy()->addHours($durationValue),
                 };
             } else {
-                // ✅ SLA: estimation_to tidak ditimpa agar deadline awal tetap terjaga
+                // SLA: estimation_to tidak ditimpa agar deadline awal tetap terjaga
                 $estimation   = $ticket->estimation;
                 $estimationTo = $ticket->estimation_to;
             }
@@ -617,12 +618,12 @@ class dashboardController extends Controller
             $ticket->update($data);
 
             Log::info('TICKET_UPDATED', [
-                'ticket_id'    => $ticket->id,
-                'old_status'   => $oldStatus,
-                'new_status'   => $status,
-                'priority'     => $autoPriority,
-                'estimation_to'=> $estimationTo,
-                'finished'     => $finished,
+                'ticket_id'     => $ticket->id,
+                'old_status'    => $oldStatus,
+                'new_status'    => $status,
+                'priority'      => $autoPriority,
+                'estimation_to' => $estimationTo,
+                'finished'      => $finished,
             ]);
         });
 
