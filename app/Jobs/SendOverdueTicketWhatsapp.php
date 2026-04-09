@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Jobs;
-
 // use Illuminate\Contracts\Queue\ShouldQueue;
 // use Illuminate\Foundation\Queue\Queueable;
 // use Illuminate\Queue\SerializesModels;
@@ -116,7 +114,6 @@ class SendOverdueTicketWhatsapp implements ShouldQueue
         Log::info('WA_OVERDUE_JOB_START', [
             'ticket_id' => $this->ticketId,
         ]);
-
         $ticket = Tickets::with('executor.employee')
             ->find($this->ticketId)
             ?->fresh();
