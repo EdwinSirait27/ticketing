@@ -1816,19 +1816,24 @@
                             @enderror
                         </div>
                         {{-- Baris 2: Choose Duration (Day/Week) atau Flatpickr (Hour) --}}
-                        <div>
-                            <select id="duration_value_select"
-                                class="w-full px-4 py-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white">
+                         <div>
+                            <select id="duration_value_select">
                                 <option value="">Choose duration...</option>
                             </select>
-                            {{-- FIX #2: disableMobile false agar muncul di mobile --}}
-                            <input type="text" id="duration_hour_time"
-                                class="hidden w-full bg-slate-800 border border-slate-700 rounded-xl text-white"
-                                placeholder="Pick a time..." readonly>
+
+                                <div id="duration_hour_wrapper" class="hidden">
+    <input type="text" id="duration_hour_time"
+        class="w-full bg-slate-800 border border-slate-700 rounded-xl text-white"
+        placeholder="Pick a time">
+</div>
+
                             <p id="duration-hour-help" class="mt-2 text-xs text-slate-500 hidden">
-                                Pilih jam selesai pengerjaan. Durasi dihitung otomatis dari waktu sekarang.
+                                Select the desired time. The duration is automatically calculated from the current time.
                             </p>
-                            <input type="hidden" id="duration_value" name="duration_value" value="{{ old('duration_value') }}">
+
+                            <input type="hidden" id="duration_value" name="duration_value"
+                                value="{{ old('duration_value') }}">
+
                             @error('duration_value')
                                 <p class="mt-2 text-sm text-red-400 flex items-center space-x-1">
                                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -1841,14 +1846,14 @@
                             @enderror
                         </div>
                     </div>
-                    <input type="datetime-local" id="estimation" name="estimation"
-                        value="{{ old('estimation') }}" class="hidden">
+
+                    <input type="datetime-local" id="estimation" name="estimation" value="{{ old('estimation') }}"
+                        class="hidden">
                     <div class="hidden">
                         <input type="datetime-local" id="estimation_to" name="estimation_to"
                             value="{{ old('estimation_to') }}">
                     </div>
                 </div>
-
             @else
                 <input type="hidden" name="duration_type" value="{{ $ticket->duration_type }}">
                 <input type="hidden" name="duration_value" value="{{ $ticket->duration_value }}">
