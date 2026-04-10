@@ -2147,144 +2147,145 @@
             @if (session('error')) toastr.error(@json(session('error'))); @endif
         </script>
 
-        @if ($ticket->status === 'Open')
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const durationType        = document.getElementById('duration_type');
-                const durationValueSelect = document.getElementById('duration_value_select');
-                const durationHourTime    = document.getElementById('duration_hour_time');
-                const durationValueInput  = document.getElementById('duration_value');
-                const estimationInput     = document.getElementById('estimation');
-                const estimationToInput   = document.getElementById('estimation_to');
-                const durationHourHelp    = document.getElementById('duration-hour-help');
+       @if ($ticket->status === 'Open')
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const durationType = document.getElementById('duration_type');
+                    const durationValueSelect = document.getElementById('duration_value_select');
+                    const durationHourTime = document.getElementById('duration_hour_time');
+                    const durationHourWrapper = document.getElementById('duration_hour_wrapper');
+                    const durationValueInput = document.getElementById('duration_value');
+                    const estimationInput = document.getElementById('estimation');
+                    const estimationToInput = document.getElementById('estimation_to');
+                    const durationHourHelp = document.getElementById('duration-hour-help');
 
-                if (!durationType || !durationValueSelect || !durationHourTime || !durationValueInput || !estimationInput || !estimationToInput) return;
+                    if (!durationType || !durationValueSelect || !durationHourTime || !durationValueInput || !
+                        estimationInput || !estimationToInput) return;
 
-                const ranges = {
-                    hour: { min:1, max:24, label:'Hour' },
-                    day:  { min:2, max:6,  label:'Day'  },
-                    week: { min:1, max:4,  label:'Week' }
-                };
+                    const ranges = {
+                        hour: {
+                            min: 1,
+                            max: 24,
+                            label: 'Hour'
+                        },
+                        day: {
+                            min: 2,
+                            max: 6,
+                            label: 'Day'
+                        },
+                        week: {
+                            min: 1,
+                            max: 4,
+                            label: 'Week'
+                        }
+                    };
 
-                const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}T${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+                    const fmt = (d) =>
+                        `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}T${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 
-                // Estimation FROM = waktu sekarang saat halaman dimuat
-                estimationInput.value = fmt(new Date());
+                    estimationInput.value = fmt(new Date());
 
-                const buildOpts = () => {
-                    const type = durationType.value;
-                    durationValueSelect.innerHTML = '';
-                    if (!ranges[type]) { durationValueSelect.appendChild(new Option('Choose type first...', '')); return; }
-                    durationValueSelect.appendChild(new Option('Choose duration...', ''));
-                    for (let i = ranges[type].min; i <= ranges[type].max; i++) {
-                        durationValueSelect.appendChild(new Option(`${i} ${ranges[type].label}`, i));
-                    }
-                };
+                    const buildOpts = () => {
+                        const type = durationType.value;
+                        durationValueSelect.innerHTML = '';
+                        if (!ranges[type]) {
+                            durationValueSelect.appendChild(new Option('Choose duration...', ''));
+                            return;
+                        }
+                        durationValueSelect.appendChild(new Option('Choose duration...', ''));
+                        for (let i = ranges[type].min; i <= ranges[type].max; i++) {
+                            const opt = new Option(`${i} ${ranges[type].label}`, i);
+                            if (String(i) === String('{{ old('duration_value') }}')) opt.selected = true;
+                            durationValueSelect.appendChild(opt);
+                        }
+                    };
 
-                // =========================================================
-                // FIX #3: syncVal untuk hour langsung ambil jam & menit
-                // dari Flatpickr, set estimationToInput langsung di sini
-                // =========================================================
-                const syncVal = () => {
-                    const type = durationType.value;
-                    if (type === 'hour') {
-                        const v = fpHour.input.value;
-                        if (!v) { durationValueInput.value = ''; return; }
+                    const syncVal = () => {
+                        const type = durationType.value;
+                        if (type === 'hour') {
+                            const v = fpHour.input.value;
+                            if (!v) {
+                                durationValueInput.value = '';
+                                return;
+                            }
+                            const start = new Date(estimationInput.value);
+                            const h = parseInt(v.split(':')[0] || '0', 10);
+                            if (isNaN(start.getTime()) || isNaN(h)) {
+                                durationValueInput.value = '';
+                                return;
+                            }
+                            let diff = h - start.getHours();
+                            if (diff <= 0) diff += 24;
+                            durationValueInput.value = String(diff);
+                            return;
+                        }
+                        durationValueInput.value = durationValueSelect.value || '';
+                    };
 
+                    const syncReq = () => {
+                        const type = durationType.value;
+                        if (type === 'hour') {
+                            durationValueSelect.required = false;
+                            durationHourHelp?.classList.remove('hidden');
+                        } else {
+                            durationValueSelect.required = true;
+                            durationHourHelp?.classList.add('hidden');
+                        }
+                    };
+
+                    const calcEnd = () => {
+                        const type = durationType.value;
+                        const val = parseInt(durationValueInput.value || '0', 10);
+                        if (!type || !val || !estimationInput.value) return;
                         const start = new Date(estimationInput.value);
-                        const [hh, mm] = v.split(':').map(Number);
+                        if (isNaN(start.getTime())) return;
+                        const mins = type === 'hour' ? val * 60 : type === 'day' ? val * 1440 : val * 10080;
+                        estimationToInput.value = fmt(new Date(start.getTime() + mins * 60000));
+                    };
 
-                        // Buat end date dari jam & menit yang dipilih user
-                        const end = new Date(start);
-                        end.setHours(hh, mm, 0, 0);
+                    const fpHour = flatpickr(durationHourTime, {
+                        enableTime: true,
+                        noCalendar: true,
+                        dateFormat: "H:i",
+                        time_24hr: true,
+                        minuteIncrement: 60,
+                        onReady: function(selectedDates, dateStr, instance) {
+                            instance.calendarContainer.style.zIndex = "99999";
+                        },
+                        onChange: function() {
+                            syncVal();
+                            calcEnd();
+                        }
+                    });
 
-                        // Kalau jam yang dipilih sudah lewat dari sekarang, anggap besok
-                        if (end <= start) end.setDate(end.getDate() + 1);
+                   
+                    function onDurationTypeChange() {
+    const type = durationType.value;
+    if (type === 'hour') {
+        durationValueSelect.classList.add('hidden');
+        durationHourWrapper.classList.remove('hidden'); 
+    } else {
+        durationValueSelect.classList.remove('hidden');
+        durationHourWrapper.classList.add('hidden');    
+        buildOpts();
+    }
+    syncReq();
+    syncVal();
+    calcEnd();
+}
 
-                        // Set estimation_to langsung dari pilihan user
-                        estimationToInput.value = fmt(end);
+                    durationType.addEventListener('change', onDurationTypeChange);
 
-                        // Hitung diff dalam menit untuk duration_value
-                        const diffMins = Math.round((end - start) / 60000);
-                        durationValueInput.value = String(diffMins);
+                    $('#duration_type').on('select2:select', onDurationTypeChange);
 
-                        return; // stop di sini, jangan lanjut ke bawah
-                    }
-                    // Day & Week: tetap pakai dropdown
-                    durationValueInput.value = durationValueSelect.value || '';
-                };
+                    durationValueSelect.addEventListener('change', () => {
+                        syncVal();
+                        calcEnd();
+                    });
 
-                const syncReq = () => {
-                    const type = durationType.value;
-                    if (type === 'hour') {
-                        durationValueSelect.required = false;
-                        durationHourHelp?.classList.remove('hidden');
-                    } else {
-                        durationValueSelect.required = true;
-                        durationHourHelp?.classList.add('hidden');
-                    }
-                };
-
-                // =========================================================
-                // FIX #4: calcEnd skip untuk hour, sudah diurus syncVal
-                // Day & Week tetap jalan seperti biasa
-                // =========================================================
-                const calcEnd = () => {
-                    const type = durationType.value;
-                    if (type === 'hour') return; // skip, sudah diurus syncVal
-
-                    const val = parseInt(durationValueInput.value || '0', 10);
-                    if (!type || !val || !estimationInput.value) return;
-                    const start = new Date(estimationInput.value);
-                    if (isNaN(start.getTime())) return;
-                    const mins = type === 'day' ? val * 1440 : val * 10080;
-                    estimationToInput.value = fmt(new Date(start.getTime() + mins * 60000));
-                };
-
-                // =========================================================
-                // FIX #1: minuteIncrement: 1 agar bebas pilih menit
-                // FIX #2: disableMobile: false agar muncul di mobile
-                // =========================================================
-                const fpHour = flatpickr(durationHourTime, {
-                    enableTime: true,
-                    noCalendar: true,
-                    dateFormat: "H:i",
-                    time_24hr: true,
-                    minuteIncrement: 1,    // FIX #1: bebas pilih menit
-                    disableMobile: false,  // FIX #2: muncul di mobile
-                    static: false,
-                    appendTo: document.body,
-                    onReady: function(selectedDates, dateStr, instance) {
-                        instance.calendarContainer.style.zIndex = "999999";
-                    },
-                    onChange: function() {
-                        syncVal(); // FIX #3 & #4: syncVal yang handle semuanya untuk hour
-                    }
+                    onDurationTypeChange();
                 });
-
-                $('#duration_type').on('change', function () {
-                    const type = this.value;
-                    if (type === 'hour') {
-                        durationValueSelect.classList.add('hidden');
-                        durationHourTime.classList.remove('hidden');
-                    } else {
-                        durationValueSelect.classList.remove('hidden');
-                        durationHourTime.classList.add('hidden');
-                        buildOpts();
-                    }
-                    syncReq();
-                    syncVal();
-                    calcEnd();
-                });
-
-                durationValueSelect.addEventListener('change', () => { syncVal(); calcEnd(); });
-
-                buildOpts();
-                syncReq();
-                syncVal();
-                calcEnd();
-            });
-        </script>
+            </script>
         @endif
 
         @if (in_array($ticket->status, ['Progress', 'Overdue']))
