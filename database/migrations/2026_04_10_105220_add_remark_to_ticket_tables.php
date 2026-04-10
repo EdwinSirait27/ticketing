@@ -12,16 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('ticket_tables', function (Blueprint $table) {
-            $table->dateTime('progressed_at')->nullable()->after('created_at');
+                $table->string('remark',150)->default('Project')->after('sub_category');
         });
     }
-
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::table('tickets', function (Blueprint $table) {
+        Schema::table('ticket_tables', function (Blueprint $table) {
             //
         });
     }

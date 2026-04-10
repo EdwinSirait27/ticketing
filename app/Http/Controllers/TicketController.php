@@ -912,7 +912,6 @@ class TicketController extends Controller
                 'sub_category',
                 'status',
             ]);
-
         return DataTables::eloquent($query)
             ->addColumn('employee_name', function ($ticket) {
                 // PEMBUAT TICKET (human)

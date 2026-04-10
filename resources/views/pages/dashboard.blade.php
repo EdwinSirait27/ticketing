@@ -669,7 +669,7 @@
                             <label class="text-white block mb-1">Category</label>
                             <select class="select2"id="category" name="category"
                                 class="px-3 py-2 rounded bg-gray-800 text-white w-48">
-                                <option value="">— Semua —</option>
+                                <option value="">— All —</option>
                                 @foreach ($categories as $cat)
                                     <option value="{{ $cat }}" {{ request('category') == $cat ? 'selected' : '' }}>
                                         {{ $cat }}
@@ -1147,11 +1147,14 @@
                                     className: 'text-center'
                                 },
                                 {
-                                    data: 'sub_category',
-                                    name: 'sub_category',
-                                    width: '10%',
-                                    className: 'text-center'
-                                },
+    data: 'sub_category',
+    name: 'sub_category',
+    width: '10%',
+    className: 'text-center',
+    render: function (data, type, row) {
+        return data ? data : '-';
+    }
+},
                                 {
                                     data: 'priority',
                                     name: 'priority',

@@ -1546,11 +1546,9 @@ class dashboardController extends Controller
             ->select([
                 'id', 'user_id', 'queue_number', 'title', 'description',
                 'progressed_at', 'estimation', 'estimation_to',
-                'executor_id', 'category','sub_category', 'priority',
+                'executor_id','category','sub_category', 'priority',
                 'finished', 'status', 'created_at',
             ]);
-
-        // --- Search ---
         $search = $request->input('search.value');
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -1612,6 +1610,9 @@ class dashboardController extends Controller
                     ? $t->progressed_at->timezone('Asia/Makassar')->translatedFormat('d F Y H:i')
                     : '-'
             )
+              ->addColumn('sub_category', fn($t) =>
+                optional($t)->sub_category ?? 'empty'
+            )
             ->editColumn('estimation', fn($t) =>
                 $t->estimation
                     ? $t->estimation->timezone('Asia/Makassar')->translatedFormat('d F Y H:i')
@@ -1632,7 +1633,6 @@ class dashboardController extends Controller
                 $employee = e($ticket->user->employee->employee_name ?? '-');
                 $isClosed = $ticket->status === 'Closed';
                 $canEdit  = now()->greaterThanOrEqualTo($ticket->created_at->copy()->addMinute());
-
                 if ($isClosed) {
                     $editBtn = '
                         <span class="inline-flex items-center justify-center p-2 text-slate-400 bg-slate-700/40 rounded-full cursor-not-allowed"
@@ -1667,7 +1667,6 @@ class dashboardController extends Controller
                             </svg>
                         </a>';
                 }
-
                 $showBtn = '
                     <a href="' . route('showopenticket', $idHashed) . '"
                        class="inline-flex items-center justify-center p-2 text-slate-500

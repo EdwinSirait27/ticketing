@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('drive_folder_id')->nullable()->after('drive_file_id');
             $table->text('web_view_link')->nullable()->after('drive_folder_id');
             $table->text('web_content_link')->nullable()->after('web_view_link');
-            $table->softDeletes();
         });
     }
 
