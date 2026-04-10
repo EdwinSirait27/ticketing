@@ -16,12 +16,14 @@
             color: #ffffff;
             font-size: 0.875rem;
         }
+
         .dark .dataTables_wrapper .dataTables_length,
         .dark .dataTables_wrapper .dataTables_filter,
         .dark .dataTables_wrapper .dataTables_info,
         .dark .dataTables_wrapper .dataTables_paginate {
             color: #ffffff;
         }
+
         .dataTables_wrapper .dataTables_length select,
         .dataTables_wrapper .dataTables_filter input {
             border: 1px solid #e2e8f0;
@@ -30,22 +32,28 @@
             font-size: 0.875rem;
             margin: 0 0.5rem;
         }
+
         .dark .dataTables_wrapper .dataTables_length select,
         .dark .dataTables_wrapper .dataTables_filter input {
             border-color: #475569;
             background-color: #334155;
             color: #f1f5f9;
         }
+
+        /* Table Styling - Desktop Only */
         #users-table {
             width: 100% !important;
         }
+
         #users-table thead {
             background: linear-gradient(to right, #000000, #000000);
             color: rgb(255, 255, 255);
         }
+
         #users-table thead th {
             padding: 1rem;
             font-weight: 600;
+            /* text-transform: uppercase; */
             font-size: 0.75rem;
             letter-spacing: 0.05em;
             border: none;
@@ -703,6 +711,7 @@
                                 <div class="flex flex-col gap-1">
                                     <label for="filterStatus" class="text-xs text-slate-300">Status</label>
                                     <select id="filterStatus" class="select2">
+
                                         <option value="">All Status</option>
                                         <option value="Open">Open</option>
                                         <option value="Progress">Progress</option>
@@ -712,11 +721,13 @@
                                 </div>
                                 <div class="flex flex-col gap-1">
                                     <label for="filterCategory" class="text-xs text-slate-300">Category</label>
+
                                     <select id="filterCategory" class="select2">
                                         <option value="">All Category</option>
-                                    <option value="Hardware & Software">Hardware & Software</option>
-                                    <option value="Network" >Network</option>
-                                    <option value="Account & Access">Account & Access</option>
+                                       
+                                    <option value="Plumbing">Plumbing</option>
+                                    <option value="Building">Building</option>
+                                    <option value="Mechanical Engineering">Mechanical Engineering</option>
                                     <option value="Others">Others</option>
                                     </select>
                                 </div>
@@ -732,6 +743,7 @@
                                 </div>
                                 <div class="flex flex-col gap-1">
                                     <label for="dateFrom" class="text-xs text-slate-300">Date From</label>
+
                                     <input type="date" id="dateFrom" placeholder="YYYY-MM-DD" {{-- class="px-3 py-2 bg-slate-600 border border-white/10 rounded-lg text-white
                                     focus:outline-none focus:ring-2 focus:ring-cyan-500"> --}}
                                         class="px-3 py-2 rounded w-40
@@ -1523,13 +1535,11 @@ buttons: [
                                 <label for="filterCategory" class="text-xs text-slate-300">Category</label>
 
                                 <select id="filterCategory" class="select2">
-                                    <select id="filterCategory" class="select2">
-                                        <option value="">All Category</option>
-                                    <option value="Hardware & Software">Hardware & Software</option>
-                                    <option value="Network" >Network</option>
-                                    <option value="Account & Access">Account & Access</option>
+                                    <option value="">All Category</option>
+                                    <option value="Plumbing">Plumbing</option>
+                                    <option value="Building">Building</option>
+                                    <option value="Mechanical Engineering">Mechanical Engineering</option>
                                     <option value="Others">Others</option>
-                                    </select>
                                 </select>
                             </div>
                             <div class="flex flex-col gap-1">

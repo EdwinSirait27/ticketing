@@ -24,7 +24,6 @@ return new class extends Migration
             ])->nullable()->after('category');
         });
     }
-
     /**
      * Reverse the migrations.
      */

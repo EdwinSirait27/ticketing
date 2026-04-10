@@ -14,9 +14,7 @@ return new class extends Migration
     {
         Schema::table('ticket_tables', function (Blueprint $table) {
             $table->date('queue_date')->nullable()->after('queue_number');
-            $table->unique(['queue_date', 'queue_number'], 'ticket_queue_date_number_unique');
-        });
-
+             });
         // Backfill existing rows so the unique index applies cleanly for old data.
         DB::table('ticket_tables')
             ->whereNull('queue_date')
