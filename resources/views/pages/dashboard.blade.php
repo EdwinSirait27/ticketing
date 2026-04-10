@@ -1805,10 +1805,14 @@ buttons: [
                                 width: '15%'
                             },
                             {
-                                data: 'sub_category',
-                                name: 'sub_category',
-                                width: '15%'
-                            },
+    data: 'sub_category',
+    name: 'sub_category',
+    width: '10%',
+    className: 'text-center',
+    render: function (data, type, row) {
+        return data ? data : 'empty';
+    }
+},
 
                             {
                                 data: 'executor_employee_name',

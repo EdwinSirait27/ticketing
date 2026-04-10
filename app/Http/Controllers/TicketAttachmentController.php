@@ -16,7 +16,7 @@ class TicketAttachmentController extends Controller
       public function store(Request $request, $ticketId): JsonResponse
     {
         $request->validate([
-            'files'   => ['required', 'array', 'max:10'],
+            'files'   => ['nullable', 'array', 'max:10'],
             'files.*' => [
                 'file',
                 'max:20480',

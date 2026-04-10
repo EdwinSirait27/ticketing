@@ -1793,8 +1793,8 @@ class dashboardController extends Controller
         $isOpenStatus = $ticket->status === 'Open';
 
         $validated = $request->validate([
-                   'category'       => 'required|in:Plumbing,Building,Mechanical Engineering,Others',
-            'sub_category'       => 'required|in:Maintenance,Renovation,Others',
+                   'category'       => 'required|in:Hardware & Software,Network,Account & Access,Others',
+            'sub_category'       => 'required|in:Hardware,Sofware,Connectivity,Infrastructure,Account,Access,General,Others',
             'notes_executor' => 'required|string|min:5|max:500',
             'finished'       => 'nullable|date',
             'estimation'     => 'nullable|date',
