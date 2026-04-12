@@ -573,13 +573,7 @@
 
                     <div class="flex flex-wrap items-end gap-4">
 
-                        <!-- Per Bulan -->
-                        {{-- <div>
-                            <label for="month"class="text-white block mb-1">Month</label>
-
-                            <input type="text" name="month" id="month" value="{{ request('month') }}"
-                                placeholder="YYYY-MM" class="px-3 py-2 rounded bg-gray-800 text-white w-40">
-                        </div> --}}
+                      
                         <div>
                             <label for="month" class="text-white block mb-1">Month</label>
 
@@ -607,12 +601,7 @@
                             </select>
                         </div>
 
-                        <!-- Tahun -->
-                        {{-- <div>
-                            <label class="text-white block mb-1">Year</label>
-                            <input type="number" min="2000" name="year" value="{{ request('year') }}"
-                                class="px-3 py-2 rounded bg-gray-800 text-white w-28">
-                        </div> --}}
+                       
                         <div>
                             <label class="text-white block mb-1">Year</label>
 
@@ -626,13 +615,7 @@
                         </div>
 
 
-                        <!-- Date Range From -->
-                        {{-- <div>
-                            <label for="from" class="text-white block mb-1">From</label>
-
-                            <input type="text" name="from" id="from" value="{{ request('from') }}"
-                                placeholder="YYYY-MM-DD" class="px-3 py-2 rounded bg-gray-800 text-white w-44">
-                        </div> --}}
+                        
                         <div>
                             <label for="from" class="text-white block mb-1">From</label>
 
@@ -646,12 +629,7 @@
                         </div>
 
 
-                        <!-- Date Range To -->
-                        {{-- <div>
-                            <label for="to"class="text-white block mb-1">To</label>
-                            <input type="text" name="to" id="to" value="{{ request('to') }}"
-                                placeholder="YYYY-MM-DD" class="px-3 py-2 rounded bg-gray-800 text-white w-44">
-                        </div> --}}
+                      
                         <div>
                             <label for="to" class="text-white block mb-1">To</label>
 
@@ -914,13 +892,7 @@
                             return collect($priorities)->map(fn($p) => $ex['resolution_by_priority'][$p]['avg'])->toArray();
                         }));
 
-                    // warna per priority
-                    // const colors = [
-
-                    //     'rgba(239,68,68,0.8)', 
-                    //     'rgba(234,179,8,0.8)', 
-                    //     'rgba(34,197,94,0.8)', 
-                    // ];
+                  
                     const colors = [
                         'rgba(34,197,94,0.8)', // Low  → Hijau
                         'rgba(234,179,8,0.8)', // Medium → Kuning

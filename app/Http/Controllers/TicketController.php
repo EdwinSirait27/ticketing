@@ -1225,54 +1225,7 @@ class TicketController extends Controller
             ->rawColumns(['action'])
             ->make(true);
     }
-    // public function show($hash)
-    // {
-    //     $userId = Auth::id();
-    //     $ticket = Tickets::with([
-    //         'user.employee',
-    //         'executor.employee',
-    //         'attachments',
-    //         'executorAttachments',
-    //     ])
-    //         ->where('user_id', $userId)
-    //         ->get()
-    //         ->first(function ($ticket) use ($hash) {
-    //             $hashedId = substr(
-    //                 hash('sha256', $ticket->id . env('APP_KEY')),
-    //                 0,
-    //                 8
-    //             );
-    //             return hash_equals($hashedId, $hash);
-    //         });
-
-    //     if (! $ticket) {
-    //         abort(404, 'Ticket not found');
-    //     }
-    //     $status = ($ticket->status);
-
-    //     $map = [
-    //         'Open'     => 'bg-blue-600 text-white',
-    //         'Progress' => 'bg-yellow-500 text-white',
-    //         'Overdue'  => 'bg-red-500 text-white',
-    //         'Closed'   => 'bg-green-600 text-white',
-    //     ];
-    //      $estimationDate = $ticket->estimation
-    //             ?->timezone('Asia/Makassar')
-    //             ?->format('d-m-Y H:i') ?? '-';
-    //         $estimationToDate = $ticket->estimation_to
-    //             ?->timezone('Asia/Makassar')
-    //             ?->format('d-m-Y H:i') ?? '-';
-    //         $estimationToDate = $ticket->estimation_to
-    //             ?->timezone('Asia/Makassar')
-    //             ?->format('d-m-Y H:i') ?? '-';
-    //         $finishedat = $ticket->finished
-    //             ?->timezone('Asia/Makassar')
-    //             ?->format('d-m-Y H:i') ?? '-';
-
-    //     // fallback
-    //     $ticket->badge_class = $map[$status] ?? 'bg-slate-500 text-white';
-    //     return view('pages.showmytickets', compact('ticket','estimationDate','estimationToDate','finishedat'));
-    // }
+    
     public function show($hash)
     {
         $userId = Auth::id();
