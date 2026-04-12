@@ -90,9 +90,8 @@
                             experience in enterprise IT support.
                         </p>
                         <div class="flex flex-wrap gap-2">
-                            <span class="px-3 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-lg">Network</span>
-                            <span class="px-3 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-lg">Security</span>
-                            <span class="px-3 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-lg">Cloud</span>
+                            <span class="px-3 py-1 bg-slate-700/50 text-slate-300 text-xs rounded-lg">PM</span>
+                            
                         </div>
                     </div>
                     <div class="mt-4 flex items-center space-x-3">
