@@ -48,6 +48,13 @@ class dashboardController extends Controller
         // ---------------------------------------------------------------------
         // SLA Compliance — Hanya untuk Executor yang Login
         // ---------------------------------------------------------------------
+        // Logic: SLA jujur & ketat
+        // - Ticket yang TIDAK PERNAH Overdue: original_estimation_to = NULL
+        //   → COALESCE pakai estimation_to → bandingkan finished dengan deadline normal
+        // - Ticket yang PERNAH Overdue: original_estimation_to = deadline asli (sebelum extend)
+        //   → COALESCE pakai original_estimation_to → bandingkan finished dengan deadline asli
+        //   → Karena finished pasti > deadline asli (sudah pernah Overdue), maka NOT compliant
+        // ---------------------------------------------------------------------
         $executorId = auth()->id();
 
         $totalSlaTickets = Tickets::where('executor_id', $executorId)
@@ -60,7 +67,7 @@ class dashboardController extends Controller
             ->whereNotNull('estimation')
             ->whereNotNull('estimation_to')
             ->whereNotNull('finished')
-            ->whereColumn('finished', '<=', 'estimation_to')
+            ->whereRaw('finished <= COALESCE(original_estimation_to, estimation_to)')
             ->count();
 
         $slaCompliance = $totalSlaTickets > 0
@@ -146,6 +153,7 @@ class dashboardController extends Controller
         $avgResponseRaw = (clone $ticketBase)
             ->whereNotNull('progressed_at')
             ->whereNotNull('executor_id')
+            ->whereNotNull('priority')
             ->select(
                 'executor_id',
                 'priority',
@@ -163,6 +171,7 @@ class dashboardController extends Controller
             ->whereNotNull('progressed_at')
             ->whereNotNull('finished')
             ->whereNotNull('executor_id')
+            ->whereNotNull('priority')
             ->select(
                 'executor_id',
                 'priority',
@@ -177,7 +186,9 @@ class dashboardController extends Controller
         // Priority Order: Low → Medium → High
         // ---------------------------------------------------------------------
         $order      = ['Low', 'Medium', 'High'];
-        $priorities = Tickets::distinct()
+        $priorities = Tickets::whereNotNull('priority')
+            ->where('priority', '!=', '')
+            ->distinct()
             ->pluck('priority')
             ->sort(fn($a, $b) => array_search($a, $order) <=> array_search($b, $order))
             ->values();
@@ -463,7 +474,6 @@ class dashboardController extends Controller
 
     public function show($hash)
     {
-        // FIX: tambah executorAttachments agar bisa ditampilkan di blade
         $ticket = Tickets::with(['user.employee', 'executor.employee', 'attachments', 'executorAttachments'])
             ->get()
             ->first(fn($t) => hash_equals(
@@ -530,12 +540,34 @@ class dashboardController extends Controller
                 return back()->withErrors(['duration_value' => 'Duration tidak valid'])->withInput();
             }
 
+            // Validasi backend untuk Hour: estimation_to harus setelah sekarang
+            if ($durationType === 'hour') {
+                if (empty($validated['estimation_to'])) {
+                    return back()
+                        ->withErrors(['estimation_to' => 'Jam deadline harus diisi untuk type Hour'])
+                        ->withInput();
+                }
+
+                $estimationToCarbon = Carbon::parse($validated['estimation_to']);
+                if ($estimationToCarbon->lessThanOrEqualTo(now())) {
+                    Log::warning('HOUR_DEADLINE_INVALID', [
+                        'ticket_id'     => $ticket->id,
+                        'user_id'       => auth()->id(),
+                        'estimation_to' => $validated['estimation_to'],
+                        'now'           => now()->toIso8601String(),
+                    ]);
+
+                    return back()
+                        ->withErrors(['estimation_to' => 'Jam deadline harus setelah waktu sekarang'])
+                        ->withInput();
+                }
+            }
+
             // Auto Priority: hour = Low, day = Medium, week = High
             $autoPriority = match($durationType) {
                 'hour'  => 'Low',
                 'day'   => 'Medium',
                 'week'  => 'High',
-                default => 'Low',
             };
 
             Log::info('AUTO_PRIORITY_SET', [
@@ -568,10 +600,14 @@ class dashboardController extends Controller
             $progressedAt   = $ticket->progressed_at;
             $autoEstimation = null;
         } elseif ($ticket->status === 'Overdue') {
-            $status         = 'Progress';
-            $finished       = null;
-            $progressedAt   = $ticket->progressed_at;
-            $autoEstimation = null;
+            $status       = 'Progress';
+            $finished     = null;
+            $progressedAt = $ticket->progressed_at;
+            $autoEstimation = match($ticket->duration_type) {
+                'hour'  => now()->addHours($ticket->duration_value),
+                'day'   => now()->addDays($ticket->duration_value),
+                'week'  => now()->addWeeks($ticket->duration_value),
+            };
         } else {
             abort(403, 'Status ticket tidak valid');
         }
@@ -584,21 +620,58 @@ class dashboardController extends Controller
             $progressedAt, $oldStatus, $durationType,
             $durationValue, $autoEstimation, $autoPriority
         ) {
+            // Extra data untuk kolom yang tidak selalu diupdate
+            $extraData = [];
+
             if ($oldStatus === 'Open') {
-                $estimation   = $autoEstimation;
-                $estimationTo = match($durationType) {
-                    'hour'  => $estimation->copy()->addHours($durationValue),
-                    'day'   => $estimation->copy()->addDays($durationValue),
-                    'week'  => $estimation->copy()->addWeeks($durationValue),
-                    default => $estimation->copy()->addHours($durationValue),
-                };
+                $estimation = $autoEstimation;
+
+                if ($durationType === 'hour') {
+                    // Hour: pakai jam yang user pilih di Flatpickr (dari request)
+                    $estimationTo = !empty($validated['estimation_to'])
+                        ? Carbon::parse($validated['estimation_to'])
+                        : $estimation->copy()->addHours($durationValue);
+                } else {
+                    // Day & Week: hitung dari estimation + duration
+                    $estimationTo = match($durationType) {
+                        'day'  => $estimation->copy()->addDays($durationValue),
+                        'week' => $estimation->copy()->addWeeks($durationValue),
+                    };
+                }
+            } elseif ($oldStatus === 'Overdue') {
+                // === SLA: Simpan deadline asli SEKALI saat pertama kali extend ===
+                // Kalau original_estimation_to masih NULL, artinya ini extend pertama
+                // → simpan estimation_to lama sebagai original_estimation_to
+                // Kalau sudah ada nilainya (extend ke-2, ke-3, dst), JANGAN diubah
+                // → original_estimation_to harus selalu deadline ASLI yang pertama kali
+                if (is_null($ticket->original_estimation_to)) {
+                    $extraData['original_estimation_to'] = $ticket->estimation_to;
+
+                    Log::info('TICKET_ORIGINAL_DEADLINE_SAVED', [
+                        'ticket_id'              => $ticket->id,
+                        'original_estimation_to' => $ticket->estimation_to,
+                    ]);
+                }
+
+                // Overdue → Progress: extend deadline pakai duration awal dari sekarang
+                $estimation   = $ticket->estimation;   // waktu mulai tetap
+                $estimationTo = $autoEstimation;       // deadline baru (extended)
+
+                Log::info('TICKET_EXTENDED_FROM_OVERDUE', [
+                    'ticket_id'              => $ticket->id,
+                    'old_estimation_to'      => $ticket->estimation_to,
+                    'new_estimation_to'      => $estimationTo,
+                    'original_estimation_to' => $ticket->original_estimation_to ?? $extraData['original_estimation_to'] ?? null,
+                    'duration_type'          => $ticket->duration_type,
+                    'duration_value'         => $ticket->duration_value,
+                ]);
             } else {
-                // SLA: estimation_to tidak ditimpa agar deadline awal tetap terjaga
+                // Progress → Closed: deadline tidak berubah
                 $estimation   = $ticket->estimation;
                 $estimationTo = $ticket->estimation_to;
             }
 
-            $data = [
+            $data = array_merge([
                 'category'       => $validated['category'],
                 'notes_executor' => $validated['notes_executor'],
                 'status'         => $status,
@@ -609,7 +682,7 @@ class dashboardController extends Controller
                 'duration_type'  => $durationType,
                 'duration_value' => $durationValue,
                 'priority'       => $autoPriority,
-            ];
+            ], $extraData);
 
             if ($oldStatus === 'Open' && $status === 'Progress') {
                 $data['progressed_at'] = $progressedAt;

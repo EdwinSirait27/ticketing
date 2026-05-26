@@ -53,41 +53,23 @@
             z-index: 9999;
         }
 
-        /* ✅ Flatpickr dark theme override */
-        .flatpickr-calendar {
-            background: #1e293b !important;
-            border: 1px solid #334155 !important;
-            border-radius: 0.75rem !important;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4) !important;
-            z-index: 99999 !important;
+        /* === FLATPICKR CUSTOM STYLING agar match dengan Select2 === */
+        .flatpickr-hour-input {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.75rem;
+            color: #e5e7eb;
+            padding: 0 1rem;
+            height: 52px;
+            width: 100%;
+            font-size: 1rem;
+            outline: none;
         }
-        .flatpickr-time input,
-        .flatpickr-time .flatpickr-time-separator,
-        .flatpickr-time .flatpickr-am-pm {
-            color: #e5e7eb !important;
-            background: #1e293b !important;
+        .flatpickr-hour-input:focus {
+            border-color: #2563eb;
         }
-        .flatpickr-time input:hover,
-        .flatpickr-time input:focus {
-            background: #334155 !important;
-        }
-        .numInputWrapper:hover {
-            background: #334155 !important;
-        }
-        .flatpickr-input {
-            background-color: #1e293b !important;
-            border: 1px solid #334155 !important;
-            border-radius: 0.75rem !important;
-            color: #e5e7eb !important;
-            padding: 0.75rem 1rem !important;
-            width: 100% !important;
-            font-size: 0.875rem !important;
-            cursor: pointer !important;
-        }
-        .flatpickr-input:focus {
-            outline: none !important;
-            border-color: #3b82f6 !important;
-            box-shadow: 0 0 0 2px rgba(59,130,246,0.3) !important;
+        .flatpickr-hour-input::placeholder {
+            color: #94a3b8;
         }
     </style>
 
@@ -109,7 +91,7 @@
             </div>
         </div>
 
-        <form method="POST" action="{{ route('updateopenticketforadmin', request()->route('hash')) }}" class="space-y-6">
+        <form method="POST" action="{{ route('updateopenticketforadmin', request()->route('hash')) }}" class="space-y-6" id="ticketForm">
             @csrf
             @method('PUT')
             <input type="hidden" name="updated_at" value="{{ $ticket->updated_at->toISOString() }}">
@@ -129,9 +111,8 @@
                             d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                     </svg>
                     <span>Ticket Title</span>
-                    <span class="text-red-400">*</span>
                 </label>
-                <input type="text" id="title" name="title" required
+                <input type="text" id="title" name="title"
                     placeholder="Example: Laptop cannot connect to WiFi"
                     class="w-full px-4 py-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     value="{{ old('title', $ticket->title) }}" disabled>
@@ -145,10 +126,9 @@
                             d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                     </svg>
                     <span>Categories</span>
-                    <span class="text-red-400">*</span>
                 </label>
                 <div class="relative">
-                    <select id="category" name="category" required
+                    <select id="category" name="category"
                         class="select2 w-full bg-slate-800 border border-slate-700 rounded-xl text-white">
                         <option value="">Choose Categories...</option>
                         <option value="Hardware & Software" {{ old('category', $ticket->category) == 'Hardware & Software' ? 'selected' : '' }}>Hardware & Software</option>
@@ -157,16 +137,9 @@
                         <option value="Others" {{ old('category', $ticket->category) == 'Others' ? 'selected' : '' }}>Others</option>
                     </select>
                 </div>
-                @error('category')
-                    <p class="mt-2 text-sm text-red-400 flex items-center space-x-1">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <span>{{ $message }}</span>
-                    </p>
-                @enderror
+                @if ($errors->has('category'))
+                    <p class="mt-2 text-sm text-red-400">{{ $errors->first('category') }}</p>
+                @endif
             </div>
 
             {{-- Description --}}
@@ -176,7 +149,6 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
                     </svg>
                     <span>Problem Description</span>
-                    <span class="text-red-400">*</span>
                 </label>
                 <textarea id="description" name="description" rows="5" disabled
                     placeholder="Describe your problem in detail..."
@@ -194,25 +166,17 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
                     </svg>
                     <span>Notes Executor</span>
-                    <span class="text-red-400">*</span>
                 </label>
-                <textarea id="notes_executor" name="notes_executor" rows="5" required
+                <textarea id="notes_executor" name="notes_executor" rows="5"
                     placeholder="Describe user's problem in detail..."
                     class="w-full px-4 py-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none">{{ old('notes_executor', $ticket->notes_executor) }}</textarea>
                 <div class="flex items-center justify-between mt-2">
                     <p class="text-xs text-slate-500">minimum 10 character</p>
                     <p class="text-xs text-slate-500"><span id="notesCharCount">0</span> / 500</p>
                 </div>
-                @error('notes_executor')
-                    <p class="mt-2 text-sm text-red-400 flex items-center space-x-1">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <span>{{ $message }}</span>
-                    </p>
-                @enderror
+                @if ($errors->has('notes_executor'))
+                    <p class="mt-2 text-sm text-red-400">{{ $errors->first('notes_executor') }}</p>
+                @endif
             </div>
 
             {{-- DURATION SECTION --}}
@@ -224,65 +188,47 @@
                                 d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                         <span>Duration</span>
-                        <span class="text-red-400">*</span>
                     </label>
                     <div class="space-y-3">
                         {{-- Baris 1: Choose Type --}}
                         <div>
                             <select id="duration_type" name="duration_type"
-                                class="select2-duration w-full bg-slate-800 border border-slate-700 rounded-xl text-white" required>
+                                class="select2-duration w-full bg-slate-800 border border-slate-700 rounded-xl text-white">
                                 <option value="">Choose Type</option>
                                 <option value="hour" {{ old('duration_type') == 'hour' ? 'selected' : '' }}>Hour</option>
-                                <option value="day" {{ old('duration_type') == 'day' ? 'selected' : '' }}>Day</option>
+                                <option value="day"  {{ old('duration_type') == 'day'  ? 'selected' : '' }}>Day</option>
                                 <option value="week" {{ old('duration_type') == 'week' ? 'selected' : '' }}>Week</option>
                             </select>
-                            @error('duration_type')
-                                <p class="mt-2 text-sm text-red-400 flex items-center space-x-1">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                    <span>{{ $message }}</span>
-                                </p>
-                            @enderror
+                            @if ($errors->has('duration_type'))
+                                <p class="mt-2 text-sm text-red-400">{{ $errors->first('duration_type') }}</p>
+                            @endif
                         </div>
-                        {{-- Baris 2: Choose Duration (Day/Week) atau Flatpickr (Hour) --}}
+                        {{-- Baris 2: Choose Duration --}}
                         <div>
+                            {{-- Dropdown Day & Week (Select2) --}}
                             <select id="duration_value_select"
                                 class="w-full px-4 py-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white">
                                 <option value="">Choose duration...</option>
                             </select>
-                            {{-- FIX #2: disableMobile false agar muncul di mobile --}}
-                            <input type="text" id="duration_hour_time"
-                                class="hidden w-full bg-slate-800 border border-slate-700 rounded-xl text-white"
-                                placeholder="Pick a time..." readonly>
+                            {{-- === FLATPICKR untuk Hour (ganti dari <select>) === --}}
+                            <input type="text" id="duration_hour_picker"
+                                class="flatpickr-hour-input hidden"
+                                placeholder="Pilih jam deadline (HH:MM)" readonly="readonly">
                             <p id="duration-hour-help" class="mt-2 text-xs text-slate-500 hidden">
-                                Pilih jam selesai pengerjaan. Durasi dihitung otomatis dari waktu sekarang.
+                                Pilih jam deadline pengerjaan hari ini. Durasi dihitung otomatis dari sekarang.
                             </p>
                             <input type="hidden" id="duration_value" name="duration_value" value="{{ old('duration_value') }}">
-                            @error('duration_value')
-                                <p class="mt-2 text-sm text-red-400 flex items-center space-x-1">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd"
-                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                    <span>{{ $message }}</span>
-                                </p>
-                            @enderror
+                            @if ($errors->has('duration_value'))
+                                <p class="mt-2 text-sm text-red-400">{{ $errors->first('duration_value') }}</p>
+                            @endif
                         </div>
                     </div>
-                    <input type="datetime-local" id="estimation" name="estimation"
-                        value="{{ old('estimation') }}" class="hidden">
-                    <div class="hidden">
-                        <input type="datetime-local" id="estimation_to" name="estimation_to"
-                            value="{{ old('estimation_to') }}">
-                    </div>
+                    <input type="hidden" id="estimation"    name="estimation"    value="{{ old('estimation') }}">
+                    <input type="hidden" id="estimation_to" name="estimation_to" value="{{ old('estimation_to') }}">
                 </div>
 
             @else
-                <input type="hidden" name="duration_type" value="{{ $ticket->duration_type }}">
+                <input type="hidden" name="duration_type"  value="{{ $ticket->duration_type }}">
                 <input type="hidden" name="duration_value" value="{{ $ticket->duration_value }}">
 
                 <div class="mt-4">
@@ -294,7 +240,6 @@
                                         d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                                 <span>Estimation</span>
-                                <span class="text-red-400">*</span>
                             </label>
                             <input type="text" readonly
                                 value="{{ $ticket->estimation ? $ticket->estimation->timezone('Asia/Makassar')->format('Y-m-d H:i') : '-' }}"
@@ -307,7 +252,6 @@
                                         d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                                 <span>Estimation To</span>
-                                <span class="text-red-400">*</span>
                                 @if ($ticket->estimation_to && now()->gt($ticket->estimation_to))
                                     <span class="text-xs text-red-400 font-normal">(Overdue)</span>
                                 @endif
@@ -330,7 +274,6 @@
                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <span>Status</span>
-                    <span class="text-red-400">*</span>
                 </label>
                 <select id="statusSelect" name="status"
                     class="select2-status w-full bg-slate-800 border border-slate-700 rounded-xl text-white">
@@ -338,6 +281,9 @@
                     <option value="Progress">Back to Progress</option>
                     <option value="Closed">Close this Ticket</option>
                 </select>
+                @if ($errors->has('status'))
+                    <p class="mt-2 text-sm text-red-400">{{ $errors->first('status') }}</p>
+                @endif
             </div>
             @elseif (in_array($ticket->status, ['Progress']))
                 <input type="hidden" name="status" id="ticketStatusInput" value="Closed">
@@ -391,7 +337,6 @@
                         </svg>
                         <span>Executor Attachments</span>
                         @if (in_array($ticket->status, ['Progress', 'Overdue']))
-                            <span class="text-red-400">*</span>
                             <span class="text-xs text-slate-500">(wajib sebelum close ticket)</span>
                         @endif
                     </label>
@@ -480,7 +425,7 @@
             </div>
         </form>
 
-        {{-- FIX #5: Form upload executor dipindah ke LUAR form utama agar tidak nested --}}
+        {{-- Form upload executor di luar form utama agar tidak nested --}}
         <form id="admin-executor-attachments-form"
             action="{{ route('executor.attachments.store', $ticket->id) }}"
             method="POST" enctype="multipart/form-data" class="hidden">
@@ -516,11 +461,13 @@
     </div>
 
     @push('scripts')
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+        {{-- === FLATPICKR (untuk duration hour) === --}}
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
         <script>
@@ -538,6 +485,17 @@
                     dropdownParent: $('#duration_type').parent(),
                     minimumResultsForSearch: Infinity
                 });
+
+                // Init Select2 untuk dropdown day/week
+                $('#duration_value_select').select2({
+                    placeholder: 'Choose duration...',
+                    width: '100%',
+                    dropdownParent: $('#duration_value_select').parent(),
+                    minimumResultsForSearch: Infinity
+                });
+
+                // Sembunyikan dropdown day/week saat awal
+                $('#duration_value_select').next('.select2-container').hide();
 
                 $('#duration_type').on('change', function () {
                     const event = new Event('change', { bubbles: true });
@@ -579,87 +537,76 @@
             document.addEventListener('DOMContentLoaded', function () {
                 const durationType        = document.getElementById('duration_type');
                 const durationValueSelect = document.getElementById('duration_value_select');
-                const durationHourTime    = document.getElementById('duration_hour_time');
+                const durationHourPicker  = document.getElementById('duration_hour_picker');
                 const durationValueInput  = document.getElementById('duration_value');
                 const estimationInput     = document.getElementById('estimation');
                 const estimationToInput   = document.getElementById('estimation_to');
                 const durationHourHelp    = document.getElementById('duration-hour-help');
 
-                if (!durationType || !durationValueSelect || !durationHourTime || !durationValueInput || !estimationInput || !estimationToInput) return;
-
-                const ranges = {
-                    hour: { min:1, max:24, label:'Hour' },
-                    day:  { min:2, max:6,  label:'Day'  },
-                    week: { min:1, max:4,  label:'Week' }
-                };
+                if (!durationType || !durationValueSelect || !durationHourPicker || !durationValueInput || !estimationInput || !estimationToInput) return;
 
                 const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}T${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 
-                // Estimation FROM = waktu sekarang saat halaman dimuat
                 estimationInput.value = fmt(new Date());
+
+                // === INIT FLATPICKR untuk Hour ===
+                // Validasi "jam harus setelah sekarang" dipindah ke submit handler
+                // supaya tidak muncul terus saat user masih memilih
+                const hourPicker = flatpickr(durationHourPicker, {
+                    enableTime: true,
+                    noCalendar: true,
+                    dateFormat: "H:i",
+                    time_24hr: true,
+                    minuteIncrement: 5,
+                    onChange: function (selectedDates, dateStr) {
+                        if (!selectedDates.length) {
+                            durationValueInput.value = '';
+                            estimationToInput.value  = '';
+                            return;
+                        }
+
+                        const now      = new Date();
+                        const selected = selectedDates[0];
+
+                        // Build deadline = hari ini dengan jam yang dipilih
+                        const deadline = new Date(now.getFullYear(), now.getMonth(), now.getDate(),
+                                                  selected.getHours(), selected.getMinutes(), 0, 0);
+
+                        // Hitung selisih menit, lalu ceil ke jam terdekat (min 1 jam)
+                        const diffMinutes = Math.ceil((deadline.getTime() - now.getTime()) / 60000);
+                        const diffHours   = Math.max(1, Math.ceil(diffMinutes / 60));
+
+                        // Set value walaupun mungkin invalid (validasi final di submit)
+                        durationValueInput.value = diffMinutes > 0 ? String(diffHours) : '';
+                        estimationToInput.value  = fmt(deadline);
+                    }
+                });
 
                 const buildOpts = () => {
                     const type = durationType.value;
                     durationValueSelect.innerHTML = '';
-                    if (!ranges[type]) { durationValueSelect.appendChild(new Option('Choose type first...', '')); return; }
-                    durationValueSelect.appendChild(new Option('Choose duration...', ''));
-                    for (let i = ranges[type].min; i <= ranges[type].max; i++) {
-                        durationValueSelect.appendChild(new Option(`${i} ${ranges[type].label}`, i));
+                    if (type === 'day') {
+                        durationValueSelect.appendChild(new Option('Choose duration...', ''));
+                        for (let i = 2; i <= 6; i++) durationValueSelect.appendChild(new Option(`${i} Day`, i));
+                    } else if (type === 'week') {
+                        durationValueSelect.appendChild(new Option('Choose duration...', ''));
+                        for (let i = 1; i <= 4; i++) durationValueSelect.appendChild(new Option(`${i} Week`, i));
                     }
                 };
 
-                // =========================================================
-                // FIX #3: syncVal untuk hour langsung ambil jam & menit
-                // dari Flatpickr, set estimationToInput langsung di sini
-                // =========================================================
                 const syncVal = () => {
                     const type = durationType.value;
                     if (type === 'hour') {
-                        const v = fpHour.input.value;
-                        if (!v) { durationValueInput.value = ''; return; }
-
-                        const start = new Date(estimationInput.value);
-                        const [hh, mm] = v.split(':').map(Number);
-
-                        // Buat end date dari jam & menit yang dipilih user
-                        const end = new Date(start);
-                        end.setHours(hh, mm, 0, 0);
-
-                        // Kalau jam yang dipilih sudah lewat dari sekarang, anggap besok
-                        if (end <= start) end.setDate(end.getDate() + 1);
-
-                        // Set estimation_to langsung dari pilihan user
-                        estimationToInput.value = fmt(end);
-
-                        // Hitung diff dalam menit untuk duration_value
-                        const diffMins = Math.round((end - start) / 60000);
-                        durationValueInput.value = String(diffMins);
-
-                        return; // stop di sini, jangan lanjut ke bawah
-                    }
-                    // Day & Week: tetap pakai dropdown
-                    durationValueInput.value = durationValueSelect.value || '';
-                };
-
-                const syncReq = () => {
-                    const type = durationType.value;
-                    if (type === 'hour') {
-                        durationValueSelect.required = false;
-                        durationHourHelp?.classList.remove('hidden');
+                        // Hour di-handle langsung di onChange Flatpickr, skip di sini
+                        return;
                     } else {
-                        durationValueSelect.required = true;
-                        durationHourHelp?.classList.add('hidden');
+                        durationValueInput.value = durationValueSelect.value || '';
                     }
                 };
 
-                // =========================================================
-                // FIX #4: calcEnd skip untuk hour, sudah diurus syncVal
-                // Day & Week tetap jalan seperti biasa
-                // =========================================================
                 const calcEnd = () => {
                     const type = durationType.value;
-                    if (type === 'hour') return; // skip, sudah diurus syncVal
-
+                    if (type === 'hour') return; // Hour sudah dihandle Flatpickr
                     const val = parseInt(durationValueInput.value || '0', 10);
                     if (!type || !val || !estimationInput.value) return;
                     const start = new Date(estimationInput.value);
@@ -668,48 +615,71 @@
                     estimationToInput.value = fmt(new Date(start.getTime() + mins * 60000));
                 };
 
-                // =========================================================
-                // FIX #1: minuteIncrement: 1 agar bebas pilih menit
-                // FIX #2: disableMobile: false agar muncul di mobile
-                // =========================================================
-                const fpHour = flatpickr(durationHourTime, {
-                    enableTime: true,
-                    noCalendar: true,
-                    dateFormat: "H:i",
-                    time_24hr: true,
-                    minuteIncrement: 1,    // FIX #1: bebas pilih menit
-                    disableMobile: false,  // FIX #2: muncul di mobile
-                    static: false,
-                    appendTo: document.body,
-                    onReady: function(selectedDates, dateStr, instance) {
-                        instance.calendarContainer.style.zIndex = "999999";
-                    },
-                    onChange: function() {
-                        syncVal(); // FIX #3 & #4: syncVal yang handle semuanya untuk hour
+                const switchUI = (type) => {
+                    if (type === 'hour') {
+                        // Tampilkan Flatpickr, sembunyikan dropdown day/week
+                        $('#duration_value_select').next('.select2-container').hide();
+                        durationHourPicker.classList.remove('hidden');
+                        durationHourHelp?.classList.remove('hidden');
+                        // Reset value dari select day/week saat switch ke hour
+                        durationValueInput.value = '';
+                        estimationToInput.value  = '';
+                    } else if (type === 'day' || type === 'week') {
+                        // Tampilkan dropdown day/week, sembunyikan Flatpickr
+                        $('#duration_value_select').next('.select2-container').show();
+                        durationHourPicker.classList.add('hidden');
+                        durationHourHelp?.classList.add('hidden');
+                        buildOpts();
+                        $('#duration_value_select').trigger('change.select2');
+                        // Reset value dari Flatpickr saat switch ke day/week
+                        hourPicker.clear();
+                        durationValueInput.value = '';
+                        estimationToInput.value  = '';
+                    } else {
+                        // Type belum dipilih, sembunyikan keduanya
+                        $('#duration_value_select').next('.select2-container').hide();
+                        durationHourPicker.classList.add('hidden');
+                        durationHourHelp?.classList.add('hidden');
                     }
-                });
+                };
 
                 $('#duration_type').on('change', function () {
-                    const type = this.value;
-                    if (type === 'hour') {
-                        durationValueSelect.classList.add('hidden');
-                        durationHourTime.classList.remove('hidden');
-                    } else {
-                        durationValueSelect.classList.remove('hidden');
-                        durationHourTime.classList.add('hidden');
-                        buildOpts();
-                    }
-                    syncReq();
+                    switchUI(this.value);
                     syncVal();
                     calcEnd();
                 });
 
-                durationValueSelect.addEventListener('change', () => { syncVal(); calcEnd(); });
+                $('#duration_value_select').on('change', () => { syncVal(); calcEnd(); });
 
-                buildOpts();
-                syncReq();
+                // Inisialisasi saat page load
+                const initialType = durationType.value;
+                switchUI(initialType);
                 syncVal();
                 calcEnd();
+
+                // === VALIDASI SAAT SUBMIT FORM (untuk Hour) ===
+                // Validasi dipindah ke sini supaya tidak mengganggu user saat memilih jam di Flatpickr
+                const ticketForm = document.getElementById('ticketForm');
+                if (ticketForm) {
+                    ticketForm.addEventListener('submit', function (e) {
+                        if (durationType.value !== 'hour') return; // skip untuk day/week
+
+                        if (!durationHourPicker.value) {
+                            e.preventDefault();
+                            toastr.error('Pilih jam deadline terlebih dahulu!');
+                            return;
+                        }
+
+                        const now = new Date();
+                        const [hh, mm] = durationHourPicker.value.split(':').map(Number);
+                        const deadline = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm, 0, 0);
+
+                        if (deadline.getTime() <= now.getTime()) {
+                            e.preventDefault();
+                            toastr.error('Jam harus setelah waktu sekarang!');
+                        }
+                    });
+                }
             });
         </script>
         @endif
@@ -800,16 +770,6 @@
                     } finally { isUploading = false; }
                 }
 
-                function submitWithAttachmentCheck() {
-                    const total = existingCount + uploadedCount;
-                    if (total === 0) {
-                        toastr.error('Wajib upload minimal 1 attachment bukti pengerjaan sebelum menutup ticket.');
-                        document.getElementById('admin-executor-attachment-container')?.scrollIntoView({ behavior: 'smooth' });
-                        return;
-                    }
-                    btnClose.closest('form').submit();
-                }
-
                 @if ($ticket->status === 'Overdue')
                 const statusSelect = document.getElementById('statusSelect');
                 const btnLabel     = document.getElementById('btn-close-label');
@@ -821,18 +781,9 @@
                         btnLabel.textContent = 'Close this Ticket';
                     }
                 });
-
-                btnClose?.addEventListener('click', function () {
-                    if (!statusSelect?.value) {
-                        toastr.error('Please choose a status first.');
-                        statusSelect?.scrollIntoView({ behavior: 'smooth' });
-                        return;
-                    }
-                    submitWithAttachmentCheck();
-                });
-                @else
-                btnClose?.addEventListener('click', submitWithAttachmentCheck);
                 @endif
+
+                btnClose?.addEventListener('click', () => { btnClose.closest('form').submit(); });
 
                 addBtn?.addEventListener('click', addAttachment);
                 eraseBtn?.addEventListener('click', eraseAttachment);
