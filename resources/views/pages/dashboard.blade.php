@@ -469,70 +469,74 @@
             {{-- Statistics Cards --}}
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                 {{-- <a href="{{ route('dashboard.filtertoday', ['filter' => 'Open']) }}" class="block"> --}}
-                    <a href="{{ route('dashboard.filteropen', ['filteropen' => 'Open']) }}" class="block">
+                <a href="{{ route('dashboard.filteropen', ['filteropen' => 'Open']) }}" class="block">
 
-                <div
-                    class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl md:rounded-2xl p-4 md:p-6 text-white shadow-lg">
-                    <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-xs md:text-sm font-semibold opacity-90">All Open Tickets</h3>
-                        <svg class="w-6 h-6 md:w-8 md:h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
-                            </path>
-                        </svg>
+                    <div
+                        class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl md:rounded-2xl p-4 md:p-6 text-white shadow-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xs md:text-sm font-semibold opacity-90">All Open Tickets</h3>
+                            <svg class="w-6 h-6 md:w-8 md:h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <p class="text-2xl md:text-3xl font-bold mb-1">{{ $opentickets ?? 0 }}</p>
+                        <p class="text-blue-100 text-xs">Open Tickets</p>
                     </div>
-                    <p class="text-2xl md:text-3xl font-bold mb-1">{{ $opentickets ?? 0 }}</p>
-                    <p class="text-blue-100 text-xs">Open Tickets</p>
-                </div>
-            </a>
-              
+                </a>
 
-                    <a href="{{ route('dashboard.filterprogress', ['filterprogress' => 'Progress']) }}" class="block">
 
-                <div
-                    class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl md:rounded-2xl p-4 md:p-6 text-white shadow-lg">
-                    <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-xs md:text-sm font-semibold opacity-90">In Progress</h3>
-                        <svg class="w-6 h-6 md:w-8 md:h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <p class="text-2xl md:text-3xl font-bold mb-1">{{ $onprogressticket ?? 0 }}</p>
-                    <p class="text-emerald-100 text-xs">On Progress Tickets</p>
-                </div>
-            </a>
-                    <a href="{{ route('dashboard.filterclosed', ['filterclosed' => 'Closed']) }}" class="block">
+                <a href="{{ route('dashboard.filterprogress', ['filterprogress' => 'Progress']) }}" class="block">
 
-                <div
-                    class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl md:rounded-2xl p-4 md:p-6 text-white shadow-lg">
-                    <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-xs md:text-sm font-semibold opacity-90">Closed</h3>
-                        <svg class="w-6 h-6 md:w-8 md:h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                        </svg>
+                    <div
+                        class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl md:rounded-2xl p-4 md:p-6 text-white shadow-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xs md:text-sm font-semibold opacity-90">In Progress</h3>
+                            <svg class="w-6 h-6 md:w-8 md:h-8 opacity-80" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-2xl md:text-3xl font-bold mb-1">{{ $onprogressticket ?? 0 }}</p>
+                        <p class="text-emerald-100 text-xs">On Progress Tickets</p>
                     </div>
-                    <p class="text-2xl md:text-3xl font-bold mb-1">{{ $closedtickets ?? 0 }}</p>
-                    <p class="text-purple-100 text-xs">Closed Tickets</p>
-                </div>
-            </a>
-                    <a href="{{ route('dashboard.filteroverdue', ['filteroverdue' => 'Overdue']) }}" class="block">
-    
-                <div
-                    class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl md:rounded-2xl p-4 md:p-6 text-white shadow-lg">
-                    <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-xs md:text-sm font-semibold opacity-90">Overdue</h3>
-                        <svg class="w-6 h-6 md:w-8 md:h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
-                            </path>
-                        </svg>
+                </a>
+                <a href="{{ route('dashboard.filterclosed', ['filterclosed' => 'Closed']) }}" class="block">
+
+                    <div
+                        class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl md:rounded-2xl p-4 md:p-6 text-white shadow-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xs md:text-sm font-semibold opacity-90">Closed</h3>
+                            <svg class="w-6 h-6 md:w-8 md:h-8 opacity-80" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z">
+                                </path>
+                            </svg>
+                        </div>
+                        <p class="text-2xl md:text-3xl font-bold mb-1">{{ $closedtickets ?? 0 }}</p>
+                        <p class="text-purple-100 text-xs">Closed Tickets</p>
                     </div>
-                    <p class="text-2xl md:text-3xl font-bold mb-1">{{ $overdueticket ?? 0 }}</p>
-                    <p class="text-orange-100 text-xs">Overdue's Ticket</p>
-                </div>
-            </a>
+                </a>
+                <a href="{{ route('dashboard.filteroverdue', ['filteroverdue' => 'Overdue']) }}" class="block">
+
+                    <div
+                        class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl md:rounded-2xl p-4 md:p-6 text-white shadow-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xs md:text-sm font-semibold opacity-90">Overdue</h3>
+                            <svg class="w-6 h-6 md:w-8 md:h-8 opacity-80" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                                </path>
+                            </svg>
+                        </div>
+                        <p class="text-2xl md:text-3xl font-bold mb-1">{{ $overdueticket ?? 0 }}</p>
+                        <p class="text-orange-100 text-xs">Overdue's Ticket</p>
+                    </div>
+                </a>
 
             </div>
             <div class="space-y-4">
@@ -616,8 +620,8 @@
                         <div>
                             <label class="text-white block mb-1">Year</label>
 
-                            <input type="number" min="2025" name="year" id="year" value="{{ request('year') }}"
-                                placeholder="example 2025"
+                            <input type="number" min="2025" name="year" id="year"
+                                value="{{ request('year') }}" placeholder="example 2025"
                                 class="px-3 py-2 rounded w-40
                bg-slate-600 text-white
                placeholder-white
@@ -1060,15 +1064,15 @@
                     @endif
                 </script>
                 <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script>
-    const urlParams  = new URLSearchParams(window.location.search);
-    const filterOpen = urlParams.get('filteropen');
-    const filterProgress = urlParams.get('filterprogress');
-    const filterOverdue = urlParams.get('filteroverdue');
-    const filterClosed = urlParams.get('filterclosed');
-</script>
+                <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+                <script>
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const filterOpen = urlParams.get('filteropen');
+                    const filterProgress = urlParams.get('filterprogress');
+                    const filterOverdue = urlParams.get('filteroverdue');
+                    const filterClosed = urlParams.get('filterclosed');
+                </script>
 
 
                 <script>
@@ -1089,20 +1093,25 @@
                                     d.priority = $('#filterPriority').val();
                                     d.date_from = $('#dateFrom').val();
                                     d.date_to = $('#dateTo').val();
-                                     d.filteropen = filterOpen;
-                                     d.filterprogress = filterProgress;
-                                     d.filteroverdue = filterOverdue;
-                                     d.filterclosed = filterClosed;
+                                    d.filteropen = filterOpen;
+                                    d.filterprogress = filterProgress;
+                                    d.filteroverdue = filterOverdue;
+                                    d.filterclosed = filterClosed;
                                 }
                             },
                             columnDefs: [{
                                 targets: '_all',
                                 className: 'dt-center'
                             }],
-                            columns: [
-                                { data: 'DT_RowIndex', name: 'DT_RowIndex', width: '5%', orderable: false, searchable: false },
-                                 
-                          
+                            columns: [{
+                                    data: 'DT_RowIndex',
+                                    name: 'DT_RowIndex',
+                                    width: '5%',
+                                    orderable: false,
+                                    searchable: false
+                                },
+
+
                                 {
                                     data: 'employee_name',
                                     name: 'employees_tables.employee_name',
@@ -1126,12 +1135,12 @@
                                 //     className: 'text-center'
                                 // },
                                 {
-                                data: 'executor_employee_name',
-                                name: 'employees_tables.employee_name',
-                                width: '15%',
-                                orderable: false,
-                                searchable: false
-                            },
+                                    data: 'executor_employee_name',
+                                    name: 'employees_tables.employee_name',
+                                    width: '15%',
+                                    orderable: false,
+                                    searchable: false
+                                },
                                 {
                                     data: 'title',
                                     name: 'title',
@@ -1161,13 +1170,13 @@
                                     width: '20%',
                                     className: 'text-center'
                                 },
-                                  {
+                                {
                                     data: 'queue_number',
                                     name: 'queue_number',
                                     width: '5%',
                                     className: 'text-center'
                                 },
-{
+                                {
                                     data: 'finished',
                                     name: 'finished',
                                     width: '20%',
@@ -1225,31 +1234,28 @@
                                 }
                             },
                             pageLength: 10,
-                            
-    dom:
-    '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4"' +
-        '<"length-wrapper flex items-center gap-2"lB>' +
-        '<"info-wrapper"i>' +
-    '>' +
-    'rtip',
-buttons: [
-    {
-        extend: 'excelHtml5',
-        text: 'Export Excel',
-        filename: function () {
-            let d = new Date();
-            let yyyy = d.getFullYear();
-            let mm = String(d.getMonth() + 1).padStart(2, '0');
-            let dd = String(d.getDate()).padStart(2, '0');
-            return `IT Ticket Export_${yyyy}-${mm}-${dd}`;
-        },
-        title: 'Ticket Export',
-        className: 'px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm',
-        exportOptions: {
-            columns: ':not(:last-child)'
-        }
-    }
-],
+
+                            dom: '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4"' +
+                                '<"length-wrapper flex items-center gap-2"lB>' +
+                                '<"info-wrapper"i>' +
+                                '>' +
+                                'rtip',
+                            buttons: [{
+                                extend: 'excelHtml5',
+                                text: 'Export Excel',
+                                filename: function() {
+                                    let d = new Date();
+                                    let yyyy = d.getFullYear();
+                                    let mm = String(d.getMonth() + 1).padStart(2, '0');
+                                    let dd = String(d.getDate()).padStart(2, '0');
+                                    return `IT Ticket Export_${yyyy}-${mm}-${dd}`;
+                                },
+                                title: 'Ticket Export',
+                                className: 'px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm',
+                                exportOptions: {
+                                    columns: ':not(:last-child)'
+                                }
+                            }],
 
 
 
@@ -1377,8 +1383,8 @@ buttons: [
                                         else if (status === 'Closed') cls = 'bg-green-600';
                                     
                                         return `
-                                                                                                                                                                                            <span class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold text-white rounded-full ${cls}">
-                                                                                                                                                                                            <span class="w-2 h-2 rounded-full bg-white"></span>${status}</span>`;
+                                                                                                                                                                                                            <span class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold text-white rounded-full ${cls}">
+                                                                                                                                                                                                            <span class="w-2 h-2 rounded-full bg-white"></span>${status}</span>`;
                                     })()}
                                 </div>
                             </div>
@@ -1773,10 +1779,15 @@ buttons: [
                             targets: '_all',
                             className: 'dt-center'
                         }],
-                        columns: [
-                                { data: 'DT_RowIndex', name: 'DT_RowIndex', width: '5%', orderable: false, searchable: false },
-                            
-                       
+                        columns: [{
+                                data: 'DT_RowIndex',
+                                name: 'DT_RowIndex',
+                                width: '5%',
+                                orderable: false,
+                                searchable: false
+                            },
+
+
 
                             {
                                 data: 'title',
@@ -1813,7 +1824,7 @@ buttons: [
                                     return data ? data : 'empty';
                                 }
                             },
-                             {
+                            {
                                 data: 'queue_number',
                                 name: 'queue_number',
                                 width: '5%'
@@ -2002,8 +2013,8 @@ buttons: [
                                         else if (status === 'Overdue') cls = 'bg-red-500';
                                         else if (status === 'Closed') cls = 'bg-green-600';
                                         return `
-                                                                        <span class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold text-white rounded-full ${cls}">
-                                                                        <span class="w-2 h-2 rounded-full bg-white"></span>${status}</span>`;
+                                                                                    <span class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold text-white rounded-full ${cls}">
+                                                                                    <span class="w-2 h-2 rounded-full bg-white"></span>${status}</span>`;
                                     })()}
                                 </div>
                             </div>

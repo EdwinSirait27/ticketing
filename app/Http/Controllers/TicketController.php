@@ -46,17 +46,17 @@ class TicketController extends Controller
         $onprogressticket = Tickets::where('executor_id', $executorId)
             ->where('status', 'Progress')
             ->count();
-//             $executorId = auth()->id();
-// $avgRating = TicketReview::where('executor_id', $executorId)
-//     ->whereHas('ticket', function ($q) {
-//         $q->where('status', 'closed');
-//     })
-//     ->avg('rating');
-// $totalReviewedTickets = TicketReview::where('executor_id', $executorId)
-//     ->whereHas('ticket', function ($q) {
-//         $q->where('status', 'closed');
-//     })
-//     ->count();
+        //             $executorId = auth()->id();
+        // $avgRating = TicketReview::where('executor_id', $executorId)
+        //     ->whereHas('ticket', function ($q) {
+        //         $q->where('status', 'closed');
+        //     })
+        //     ->avg('rating');
+        // $totalReviewedTickets = TicketReview::where('executor_id', $executorId)
+        //     ->whereHas('ticket', function ($q) {
+        //         $q->where('status', 'closed');
+        //     })
+        //     ->count();
 
         return view(
             'pages.resolvetickets',
@@ -242,12 +242,12 @@ class TicketController extends Controller
                 $request->date_to . ' 23:59:59',
             ]);
         }
-    //       else {
-    //     // default: hari ini
-    //     $query->whereDate('created_at', Carbon::today());
-    // }
+        //       else {
+        //     // default: hari ini
+        //     $query->whereDate('created_at', Carbon::today());
+        // }
         return DataTables::eloquent($query)
-        ->addIndexColumn() 
+            ->addIndexColumn()
 
             ->addColumn('employee_name', function ($ticket) {
                 return optional($ticket->user?->employee)->employee_name ?? '-';
@@ -424,22 +424,22 @@ class TicketController extends Controller
             'Overdue'  => 'bg-red-500 text-white',
             'Closed'   => 'bg-green-600 text-white',
         ];
-         $estimationDate = $ticket->estimation
-                ?->timezone('Asia/Makassar')
-                ?->format('d-m-Y H:i') ?? '-';
-            $estimationToDate = $ticket->estimation_to
-                ?->timezone('Asia/Makassar')
-                ?->format('d-m-Y H:i') ?? '-';
-            $estimationToDate = $ticket->estimation_to
-                ?->timezone('Asia/Makassar')
-                ?->format('d-m-Y H:i') ?? '-';
-            $finishedat = $ticket->finished
-                ?->timezone('Asia/Makassar')
-                ?->format('d-m-Y H:i') ?? '-';
+        $estimationDate = $ticket->estimation
+            ?->timezone('Asia/Makassar')
+            ?->format('d-m-Y H:i') ?? '-';
+        $estimationToDate = $ticket->estimation_to
+            ?->timezone('Asia/Makassar')
+            ?->format('d-m-Y H:i') ?? '-';
+        $estimationToDate = $ticket->estimation_to
+            ?->timezone('Asia/Makassar')
+            ?->format('d-m-Y H:i') ?? '-';
+        $finishedat = $ticket->finished
+            ?->timezone('Asia/Makassar')
+            ?->format('d-m-Y H:i') ?? '-';
 
         // fallback
         $ticket->badge_class = $map[$status] ?? 'bg-slate-500 text-white';
-        return view('pages.showmytickets', compact('ticket','estimationDate','estimationToDate','finishedat'));
+        return view('pages.showmytickets', compact('ticket', 'estimationDate', 'estimationToDate', 'finishedat'));
     }
     public function reviewticket($hash)
     {
@@ -884,5 +884,3 @@ class TicketController extends Controller
         return back()->with('error', 'failed send ticket');
     }
 }
-
-

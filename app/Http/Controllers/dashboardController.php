@@ -266,10 +266,20 @@ class dashboardController extends Controller
     {
         $query = Tickets::with('user.employee', 'user.employee.store', 'executor.employee')
             ->select([
-                'id', 'user_id', 'queue_number', 'title', 'description',
-                'progressed_at', 'estimation', 'estimation_to',
-                'executor_id', 'category', 'priority',
-                'finished', 'status', 'created_at',
+                'id',
+                'user_id',
+                'queue_number',
+                'title',
+                'description',
+                'progressed_at',
+                'estimation',
+                'estimation_to',
+                'executor_id',
+                'category',
+                'priority',
+                'finished',
+                'status',
+                'created_at',
             ]);
 
         // --- Search ---
@@ -277,10 +287,10 @@ class dashboardController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('queue_number', 'like', "%{$search}%")
-                  ->orWhere('title',       'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhere('category',    'like', "%{$search}%")
-                  ->orWhere('status',      'like', "%{$search}%");
+                    ->orWhere('title',       'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('category',    'like', "%{$search}%")
+                    ->orWhere('status',      'like', "%{$search}%");
             });
         }
 
@@ -309,13 +319,19 @@ class dashboardController extends Controller
 
         return DataTables::eloquent($query)
             ->addIndexColumn()
-            ->addColumn('employee_name', fn($t) =>
+            ->addColumn(
+                'employee_name',
+                fn($t) =>
                 optional($t->user?->employee)->employee_name ?? '-'
             )
-            ->addColumn('store_name', fn($t) =>
+            ->addColumn(
+                'store_name',
+                fn($t) =>
                 optional($t->user?->employee->store)->name ?? '-'
             )
-            ->addColumn('executor_employee_name', fn($t) =>
+            ->addColumn(
+                'executor_employee_name',
+                fn($t) =>
                 $t->executor?->employee?->employee_name ?? 'empty'
             )
             ->orderColumn('executor_employee_name', function ($query, $order) {})
@@ -325,25 +341,35 @@ class dashboardController extends Controller
                     ->join('employees', 'employees.id', '=', 'users.employee_id')
                     ->orderBy('employees.employee_name', $order);
             })
-            ->editColumn('created_at',    fn($t) =>
+            ->editColumn(
+                'created_at',
+                fn($t) =>
                 optional($t->created_at)->timezone('Asia/Makassar')->translatedFormat('d F Y H:i')
             )
-            ->editColumn('progressed_at', fn($t) =>
+            ->editColumn(
+                'progressed_at',
+                fn($t) =>
                 $t->progressed_at
                     ? $t->progressed_at->timezone('Asia/Makassar')->translatedFormat('d F Y H:i')
                     : '-'
             )
-            ->editColumn('estimation', fn($t) =>
+            ->editColumn(
+                'estimation',
+                fn($t) =>
                 $t->estimation
                     ? $t->estimation->timezone('Asia/Makassar')->translatedFormat('d F Y H:i')
                     : '-'
             )
-            ->editColumn('estimation_to', fn($t) =>
+            ->editColumn(
+                'estimation_to',
+                fn($t) =>
                 $t->estimation_to
                     ? $t->estimation_to->timezone('Asia/Makassar')->translatedFormat('d F Y H:i')
                     : '-'
             )
-            ->editColumn('finished', fn($t) =>
+            ->editColumn(
+                'finished',
+                fn($t) =>
                 $t->finished
                     ? $t->finished->timezone('Asia/Makassar')->translatedFormat('d F Y H:i')
                     : '-'
@@ -521,6 +547,8 @@ class dashboardController extends Controller
             'estimation_to'  => 'nullable|date',
             'duration_type'  => $isOpenStatus ? 'required|in:hour,day,week' : 'nullable|in:hour,day,week',
             'duration_value' => $isOpenStatus ? 'required|integer|min:1'    : 'nullable|integer|min:1',
+            // status wajib dipilih HANYA saat ticket Overdue (Progress atau Closed)
+            'status'         => $ticket->status === 'Overdue' ? 'required|in:Progress,Closed' : 'nullable',
         ]);
 
         // ---------------------------------------------------------------------
@@ -564,7 +592,7 @@ class dashboardController extends Controller
             }
 
             // Auto Priority: hour = Low, day = Medium, week = High
-            $autoPriority = match($durationType) {
+            $autoPriority = match ($durationType) {
                 'hour'  => 'Low',
                 'day'   => 'Medium',
                 'week'  => 'High',
@@ -590,24 +618,38 @@ class dashboardController extends Controller
         }
 
         if ($ticket->status === 'Open') {
+            // Open → Progress
             $status         = 'Progress';
             $finished       = null;
             $progressedAt   = now();
             $autoEstimation = now();
         } elseif ($ticket->status === 'Progress') {
+            // Progress → Closed
             $status         = 'Closed';
             $finished       = now();
             $progressedAt   = $ticket->progressed_at;
             $autoEstimation = null;
         } elseif ($ticket->status === 'Overdue') {
-            $status       = 'Progress';
-            $finished     = null;
-            $progressedAt = $ticket->progressed_at;
-            $autoEstimation = match($ticket->duration_type) {
-                'hour'  => now()->addHours($ticket->duration_value),
-                'day'   => now()->addDays($ticket->duration_value),
-                'week'  => now()->addWeeks($ticket->duration_value),
-            };
+            // Overdue → pilihan executor: Progress (extend) atau Closed (tutup)
+            $chosen = $validated['status']; // 'Progress' atau 'Closed'
+
+            if ($chosen === 'Closed') {
+                // Overdue → Closed
+                $status         = 'Closed';
+                $finished       = now();
+                $progressedAt   = $ticket->progressed_at;
+                $autoEstimation = null;
+            } else {
+                // Overdue → Progress (extend deadline)
+                $status         = 'Progress';
+                $finished       = null;
+                $progressedAt   = $ticket->progressed_at;
+                $autoEstimation = match ($ticket->duration_type) {
+                    'hour'  => now()->addHours($ticket->duration_value),
+                    'day'   => now()->addDays($ticket->duration_value),
+                    'week'  => now()->addWeeks($ticket->duration_value),
+                };
+            }
         } else {
             abort(403, 'Status ticket tidak valid');
         }
@@ -616,14 +658,22 @@ class dashboardController extends Controller
         // Database Transaction
         // ---------------------------------------------------------------------
         DB::transaction(function () use (
-            $validated, $ticket, $status, $finished,
-            $progressedAt, $oldStatus, $durationType,
-            $durationValue, $autoEstimation, $autoPriority
+            $validated,
+            $ticket,
+            $status,
+            $finished,
+            $progressedAt,
+            $oldStatus,
+            $durationType,
+            $durationValue,
+            $autoEstimation,
+            $autoPriority
         ) {
             // Extra data untuk kolom yang tidak selalu diupdate
             $extraData = [];
 
             if ($oldStatus === 'Open') {
+                // ----- Open → Progress -----
                 $estimation = $autoEstimation;
 
                 if ($durationType === 'hour') {
@@ -633,40 +683,47 @@ class dashboardController extends Controller
                         : $estimation->copy()->addHours($durationValue);
                 } else {
                     // Day & Week: hitung dari estimation + duration
-                    $estimationTo = match($durationType) {
+                    $estimationTo = match ($durationType) {
                         'day'  => $estimation->copy()->addDays($durationValue),
                         'week' => $estimation->copy()->addWeeks($durationValue),
                     };
                 }
             } elseif ($oldStatus === 'Overdue') {
-                // === SLA: Simpan deadline asli SEKALI saat pertama kali extend ===
-                // Kalau original_estimation_to masih NULL, artinya ini extend pertama
-                // → simpan estimation_to lama sebagai original_estimation_to
-                // Kalau sudah ada nilainya (extend ke-2, ke-3, dst), JANGAN diubah
-                // → original_estimation_to harus selalu deadline ASLI yang pertama kali
-                if (is_null($ticket->original_estimation_to)) {
-                    $extraData['original_estimation_to'] = $ticket->estimation_to;
+                // ----- Overdue → Closed / Progress -----
+                if ($status === 'Closed') {
+                    // Overdue → Closed: deadline tidak berubah, simpan apa adanya
+                    $estimation   = $ticket->estimation;
+                    $estimationTo = $ticket->estimation_to;
 
-                    Log::info('TICKET_ORIGINAL_DEADLINE_SAVED', [
+                    Log::info('TICKET_CLOSED_FROM_OVERDUE', [
+                        'ticket_id'     => $ticket->id,
+                        'estimation_to' => $ticket->estimation_to,
+                    ]);
+                } else {
+                    // Overdue → Progress: simpan deadline asli SEKALI, lalu extend
+                    if (is_null($ticket->original_estimation_to)) {
+                        $extraData['original_estimation_to'] = $ticket->estimation_to;
+
+                        Log::info('TICKET_ORIGINAL_DEADLINE_SAVED', [
+                            'ticket_id'              => $ticket->id,
+                            'original_estimation_to' => $ticket->estimation_to,
+                        ]);
+                    }
+
+                    $estimation   = $ticket->estimation;   // waktu mulai tetap
+                    $estimationTo = $autoEstimation;       // deadline baru (extended)
+
+                    Log::info('TICKET_EXTENDED_FROM_OVERDUE', [
                         'ticket_id'              => $ticket->id,
-                        'original_estimation_to' => $ticket->estimation_to,
+                        'old_estimation_to'      => $ticket->estimation_to,
+                        'new_estimation_to'      => $estimationTo,
+                        'original_estimation_to' => $ticket->original_estimation_to ?? $extraData['original_estimation_to'] ?? null,
+                        'duration_type'          => $ticket->duration_type,
+                        'duration_value'         => $ticket->duration_value,
                     ]);
                 }
-
-                // Overdue → Progress: extend deadline pakai duration awal dari sekarang
-                $estimation   = $ticket->estimation;   // waktu mulai tetap
-                $estimationTo = $autoEstimation;       // deadline baru (extended)
-
-                Log::info('TICKET_EXTENDED_FROM_OVERDUE', [
-                    'ticket_id'              => $ticket->id,
-                    'old_estimation_to'      => $ticket->estimation_to,
-                    'new_estimation_to'      => $estimationTo,
-                    'original_estimation_to' => $ticket->original_estimation_to ?? $extraData['original_estimation_to'] ?? null,
-                    'duration_type'          => $ticket->duration_type,
-                    'duration_value'         => $ticket->duration_value,
-                ]);
             } else {
-                // Progress → Closed: deadline tidak berubah
+                // ----- Progress → Closed: deadline tidak berubah -----
                 $estimation   = $ticket->estimation;
                 $estimationTo = $ticket->estimation_to;
             }
@@ -720,6 +777,7 @@ class dashboardController extends Controller
 
             $isProgressToClosed  = $oldStatus === 'Progress' && $ticket->status === 'Closed';
             $isOverdueToProgress = $oldStatus === 'Overdue'  && $ticket->status === 'Progress';
+            $isOverdueToClosed   = $oldStatus === 'Overdue'  && $ticket->status === 'Closed';
 
             $titleMessage = 'IT Ticket Updated';
             $ticketUrl    = $adminUrl;

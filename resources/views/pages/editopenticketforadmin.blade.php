@@ -775,15 +775,29 @@
                 const btnLabel     = document.getElementById('btn-close-label');
 
                 $('#statusSelect').on('change', function () {
-                    if (this.value === 'Progress') {
+                    const val = this.value;
+                    if (val === 'Progress') {
                         btnLabel.textContent = 'Back to Progress';
-                    } else if (this.value === 'Closed') {
+                    } else if (val === 'Closed') {
                         btnLabel.textContent = 'Close this Ticket';
+                    } else {
+                        btnLabel.textContent = 'Choose Status First...';
                     }
                 });
-                @endif
+
+                // Guard: Submit jika sudah memilih status
+                btnClose?.addEventListener('click', () => {
+                    if (!statusSelect.value) {
+                        toastr.error('Please choose a status before closing the ticket.');
+                        return;
+                    }
+                    btnClose.closest('form').submit();
+                });
+                @else
 
                 btnClose?.addEventListener('click', () => { btnClose.closest('form').submit(); });
+
+                @endif
 
                 addBtn?.addEventListener('click', addAttachment);
                 eraseBtn?.addEventListener('click', eraseAttachment);
