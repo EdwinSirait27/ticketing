@@ -44,6 +44,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
 
+        $middleware->trustProxies(at: '*');
+
         // Web middleware group
         $middleware->appendToGroup('web', [
             \App\Http\Middleware\SetLocale::class,
