@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use App\Helpers\DriveHelper;
 use App\Jobs\DeleteAttachmentFromS3ForExecutor;
 use App\Jobs\UploadAttachmentToS3ForExecutor;
+use App\Helpers\StorageHelper;
 
 class TicketExecutorAttachmentController extends Controller
 {
@@ -151,7 +152,7 @@ public function destroy($attachmentId): JsonResponse
 
     return response()->json(['success' => true, 'message' => 'Attachment berhasil dihapus.']);
 }
-//  public function signedUrlForExecutor(string $attachmentId)
+// public function signedUrlForExecutor(string $attachmentId)
 // {
 //     /** @var \App\Models\User $user */
 //     $user = Auth::user();
@@ -160,8 +161,10 @@ public function destroy($attachmentId): JsonResponse
 //         ->where('status', 'uploaded')
 //         ->firstOrFail();
 
-//     // Boleh akses kalau: pemilik attachment, atau admin/executor
-//     if ($attachment->user_id !== $user->id && !$user->hasAnyRole(['admin', 'executor'])) {
+//     // Boleh akses: admin, executor, atau pemilik tiket (human)
+//     $isTicketOwner = $attachment->ticket?->user_id === $user->id;
+
+//     if (!$isTicketOwner && !$user->hasAnyRole(['admin', 'executor', 'human'])) {
 //         abort(403);
 //     }
 
@@ -185,17 +188,13 @@ public function signedUrlForExecutor(string $attachmentId)
         ->where('status', 'uploaded')
         ->firstOrFail();
 
-    // Boleh akses: admin, executor, atau pemilik tiket (human)
     $isTicketOwner = $attachment->ticket?->user_id === $user->id;
 
     if (!$isTicketOwner && !$user->hasAnyRole(['admin', 'executor', 'human'])) {
         abort(403);
     }
 
-    $url = Storage::disk('s3')->temporaryUrl(
-        $attachment->file_path,
-        now()->addMinutes(5)
-    );
+    $url = StorageHelper::temporaryPublicUrl($attachment->file_path, 5);
 
     return response()->json([
         'url'       => $url,
