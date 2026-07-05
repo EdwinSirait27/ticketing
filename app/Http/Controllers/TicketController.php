@@ -680,7 +680,7 @@ public function editmyticket(string $hash)
         $validated = $request->validate([
             'title'        => 'required|string',
             'category'       => 'required|in:Hardware & Software,Network,Account & Access,Others',
-            'sub_category'       => 'required|in:Hardware,Sofware,Connectivity,Infrastructure,Account,Access,General,Others',
+            'sub_category'       => 'required|in:Hardware,Software,Connectivity,Infrastructure,Account,Access,General,Others',
             'description'        => 'required|string|min:5|max:500',
 
         ]);
@@ -976,7 +976,7 @@ public function store(Request $request)
         'store_id'      => 'required|uuid',
         'title'         => 'required|string|max:150',
         'category'      => 'required|in:Hardware & Software,Network,Account & Access,Others',
-        'sub_category'  => 'required|in:Hardware,Sofware,Connectivity,Infrastructure,Account,Access,General,Others',
+        'sub_category'  => 'required|in:Hardware,Software,Connectivity,Infrastructure,Account,Access,General,Others',
         'description'   => 'required|string|max:500',
         'attachments'   => 'nullable|array|max:3',
         'attachments.*' => 'file|max:5012|mimes:jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,zip,txt',

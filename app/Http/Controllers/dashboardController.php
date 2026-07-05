@@ -514,7 +514,7 @@ $stores = Store::orderBy('name')->get();
 
         $validated = $request->validate([
             'category'       => 'required|in:Hardware & Software,Network,Account & Access,Others',
-            'sub_category'       => 'required|in:Hardware,Sofware,Connectivity,Infrastructure,Account,Access,General,Others',
+            'sub_category'       => 'required|in:Hardware,Software,Connectivity,Infrastructure,Account,Access,General,Others',
             'notes_executor' => 'required|string|min:5|max:500',
             'finished'       => 'nullable|date',
             'estimation'     => 'nullable|date',
