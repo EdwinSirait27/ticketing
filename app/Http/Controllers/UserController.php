@@ -45,7 +45,7 @@ class UserController extends Controller
                 )->implode('');
             })
             ->addColumn('action', function ($user) {
-                $idHashed = substr(hash('sha256', $user->id . env('APP_KEY')), 0, 8);
+                $idHashed = substr(hash('sha256', $user->id . config('app.key')), 0, 8);
 
                 return '
         <a href="' . route('editusers', $idHashed) . '"
@@ -84,7 +84,7 @@ class UserController extends Controller
 public function update(Request $request, $hash)
 {
     $user = User::all()->first(function ($u) use ($hash) {
-        return substr(hash('sha256', $u->id . env('APP_KEY')), 0, 8) === $hash;
+        return substr(hash('sha256', $u->id . config('app.key')), 0, 8) === $hash;
     });
     abort_if(!$user, 404);
 

@@ -469,70 +469,74 @@
             {{-- Statistics Cards --}}
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                 {{-- <a href="{{ route('dashboard.filtertoday', ['filter' => 'Open']) }}" class="block"> --}}
-                    <a href="{{ route('dashboard.filteropen', ['filteropen' => 'Open']) }}" class="block">
+                <a href="{{ route('dashboard.filteropen', ['filteropen' => 'Open']) }}" class="block">
 
-                <div
-                    class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl md:rounded-2xl p-4 md:p-6 text-white shadow-lg">
-                    <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-xs md:text-sm font-semibold opacity-90">All Open Tickets</h3>
-                        <svg class="w-6 h-6 md:w-8 md:h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
-                            </path>
-                        </svg>
+                    <div
+                        class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl md:rounded-2xl p-4 md:p-6 text-white shadow-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xs md:text-sm font-semibold opacity-90">All Open Tickets</h3>
+                            <svg class="w-6 h-6 md:w-8 md:h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <p class="text-2xl md:text-3xl font-bold mb-1">{{ $opentickets ?? 0 }}</p>
+                        <p class="text-blue-100 text-xs">Open Tickets</p>
                     </div>
-                    <p class="text-2xl md:text-3xl font-bold mb-1">{{ $opentickets ?? 0 }}</p>
-                    <p class="text-blue-100 text-xs">Open Tickets</p>
-                </div>
-            </a>
-              
+                </a>
 
-                    <a href="{{ route('dashboard.filterprogress', ['filterprogress' => 'Progress']) }}" class="block">
 
-                <div
-                    class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl md:rounded-2xl p-4 md:p-6 text-white shadow-lg">
-                    <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-xs md:text-sm font-semibold opacity-90">In Progress</h3>
-                        <svg class="w-6 h-6 md:w-8 md:h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <p class="text-2xl md:text-3xl font-bold mb-1">{{ $onprogressticket ?? 0 }}</p>
-                    <p class="text-emerald-100 text-xs">On Progress Tickets</p>
-                </div>
-            </a>
-                    <a href="{{ route('dashboard.filterclosed', ['filterclosed' => 'Closed']) }}" class="block">
+                <a href="{{ route('dashboard.filterprogress', ['filterprogress' => 'Progress']) }}" class="block">
 
-                <div
-                    class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl md:rounded-2xl p-4 md:p-6 text-white shadow-lg">
-                    <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-xs md:text-sm font-semibold opacity-90">Closed</h3>
-                        <svg class="w-6 h-6 md:w-8 md:h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                        </svg>
+                    <div
+                        class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl md:rounded-2xl p-4 md:p-6 text-white shadow-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xs md:text-sm font-semibold opacity-90">In Progress</h3>
+                            <svg class="w-6 h-6 md:w-8 md:h-8 opacity-80" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-2xl md:text-3xl font-bold mb-1">{{ $onprogressticket ?? 0 }}</p>
+                        <p class="text-emerald-100 text-xs">On Progress Tickets</p>
                     </div>
-                    <p class="text-2xl md:text-3xl font-bold mb-1">{{ $closedtickets ?? 0 }}</p>
-                    <p class="text-purple-100 text-xs">Closed Tickets</p>
-                </div>
-            </a>
-                    <a href="{{ route('dashboard.filteroverdue', ['filteroverdue' => 'Overdue']) }}" class="block">
-    
-                <div
-                    class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl md:rounded-2xl p-4 md:p-6 text-white shadow-lg">
-                    <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-xs md:text-sm font-semibold opacity-90">Overdue</h3>
-                        <svg class="w-6 h-6 md:w-8 md:h-8 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
-                            </path>
-                        </svg>
+                </a>
+                <a href="{{ route('dashboard.filterclosed', ['filterclosed' => 'Closed']) }}" class="block">
+
+                    <div
+                        class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl md:rounded-2xl p-4 md:p-6 text-white shadow-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xs md:text-sm font-semibold opacity-90">Closed</h3>
+                            <svg class="w-6 h-6 md:w-8 md:h-8 opacity-80" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z">
+                                </path>
+                            </svg>
+                        </div>
+                        <p class="text-2xl md:text-3xl font-bold mb-1">{{ $closedtickets ?? 0 }}</p>
+                        <p class="text-purple-100 text-xs">Closed Tickets</p>
                     </div>
-                    <p class="text-2xl md:text-3xl font-bold mb-1">{{ $overdueticket ?? 0 }}</p>
-                    <p class="text-orange-100 text-xs">Overdue's Ticket</p>
-                </div>
-            </a>
+                </a>
+                <a href="{{ route('dashboard.filteroverdue', ['filteroverdue' => 'Overdue']) }}" class="block">
+
+                    <div
+                        class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl md:rounded-2xl p-4 md:p-6 text-white shadow-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xs md:text-sm font-semibold opacity-90">Overdue</h3>
+                            <svg class="w-6 h-6 md:w-8 md:h-8 opacity-80" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                                </path>
+                            </svg>
+                        </div>
+                        <p class="text-2xl md:text-3xl font-bold mb-1">{{ $overdueticket ?? 0 }}</p>
+                        <p class="text-orange-100 text-xs">Overdue's Ticket</p>
+                    </div>
+                </a>
 
             </div>
             <div class="space-y-4">
@@ -573,7 +577,7 @@
 
                     <div class="flex flex-wrap items-end gap-4">
 
-                      
+
                         <div>
                             <label for="month" class="text-white block mb-1">Month</label>
 
@@ -601,12 +605,12 @@
                             </select>
                         </div>
 
-                       
+
                         <div>
                             <label class="text-white block mb-1">Year</label>
 
-                            <input type="number" min="2025" name="year" id="year" value="{{ request('year') }}"
-                                placeholder="example 2025"
+                            <input type="number" min="2025" name="year" id="year"
+                                value="{{ request('year') }}" placeholder="example 2025"
                                 class="px-3 py-2 rounded w-40
                bg-slate-600 text-white
                placeholder-white
@@ -615,7 +619,7 @@
                         </div>
 
 
-                        
+
                         <div>
                             <label for="from" class="text-white block mb-1">From</label>
 
@@ -629,7 +633,7 @@
                         </div>
 
 
-                      
+
                         <div>
                             <label for="to" class="text-white block mb-1">To</label>
 
@@ -702,28 +706,55 @@
 
                                     <select id="filterCategory" class="select2">
                                         <option value="">All Category</option>
-                                       
-                                    <option value="Plumbing">Plumbing</option>
-                                    <option value="Building">Building</option>
-                                    <option value="Mechanical Engineering">Mechanical Engineering</option>
-                                    <option value="Others">Others</option>
+
+                                        <option value="Hardware & Software">Hardware & Software</option>
+                                        <option value="Network">Network</option>
+                                        <option value="Account & Access">Account & Access</option>
+                                        <option value="Others">Others</option>
                                     </select>
                                 </div>
                                 <div class="flex flex-col gap-1">
-                                    <label for="filterPriority" class="text-xs text-slate-300">Dificulty</label>
+                                    <label for="filterSubCategory" class="text-xs text-slate-300">Sub Category</label>
+
+                                    <select id="filterSubCategory" class="select2">
+                                        <option value="">All Sub Categories</option>
+
+                                        <option value="Hardware">Hardware</option>
+                                        <option value="Software">Software</option>
+                                        <option value="Connectivity">Connectivity</option>
+                                        <option value="Infrastructure">Infrastructure</option>
+                                        <option value="Account">Account</option>
+                                        <option value="Access">Access</option>
+                                        <option value="General">General</option>
+                                        <option value="Others">Others</option>
+                                    </select>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <label for="filterPriority" class="text-xs text-slate-300">Priority</label>
 
                                     <select id="filterPriority" class="select2">
-                                        <option value="">All Dificulty</option>
+                                        <option value="">All Priorities</option>
                                         <option value="Low">Low</option>
                                         <option value="Medium">Medium</option>
                                         <option value="High">High</option>
                                     </select>
                                 </div>
                                 <div class="flex flex-col gap-1">
+                                    <label for="filterStore" class="text-xs text-slate-300">Locations</label>
+
+                                    <select id="filterStore" class="select2">
+                                        <option value="">All Locations</option>
+                                        @foreach ($stores as $store)
+                                            <option value="{{ $store->id }}">{{ $store->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+
+                                <div class="flex flex-col gap-1">
                                     <label for="dateFrom" class="text-xs text-slate-300">Date From</label>
 
-                                    <input type="date" id="dateFrom" placeholder="YYYY-MM-DD" {{-- class="px-3 py-2 bg-slate-600 border border-white/10 rounded-lg text-white
-                                    focus:outline-none focus:ring-2 focus:ring-cyan-500"> --}}
+                                    <input type="date" id="dateFrom" placeholder="YYYY-MM-DD"
                                         class="px-3 py-2 rounded w-40
                bg-slate-600 text-white
                placeholder-white
@@ -799,7 +830,7 @@
                                                 <th class="text-center">Title</th>
                                                 <th class="text-center">Category</th>
                                                 <th class="text-center">SCat</th>
-                                                <th class="text-center">Dificulty</th>
+                                                <th class="text-center">Priority</th>
                                                 <th class="text-center">Created</th>
                                                 <th class="text-center">Queue</th>
                                                 <th class="text-center">Finished</th>
@@ -892,7 +923,7 @@
                             return collect($priorities)->map(fn($p) => $ex['resolution_by_priority'][$p]['avg'])->toArray();
                         }));
 
-                  
+
                     const colors = [
                         'rgba(34,197,94,0.8)', // Low  → Hijau
                         'rgba(234,179,8,0.8)', // Medium → Kuning
@@ -903,7 +934,7 @@
                     const ctxResponse = document.getElementById('responseChart').getContext('2d');
 
                     const responseDatasets = priorities.map((priority, i) => ({
-                        label: `Dificulty ${priority}`,
+                        label: `Priority ${priority}`,
 
 
 
@@ -945,7 +976,7 @@
                     const ctxResolution = document.getElementById('resolutionChart').getContext('2d');
 
                     const resolutionDatasets = priorities.map((priority, i) => ({
-                        label: `Dificulty ${priority}`,
+                        label: `Priority ${priority}`,
                         data: resolutionData.map(r => r[i]),
                         backgroundColor: colors[i],
                     }));
@@ -991,14 +1022,22 @@
                             width: '100%',
                             dropdownParent: $('#filterCategory').parent()
                         });
+                        $('#filterSubCategory').select2({
+                            placeholder: 'Choose Sub Category...',
+                            allowClear: true,
+                            width: '100%',
+                            dropdownParent: $('#filterSubCategory').parent()
+                        });
+
                         $('#filterStatus').select2({
                             placeholder: 'Choose Status...',
                             allowClear: true,
                             width: '100%',
                             dropdownParent: $('#filterStatus').parent()
                         });
+
                         $('#filterPriority').select2({
-                            placeholder: 'Choose Dificulty...',
+                            placeholder: 'Choose Priority...',
                             allowClear: true,
                             width: '100%',
                             dropdownParent: $('#filterPriority').parent()
@@ -1015,6 +1054,13 @@
                             width: '100%',
                             dropdownParent: $('#category').parent()
                         });
+                        $('#filterStore').select2({
+                            placeholder: 'Choose Location...',
+                            allowClear: true,
+                            width: '100%',
+                            dropdownParent: $('#filterStore').parent()
+                        });
+
                     });
                 </script>
                 <script>
@@ -1034,15 +1080,15 @@
                     @endif
                 </script>
                 <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script>
-    const urlParams  = new URLSearchParams(window.location.search);
-    const filterOpen = urlParams.get('filteropen');
-    const filterProgress = urlParams.get('filterprogress');
-    const filterOverdue = urlParams.get('filteroverdue');
-    const filterClosed = urlParams.get('filterclosed');
-</script>
+                <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+                <script>
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const filterOpen = urlParams.get('filteropen');
+                    const filterProgress = urlParams.get('filterprogress');
+                    const filterOverdue = urlParams.get('filteroverdue');
+                    const filterClosed = urlParams.get('filterclosed');
+                </script>
 
 
                 <script>
@@ -1060,52 +1106,64 @@
                                 data: function(d) {
                                     d.status = $('#filterStatus').val();
                                     d.category = $('#filterCategory').val();
+                                    d.sub_category = $('#filterSubCategory').val();
                                     d.priority = $('#filterPriority').val();
+                                    // d.store = $('#filterStore').val();
+                                    d.store_id = $('#filterStore').val(); // <- tambahan
+
                                     d.date_from = $('#dateFrom').val();
                                     d.date_to = $('#dateTo').val();
-                                     d.filteropen = filterOpen;
-                                     d.filterprogress = filterProgress;
-                                     d.filteroverdue = filterOverdue;
-                                     d.filterclosed = filterClosed;
+                                    d.filteropen = filterOpen;
+                                    d.filterprogress = filterProgress;
+                                    d.filteroverdue = filterOverdue;
+                                    d.filterclosed = filterClosed;
                                 }
                             },
                             columnDefs: [{
                                 targets: '_all',
                                 className: 'dt-center'
                             }],
-                            columns: [
-                                { data: 'DT_RowIndex', name: 'DT_RowIndex', width: '5%', orderable: false, searchable: false },
-                                 
-                          
-                                {
-                                    data: 'employee_name',
-                                    name: 'employees_tables.employee_name',
-                                    width: '15%',
-                                    className: 'text-center',
+                            columns: [{
+                                    data: 'DT_RowIndex',
+                                    name: 'DT_RowIndex',
+                                    width: '5%',
                                     orderable: false,
                                     searchable: false
+                                },
+
+
+                                // {
+                                //     data: 'employee_name',
+                                //     name: 'employees_tables.employee_name',
+                                //     width: '15%',
+                                //     className: 'text-center',
+                                //     orderable: true,
+                                //     searchable: true
+                                // },
+                                {
+                                    data: 'employee_name',
+                                    name: 'employee_name', // hilangkan reference ke tabel lain
+                                    width: '15%',
+                                    className: 'text-center',
+                                    orderable: true,
+                                    searchable: false // <- ini kuncinya
                                 },
                                 {
                                     data: 'store_name',
                                     name: 'store_name',
                                     width: '10%',
                                     className: 'text-center',
-                                    orderable: false,
+                                    orderable: true,
                                     searchable: false
                                 },
-                                // {
-                                //     data: 'executor_name',
-                                //     name: 'executor_name',
-                                //     width: '15%',
-                                //     className: 'text-center'
-                                // },
+
                                 {
-                                data: 'executor_employee_name',
-                                name: 'employees_tables.employee_name',
-                                width: '15%',
-                                orderable: false,
-                                searchable: false
-                            },
+                                    data: 'executor_employee_name',
+                                    name: 'executor_employee_name',
+                                    width: '15%',
+                                    orderable: true,
+                                    searchable: false
+                                },
                                 {
                                     data: 'title',
                                     name: 'title',
@@ -1119,14 +1177,14 @@
                                     className: 'text-center'
                                 },
                                 {
-    data: 'sub_category',
-    name: 'sub_category',
-    width: '10%',
-    className: 'text-center',
-    render: function (data, type, row) {
-        return data ? data : '-';
-    }
-},
+                                    data: 'sub_category',
+                                    name: 'sub_category',
+                                    width: '10%',
+                                    className: 'text-center',
+                                    render: function(data, type, row) {
+                                        return data ? data : '-';
+                                    }
+                                },
                                 {
                                     data: 'priority',
                                     name: 'priority',
@@ -1144,13 +1202,13 @@
                                     width: '20%',
                                     className: 'text-center'
                                 },
-                                  {
+                                {
                                     data: 'queue_number',
                                     name: 'queue_number',
                                     width: '5%',
                                     className: 'text-center'
                                 },
-{
+                                {
                                     data: 'finished',
                                     name: 'finished',
                                     width: '20%',
@@ -1208,31 +1266,28 @@
                                 }
                             },
                             pageLength: 10,
-                            
-    dom:
-    '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4"' +
-        '<"length-wrapper flex items-center gap-2"lB>' +
-        '<"info-wrapper"i>' +
-    '>' +
-    'rtip',
-buttons: [
-    {
-        extend: 'excelHtml5',
-        text: 'Export Excel',
-        filename: function () {
-            let d = new Date();
-            let yyyy = d.getFullYear();
-            let mm = String(d.getMonth() + 1).padStart(2, '0');
-            let dd = String(d.getDate()).padStart(2, '0');
-            return `IT Ticket Export_${yyyy}-${mm}-${dd}`;
-        },
-        title: 'Ticket Export',
-        className: 'px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm',
-        exportOptions: {
-            columns: ':not(:last-child)'
-        }
-    }
-],
+
+                            dom: '<"flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4"' +
+                                '<"length-wrapper flex items-center gap-2"lB>' +
+                                '<"info-wrapper"i>' +
+                                '>' +
+                                'rtip',
+                            buttons: [{
+                                extend: 'excelHtml5',
+                                text: 'Export Excel',
+                                filename: function() {
+                                    let d = new Date();
+                                    let yyyy = d.getFullYear();
+                                    let mm = String(d.getMonth() + 1).padStart(2, '0');
+                                    let dd = String(d.getDate()).padStart(2, '0');
+                                    return `IT Ticket Export_${yyyy}-${mm}-${dd}`;
+                                },
+                                title: 'Ticket Export',
+                                className: 'px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm',
+                                exportOptions: {
+                                    columns: ':not(:last-child)'
+                                }
+                            }],
 
 
 
@@ -1261,11 +1316,15 @@ buttons: [
                         });
 
                         $('#btnReset').on('click', function() {
-                            $('#filterStatus').val('');
-                            $('#filterCategory').val('');
-                            $('#filterPriority').val('');
-                            $('#dateFrom').val('');
-                            $('#dateTo').val('');
+                            // $('#filterStatus').val('');
+                            $('#filterStatus').val('').trigger('change');
+
+                            $('#filterCategory').val('').trigger('change');
+                            $('#filterSubCategory').val('').trigger('change');
+                            $('#filterPriority').val('').trigger('change');
+                            $('#dateFrom').val('').trigger('change');
+                            $('#dateTo').val('').trigger('change');
+                            $('#filterStore').val('').trigger('change');
                             table.ajax.reload();
                         });
 
@@ -1312,7 +1371,7 @@ buttons: [
                                     </div>
                                     <div class="user-card-field">
                                         <div class="user-card-label">Location</div>
-                                        <div class="user-card-value">${ticket.user.employee.store.name || 'N/A'}</div>
+    <div class="user-card-value">${ticket.store?.name || 'empty'}</div>
                                     </div>
                                     <div class="user-card-field">
                                         <div class="user-card-label">Categories</div>
@@ -1324,7 +1383,7 @@ buttons: [
                                     </div>
                                   
                                     <div class="user-card-field">
-                                        <div class="user-card-label">Dificulty</div>
+                                        <div class="user-card-label">Priotity</div>
                                         <div class="user-card-value">${ticket.priority || 'N/A'}</div>
                                     </div>
                                     <div class="user-card-field">
@@ -1364,8 +1423,8 @@ buttons: [
                                         else if (status === 'Closed') cls = 'bg-green-600';
                                     
                                         return `
-                                                                                                                                                                                            <span class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold text-white rounded-full ${cls}">
-                                                                                                                                                                                            <span class="w-2 h-2 rounded-full bg-white"></span>${status}</span>`;
+                                                                                                                                                                                                                                            <span class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold text-white rounded-full ${cls}">
+                                                                                                                                                                                                                                            <span class="w-2 h-2 rounded-full bg-white"></span>${status}</span>`;
                                     })()}
                                 </div>
                             </div>
@@ -1510,18 +1569,19 @@ buttons: [
                                 <label for="filterCategory" class="text-xs text-slate-300">Category</label>
 
                                 <select id="filterCategory" class="select2">
-                                    <option value="">All Category</option>
-                                    <option value="Plumbing">Plumbing</option>
-                                    <option value="Building">Building</option>
-                                    <option value="Mechanical Engineering">Mechanical Engineering</option>
-                                    <option value="Others">Others</option>
+                                      <option value="">All Category</option>
+
+                                        <option value="Hardware & Software">Hardware & Software</option>
+                                        <option value="Network">Network</option>
+                                        <option value="Account & Access">Account & Access</option>
+                                        <option value="Others">Others</option>
                                 </select>
                             </div>
                             <div class="flex flex-col gap-1">
-                                <label for="filterPriority" class="text-xs text-slate-300">Dificulty</label>
+                                <label for="filterPriority" class="text-xs text-slate-300">Priority</label>
 
                                 <select id="filterPriority" class="select2">
-                                    <option value="">All Dificulty</option>
+                                    <option value="">All Priorities</option>
                                     <option value="Low">Low</option>
                                     <option value="Medium">Medium</option>
                                     <option value="High">High</option>
@@ -1600,6 +1660,7 @@ buttons: [
                                     <thead class="bg-slate-900">
                                         <tr>
                                             <th class="text-center">No.</th>
+                                            <th class="text-center">Location</th>
                                             <th class="text-center">Title</th>
                                             <th class="text-center">Categories</th>
                                             <th class="text-center">SCat</th>
@@ -1695,6 +1756,12 @@ buttons: [
                         width: '100%',
                         dropdownParent: $('#filterCategory').parent()
                     });
+                    $('#filterSubCategory').select2({
+                        placeholder: 'Choose Sub Category...',
+                        allowClear: true,
+                        width: '100%',
+                        dropdownParent: $('#filterSubCategory').parent()
+                    });
                     $('#filterStatus').select2({
                         placeholder: 'Choose Status...',
                         allowClear: true,
@@ -1702,7 +1769,7 @@ buttons: [
                         dropdownParent: $('#filterStatus').parent()
                     });
                     $('#filterPriority').select2({
-                        placeholder: 'Choose Dificulty...',
+                        placeholder: 'Choose Priority...',
                         allowClear: true,
                         width: '100%',
                         dropdownParent: $('#filterPriority').parent()
@@ -1752,6 +1819,7 @@ buttons: [
                             data: function(d) {
                                 d.status = $('#filterStatus').val();
                                 d.category = $('#filterCategory').val();
+                                d.sub_category = $('#filterSubCategory').val();
                                 d.priority = $('#filterPriority').val();
                                 d.date_from = $('#dateFrom').val();
                                 d.date_to = $('#dateTo').val();
@@ -1761,10 +1829,23 @@ buttons: [
                             targets: '_all',
                             className: 'dt-center'
                         }],
-                        columns: [
-                                { data: 'DT_RowIndex', name: 'DT_RowIndex', width: '5%', orderable: false, searchable: false },
-                            
-                       
+                        columns: [{
+                                data: 'DT_RowIndex',
+                                name: 'DT_RowIndex',
+                                width: '5%',
+                                orderable: false,
+                                searchable: false
+                            },
+                             {
+                                    data: 'store_name',
+                                    name: 'store_name',
+                                    width: '10%',
+                                    className: 'text-center',
+                                    orderable: false,
+                                    searchable: false
+                                },
+
+
 
                             {
                                 data: 'title',
@@ -1777,14 +1858,14 @@ buttons: [
                                 width: '15%'
                             },
                             {
-    data: 'sub_category',
-    name: 'sub_category',
-    width: '10%',
-    className: 'text-center',
-    render: function (data, type, row) {
-        return data ? data : 'empty';
-    }
-},
+                                data: 'sub_category',
+                                name: 'sub_category',
+                                width: '10%',
+                                className: 'text-center',
+                                render: function(data, type, row) {
+                                    return data ? data : 'empty';
+                                }
+                            },
 
                             {
                                 data: 'executor_employee_name',
@@ -1810,7 +1891,7 @@ buttons: [
                                     return data ? data : 'empty';
                                 }
                             },
-                             {
+                            {
                                 data: 'queue_number',
                                 name: 'queue_number',
                                 width: '5%'
@@ -1908,22 +1989,20 @@ buttons: [
                     $('#btnFilter').on('click', function() {
                         table.ajax.reload();
                     });
-
                     $('#btnReset').on('click', function() {
-                        $('#filterStatus').val('');
-                        $('#filterCategory').val('');
-                        $('#filterPriority').val('');
-                        $('#dateFrom').val('');
-                        $('#dateTo').val('');
+                         $('#filterStatus').val('').trigger('change');
+
+                        $('#filterCategory').val('').trigger('change');
+                        $('#filterSubCategory').val('').trigger('change');
+                        $('#filterPriority').val('').trigger('change');
+                        $('#dateFrom').val('').trigger('change');
+                        $('#dateTo').val('').trigger('change');
                         table.ajax.reload();
                     });
-
-
                     // Custom search functionality
                     $('#table-search').on('keyup', function() {
                         table.search(this.value).draw();
                     });
-
                     // Function to render mobile cards
                     function renderMobileCards() {
                         if ($(window).width() >= 768) return;
@@ -1969,7 +2048,7 @@ buttons: [
                                         <div class="user-card-value">${ticket.executor_employee_name || 'N/A'}</div>
                                     </div>
                                     <div class="user-card-field">
-                                        <div class="user-card-label">Dificulty</div>
+                                        <div class="user-card-label">Priority</div>
                                         <div class="user-card-value">${ticket.priority || 'N/A'}</div>
                                     </div>
                                     <div class="user-card-field">
@@ -2003,8 +2082,8 @@ buttons: [
                                         else if (status === 'Overdue') cls = 'bg-red-500';
                                         else if (status === 'Closed') cls = 'bg-green-600';
                                         return `
-                                                                        <span class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold text-white rounded-full ${cls}">
-                                                                        <span class="w-2 h-2 rounded-full bg-white"></span>${status}</span>`;
+                                                                                                            <span class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold text-white rounded-full ${cls}">
+                                                                                                            <span class="w-2 h-2 rounded-full bg-white"></span>${status}</span>`;
                                     })()}
                                 </div>
                             </div>

@@ -23,9 +23,16 @@ Route::middleware('throttle:15,1')->group(function () {
 });
 Route::middleware(['auth', 'role:admin|human|executor'])->group(function () {
     Route::get('/dashboard', [dashboardController::class, 'dashboardPage'])->name('dashboard');
-    Route::post('/tickets/{ticketId}/attachments', [TicketAttachmentController::class, 'store'])->name('attachments.store');
-    Route::delete('/tickets/{ticketId}/attachments/{attachmentId}', [TicketAttachmentController::class, 'destroy'])->name('attachments.destroy');
+    // Route::post('/tickets/{ticketId}/attachments', [TicketAttachmentController::class, 'store'])->name('attachments.store');
+    // Route::delete('/tickets/{ticketId}/attachments/{attachmentId}', [TicketAttachmentController::class, 'destroy'])->name('attachments.destroy');
+     Route::post('/attachments/{ticket}', [TicketAttachmentController::class, 'store'])->name('attachments.store');
+    Route::delete('/attachments/{attachment}', [TicketAttachmentController::class, 'destroy'])->name('attachments.destroy');
+    Route::get('/attachments/{attachment}/signed-url', [TicketAttachmentController::class, 'signedUrl'])->name('attachments.signed-url');
  
+     Route::post('/attachmentsforexecutor/{ticket}', [TicketExecutorAttachmentController::class, 'store'])->name('attachmentsforexecutor.store');
+    Route::delete('/attachmentsforexecutor/{attachment}', [TicketExecutorAttachmentController::class, 'destroy'])->name('attachmentsforexecutor.destroy');
+    Route::get('/attachmentsforexecutor/{attachment}/signed-url-for-executor', [TicketExecutorAttachmentController::class, 'signedUrlForExecutor'])->name('attachmentsforexecutor.signed-url-for-executor');
+
     // routes/web.php
 Route::get('/dashboard/filteropen', [dashboardController::class, 'dashboardPage'])
     ->name('dashboard.filteropen');

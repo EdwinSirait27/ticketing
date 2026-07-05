@@ -8,20 +8,21 @@ use App\Models\Tickets;
 
 class ProfileController extends Controller
 {
-
      public function profile()
     {
-        $user = Auth::user();
+         /** @var \App\Models\User $user */        
+            $user = Auth::user()->load('employee.position','employee.store','employee.department','employee');
+
         $roles = $user->getRoleNames();
-         $allticket = Tickets::where('user_id', auth()->id())
+         $allticket = Tickets::where('user_id', $user->id)
             ->count();
-            $overdueticket = Tickets::where('user_id', auth()->id())
+            $overdueticket = Tickets::where('user_id', $user->id)
             ->where('status', 'Overdue')
             ->count();
-            $openticket = Tickets::where('user_id', auth()->id())
+            $openticket = Tickets::where('user_id', $user->id)
             ->where('status', 'Open')
             ->count();
-            $handled = Tickets::where('executor_id',auth()->id())->count();
+            $handled = Tickets::where('executor_id', $user->id)->count();
 
         return view('pages.profile',compact('roles','allticket','user','overdueticket','openticket','handled'));
     }
@@ -30,9 +31,9 @@ class ProfileController extends Controller
     $request->validate([
         'role' => 'required|string',
     ]);
+         /** @var \App\Models\User $user */
 
-    $user = auth()->user();
-
+            $user = Auth::user();
     // validasi dari all_roles_bdtix, bukan Spatie
     $allRoles = $user->all_roles_tix ?? [];
     if (!in_array($request->role, $allRoles)) {

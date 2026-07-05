@@ -42,7 +42,7 @@ class SendOverdueTicketWhatsapp implements ShouldQueue
         $user = User::with('employee.store')->find($ticket->user_id);
         $adminUrl  = route('editopenticketforadmin', $hash);
         $employee = $user?->employee;
-        $store = $employee?->store;
+        $store = $ticket->store?->name;
         $phoneNumber  = $employee->telp_number ?? '-';
 
         $estimation = $ticket->estimation
@@ -62,7 +62,7 @@ class SendOverdueTicketWhatsapp implements ShouldQueue
             "Queue: {$ticket->queue_number}",
             "Date: {$createdAt}",
             "User: {$employee->employee_name}",
-            "Location: {$store->name}",
+            "Location: {$store}",
             "Phone Number: {$phoneNumber}",
             "Title: {$ticket->title}",
             "Categories: {$ticket->category}",

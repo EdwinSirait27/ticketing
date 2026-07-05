@@ -1,19 +1,25 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\Tickets;
+use App\Models\Employee;
 use App\Models\User;
+use App\Models\Store;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+
 class dashboardController extends Controller
 {
-   
+
     public function dashboardPage()
     {
+        /** @var \App\Models\User $user */
         $user      = Auth::user();
         $userhuman = Auth::user();
 
@@ -26,12 +32,12 @@ class dashboardController extends Controller
         $closedticket     = Tickets::whereNotNull('finished')->count();
         $overdueticket    = Tickets::where('status', 'Overdue')->count();
 
-        $assignedtoyou       = Tickets::where('executor_id', auth()->id())->count();
+        $assignedtoyou       = Tickets::where('executor_id', $user->id)->count();
         $finishedtickettoyou = Tickets::whereNotNull('finished')
-            ->where('executor_id', auth()->id())
+            ->where('executor_id', $user->id)
             ->count();
 
-        $executorId = auth()->id();
+        $executorId = $user->id;
 
         $totalSlaTickets = Tickets::where('executor_id', $executorId)
             ->whereNotNull('estimation')
@@ -50,12 +56,11 @@ class dashboardController extends Controller
             ? round(($slaCompliantTickets / $totalSlaTickets) * 100, 2)
             : 0;
 
-        $alltickethuman        = Tickets::where('user_id', auth()->id())->count();
-        $overduetickethuman    = Tickets::where('user_id', auth()->id())->where('status', 'Overdue')->count();
-        $todaystickethuman     = Tickets::where('user_id', auth()->id())->whereDate('created_at', Carbon::today())->count();
-        $onprogresstickethuman = Tickets::where('user_id', auth()->id())->where('status', 'Progress')->count();
-        $closedtickethuman     = Tickets::where('user_id', auth()->id())->where('status', 'Closed')->count();
-
+        $alltickethuman        = Tickets::where('user_id', $user->id)->count();
+        $overduetickethuman    = Tickets::where('user_id', $user->id)->where('status', 'Overdue')->count();
+        $todaystickethuman     = Tickets::where('user_id', $user->id)->whereDate('created_at', Carbon::today())->count();
+        $onprogresstickethuman = Tickets::where('user_id', $user->id)->where('status', 'Progress')->count();
+        $closedtickethuman     = Tickets::where('user_id', $user->id)->where('status', 'Closed')->count();
         $month    = request('month');
         $quarter  = request('quarter');
         $year     = request('year');
@@ -173,9 +178,12 @@ class dashboardController extends Controller
                 'resolution_by_priority' => $resolutionByPriority,
             ];
         });
+        $stores = Store::orderBy('name')->get();
+
 
         return view('pages.dashboard', compact(
             'user',
+            'stores',
             'userhuman',
             'adminCount',
             'todaysticket',
@@ -200,7 +208,7 @@ class dashboardController extends Controller
         ));
     }
 
-  
+
     public function aboutUs()
     {
         return view('pages.about');
@@ -208,39 +216,64 @@ class dashboardController extends Controller
 
     public function getAllticketforadmins(Request $request)
     {
-        $query = Tickets::with('user.employee', 'user.employee.store', 'executor.employee')
+        $hrxDb = config('database.connections.hrx.database');
+        $query = Tickets::with('store','user.employee', 'user.employee.store', 'executor.employee')
             ->select([
-                'id', 'user_id', 'queue_number', 'title', 'description',
-                'progressed_at', 'estimation', 'estimation_to',
-                'executor_id','category','sub_category', 'priority',
-                'finished', 'status', 'created_at',
+                'ticket_tables.id',
+                'ticket_tables.user_id',
+                'ticket_tables.queue_number',
+                'ticket_tables.title',
+                'ticket_tables.description',
+                'ticket_tables.progressed_at',
+                'ticket_tables.estimation',
+                'ticket_tables.estimation_to',
+                'ticket_tables.executor_id',
+                'ticket_tables.category',
+                'ticket_tables.sub_category',
+                'ticket_tables.priority',
+                'ticket_tables.finished',
+                'ticket_tables.store_id',
+                'ticket_tables.status',
+                'ticket_tables.created_at',
             ]);
+
         $search = $request->input('search.value');
+
         if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('queue_number', 'like', "%{$search}%")
-                  ->orWhere('title',       'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhere('category',    'like', "%{$search}%")
-                  ->orWhere('sub_category',    'like', "%{$search}%")
-                  ->orWhere('status',      'like', "%{$search}%");
+            $matchingEmployeeIds = Employee::where('employee_name', 'like', "%{$search}%")
+                ->pluck('id');
+
+            $matchingUserIds = User::whereIn('employee_id', $matchingEmployeeIds)
+                ->pluck('id');
+
+            $query->where(function ($q) use ($search, $matchingUserIds) {
+                $q->where('ticket_tables.queue_number', 'like', "%{$search}%")
+                    ->orWhere('ticket_tables.title',       'like', "%{$search}%")
+                    ->orWhere('ticket_tables.description', 'like', "%{$search}%")
+                    ->orWhere('ticket_tables.category',    'like', "%{$search}%")
+                    ->orWhere('ticket_tables.sub_category', 'like', "%{$search}%")
+                    ->orWhere('ticket_tables.status',      'like', "%{$search}%")
+                    ->orWhereIn('ticket_tables.user_id', $matchingUserIds)
+                    ->orWhereIn('ticket_tables.executor_id', $matchingUserIds);
             });
         }
 
         // --- Status Filters ---
-        if ($request->filled('status'))              $query->where('status', $request->status);
-        if ($request->filteropen     === 'Open')     $query->where('status', 'Open');
-        if ($request->filterprogress === 'Progress') $query->where('status', 'Progress');
-        if ($request->filterclosed   === 'Closed')   $query->where('status', 'Closed');
-        if ($request->filteroverdue  === 'Overdue')  $query->where('status', 'Overdue');
+        if ($request->filled('status'))              $query->where('ticket_tables.status', $request->status);
+        if ($request->filteropen     === 'Open')     $query->where('ticket_tables.status', 'Open');
+        if ($request->filterprogress === 'Progress') $query->where('ticket_tables.status', 'Progress');
+        if ($request->filterclosed   === 'Closed')   $query->where('ticket_tables.status', 'Closed');
+        if ($request->filteroverdue  === 'Overdue')  $query->where('ticket_tables.status', 'Overdue');
 
         // --- Other Filters ---
-        if ($request->filter === 'today')  $query->whereDate('created_at', Carbon::today());
-        if ($request->filled('category'))  $query->where('category', $request->category);
-        if ($request->filled('priority'))  $query->where('priority', $request->priority);
+        if ($request->filter === 'today')  $query->whereDate('ticket_tables.created_at', Carbon::today());
+        if ($request->filled('category'))  $query->where('ticket_tables.category', $request->category);
+        if ($request->filled('sub_category'))  $query->where('ticket_tables.sub_category', $request->sub_category);
+        if ($request->filled('priority'))  $query->where('ticket_tables.priority', $request->priority);
+        if ($request->filled('store_id'))  $query->where('ticket_tables.store_id', $request->store_id); // <- tambahan
 
         if ($request->filled('date_from') && $request->filled('date_to')) {
-            $query->whereBetween('created_at', [
+            $query->whereBetween('ticket_tables.created_at', [
                 $request->date_from . ' 00:00:00',
                 $request->date_to   . ' 23:59:59',
             ]);
@@ -252,44 +285,66 @@ class dashboardController extends Controller
 
         return DataTables::eloquent($query)
             ->addIndexColumn()
-            ->addColumn('employee_name', fn($t) =>
+            ->addColumn(
+                'employee_name',
+                fn($t) =>
                 optional($t->user?->employee)->employee_name ?? '-'
             )
+          
             ->addColumn('store_name', fn($t) =>
-                optional($t->user?->employee->store)->name ?? '-'
-            )
-            ->addColumn('executor_employee_name', fn($t) =>
+    optional($t->store)->name ?? '-'
+)
+            ->addColumn(
+                'executor_employee_name',
+                fn($t) =>
                 $t->executor?->employee?->employee_name ?? 'empty'
             )
-            ->orderColumn('executor_employee_name', function ($query, $order) {})
-            ->orderColumn('employee_name', function ($query, $order) {
+            ->orderColumn('employee_name', function ($query, $order) use ($hrxDb) {
                 $query
-                    ->join('users',     'users.id',     '=', 'tickets.user_id')
-                    ->join('employees', 'employees.id', '=', 'users.employee_id')
-                    ->orderBy('employees.employee_name', $order);
+                    ->join("{$hrxDb}.users as ord_users", 'ord_users.id', '=', 'ticket_tables.user_id')
+                    ->join("{$hrxDb}.employees_tables as ord_employees", 'ord_employees.id', '=', 'ord_users.employee_id')
+                    ->orderBy('ord_employees.employee_name', $order);
             })
-            ->editColumn('created_at',    fn($t) =>
+            ->orderColumn('executor_employee_name', function ($query, $order) use ($hrxDb) {
+                $query
+                    ->join("{$hrxDb}.users as ord_exec_users", 'ord_exec_users.id', '=', 'ticket_tables.executor_id')
+                    ->join("{$hrxDb}.employees_tables as ord_exec_employees", 'ord_exec_employees.id', '=', 'ord_exec_users.employee_id')
+                    ->orderBy('ord_exec_employees.employee_name', $order);
+            })
+            ->editColumn(
+                'created_at',
+                fn($t) =>
                 optional($t->created_at)->timezone('Asia/Makassar')->translatedFormat('d F Y H:i')
             )
-            ->editColumn('progressed_at', fn($t) =>
+            ->editColumn(
+                'progressed_at',
+                fn($t) =>
                 $t->progressed_at
                     ? $t->progressed_at->timezone('Asia/Makassar')->translatedFormat('d F Y H:i')
                     : '-'
             )
-              ->addColumn('sub_category', fn($t) =>
-                optional($t)->sub_category ?? 'empty'
-            )
-            ->editColumn('estimation', fn($t) =>
+            // ->addColumn(
+            //     'sub_category',
+            //     fn($t) =>
+            //     optional($t)->sub_category ?? 'empty'
+            // )
+            ->editColumn(
+                'estimation',
+                fn($t) =>
                 $t->estimation
                     ? $t->estimation->timezone('Asia/Makassar')->translatedFormat('d F Y H:i')
                     : '-'
             )
-            ->editColumn('estimation_to', fn($t) =>
+            ->editColumn(
+                'estimation_to',
+                fn($t) =>
                 $t->estimation_to
                     ? $t->estimation_to->timezone('Asia/Makassar')->translatedFormat('d F Y H:i')
                     : '-'
             )
-            ->editColumn('finished', fn($t) =>
+            ->editColumn(
+                'finished',
+                fn($t) =>
                 $t->finished
                     ? $t->finished->timezone('Asia/Makassar')->translatedFormat('d F Y H:i')
                     : '-'
@@ -351,9 +406,10 @@ class dashboardController extends Controller
             ->rawColumns(['action'])
             ->make(true);
     }
+   
 
     // HELPER — Find Ticket by Hash
-   
+
     private function findTicketByHash(string $hash): Tickets
     {
         $ticket = Tickets::with('user.employee')
@@ -369,17 +425,19 @@ class dashboardController extends Controller
     }
 
     // HELPER — Generate Ticket Hash
-    
+
     private function generateTicketHash(string $ticketId): string
     {
         return substr(hash('sha256', $ticketId . config('app.key')), 0, 8);
     }
 
     // EDIT TICKET (Admin View)
-    
+
     public function edit($hash)
     {
-        $ticket = Tickets::with(['user.employee', 'executor.employee', 'attachments', 'executorAttachments'])
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $ticket = Tickets::with(['user.employee', 'executor.employee', 'attachments', 'executorAttachments','store'])
             ->get()
             ->first(fn($t) => hash_equals(
                 substr(hash('sha256', $t->id . config('app.key')), 0, 8),
@@ -394,24 +452,29 @@ class dashboardController extends Controller
             return redirect()->route('dashboard')->with('error', 'Ticket Closed');
         }
 
-        if (auth()->user()->hasRole('human')) {
+        if ($user->hasRole('human')) {
             return redirect()->route('showmytickets', $hash)
                 ->with('error', 'You are not allowed to edit this ticket');
         }
 
+
         $createdat = optional($ticket->created_at)
             ->timezone('Asia/Makassar')
             ->translatedFormat('d F Y H:i');
+$stores = Store::orderBy('name')->get();
 
-        return view('pages.editopenticketforadmin', compact('ticket', 'createdat'));
+        return view('pages.editopenticketforadmin', compact('ticket', 'createdat','stores'));
     }
 
     // SHOW TICKET
-    
+
     public function show($hash)
     {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
         // FIX: tambah executorAttachments agar bisa ditampilkan di blade
-        $ticket = Tickets::with(['user.employee', 'executor.employee', 'attachments', 'executorAttachments'])
+        $ticket = Tickets::with(['user.employee', 'executor.employee', 'attachments', 'executorAttachments','store'])
             ->get()
             ->first(fn($t) => hash_equals(
                 substr(hash('sha256', $t->id . config('app.key')), 0, 8),
@@ -422,7 +485,7 @@ class dashboardController extends Controller
             abort(404, 'Ticket not found');
         }
 
-        if (auth()->user()->hasRole('human')) {
+        if ($user->hasRole('human')) {
             return redirect()->route('showmytickets', $hash)
                 ->with('error', 'You are not allowed to edit this ticket');
         }
@@ -431,15 +494,18 @@ class dashboardController extends Controller
     }
 
     // UPDATE TICKET
-    
+
     public function update(Request $request, string $hash)
     {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
         $ticket    = $this->findTicketByHash($hash);
         $oldStatus = $ticket->status;
 
         Log::info('TICKET_UPDATE_START', [
             'ticket_id' => $ticket->id,
-            'user_id'   => auth()->id(),
+            'user_id'   => $user->id,
             'ip'        => $request->ip(),
         ]);
 
@@ -447,7 +513,7 @@ class dashboardController extends Controller
         $isOpenStatus = $ticket->status === 'Open';
 
         $validated = $request->validate([
-                   'category'       => 'required|in:Hardware & Software,Network,Account & Access,Others',
+            'category'       => 'required|in:Hardware & Software,Network,Account & Access,Others',
             'sub_category'       => 'required|in:Hardware,Sofware,Connectivity,Infrastructure,Account,Access,General,Others',
             'notes_executor' => 'required|string|min:5|max:500',
             'finished'       => 'nullable|date',
@@ -473,7 +539,7 @@ class dashboardController extends Controller
             }
 
             // Auto Priority: hour = Low, day = Medium, week = High
-            $autoPriority = match($durationType) {
+            $autoPriority = match ($durationType) {
                 'hour'  => 'Low',
                 'day'   => 'Medium',
                 'week'  => 'High',
@@ -518,13 +584,20 @@ class dashboardController extends Controller
 
         // Database Transaction
         DB::transaction(function () use (
-            $validated, $ticket, $status, $finished,
-            $progressedAt, $oldStatus, $durationType,
-            $durationValue, $autoEstimation, $autoPriority
+            $validated,
+            $ticket,
+            $status,
+            $finished,
+            $progressedAt,
+            $oldStatus,
+            $durationType,
+            $durationValue,
+            $autoEstimation,
+            $autoPriority
         ) {
             if ($oldStatus === 'Open') {
                 $estimation   = $autoEstimation;
-                $estimationTo = match($durationType) {
+                $estimationTo = match ($durationType) {
                     'hour'  => $estimation->copy()->addHours($durationValue),
                     'day'   => $estimation->copy()->addDays($durationValue),
                     'week'  => $estimation->copy()->addWeeks($durationValue),
@@ -534,6 +607,7 @@ class dashboardController extends Controller
                 $estimation   = $ticket->estimation;
                 $estimationTo = $ticket->estimation_to;
             }
+            $user = Auth::user();
 
             $data = [
                 'category'       => $validated['category'],
@@ -543,7 +617,7 @@ class dashboardController extends Controller
                 'finished'       => $finished,
                 'estimation'     => $estimation,
                 'estimation_to'  => $estimationTo,
-                'executor_id'    => auth()->id(),
+                'executor_id'    => $user->id,
                 'duration_type'  => $durationType,
                 'duration_value' => $durationValue,
                 'priority'       => $autoPriority,
@@ -566,17 +640,19 @@ class dashboardController extends Controller
         });
         $ticket->refresh();
         // WhatsApp Notification
+        $user = Auth::user();
+
         try {
             $hash             = $this->generateTicketHash($ticket->id);
             $adminUrl         = route('editopenticketforadmin', $hash);
             $reviewUrl        = route('reviewtickets', $hash);
-            $executorName     = auth()->user()->employee->employee_name ?? auth()->user()->username;
+            $executorName     = $user->employee->employee_name ?? $user->username;
             $formattedDate    = $ticket->created_at?->timezone('Asia/Makassar')?->format('d-m-Y H:i') ?? '-';
             $finishedDate     = $ticket->finished?->timezone('Asia/Makassar')?->format('d-m-Y H:i') ?? '-';
             $estimationDate   = $ticket->estimation?->timezone('Asia/Makassar')?->format('d-m-Y H:i') ?? '-';
             $estimationToDate = $ticket->estimation_to?->timezone('Asia/Makassar')?->format('d-m-Y H:i') ?? '-';
             $userName         = $ticket->user->employee->employee_name;
-            $locationName     = $ticket->user->employee->store->name ?? '-';
+            $locationName     = $ticket->store?->name ?? '-';
             $phoneNumber      = $ticket->user->employee->telp_number ?? '-';
             $isProgressToClosed  = $oldStatus === 'Progress' && $ticket->status === 'Closed';
             $isOverdueToProgress = $oldStatus === 'Overdue'  && $ticket->status === 'Progress';

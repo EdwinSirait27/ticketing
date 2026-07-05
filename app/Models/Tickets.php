@@ -81,6 +81,7 @@ class Tickets extends Model
         'sub_category',
         'description',
         'status',
+        'store_id',
         'attachment_folder',
         'attachment_url',
         'executor_id',
@@ -128,6 +129,10 @@ class Tickets extends Model
     public function review()
 {
     return $this->hasOne(TicketReview::class, 'ticket_id', 'id');
+}
+    public function store()
+{
+    return $this->belongsTo(Store::class, 'store_id', 'id');
 }
 
 }

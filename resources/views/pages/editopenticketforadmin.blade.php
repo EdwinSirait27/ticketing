@@ -49,6 +49,9 @@
         }
 
         #executorSourceModal,
+        #previewModalForExecutor {
+            z-index: 9999;
+        }
         #previewModal {
             z-index: 9999;
         }
@@ -58,22 +61,26 @@
             background: #1e293b !important;
             border: 1px solid #334155 !important;
             border-radius: 0.75rem !important;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4) !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4) !important;
             z-index: 99999 !important;
         }
+
         .flatpickr-time input,
         .flatpickr-time .flatpickr-time-separator,
         .flatpickr-time .flatpickr-am-pm {
             color: #e5e7eb !important;
             background: #1e293b !important;
         }
+
         .flatpickr-time input:hover,
         .flatpickr-time input:focus {
             background: #334155 !important;
         }
+
         .numInputWrapper:hover {
             background: #334155 !important;
         }
+
         .flatpickr-input {
             background-color: #1e293b !important;
             border: 1px solid #334155 !important;
@@ -84,10 +91,11 @@
             font-size: 0.875rem !important;
             cursor: pointer !important;
         }
+
         .flatpickr-input:focus {
             outline: none !important;
             border-color: #3b82f6 !important;
-            box-shadow: 0 0 0 2px rgba(59,130,246,0.3) !important;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3) !important;
         }
     </style>
 
@@ -104,12 +112,14 @@
                     <h3 class="text-sm font-semibold text-blue-400 mb-1">Tickets from
                         {{ optional($ticket->user->employee)->employee_name }}</h3>
                     <p class="text-xs text-slate-400 leading-relaxed">Date : {{ $createdat }}</p>
-                    <p class="text-xs text-slate-400 leading-relaxed">Queue Number : {{ optional($ticket)->queue_number }}</p>
+                    <p class="text-xs text-slate-400 leading-relaxed">Queue Number : {{ optional($ticket)->queue_number }}
+                    </p>
                 </div>
             </div>
         </div>
 
-        <form method="POST" action="{{ route('updateopenticketforadmin', request()->route('hash')) }}" class="space-y-6">
+        <form method="POST" action="{{ route('updateopenticketforadmin', request()->route('hash')) }}" class="space-y-6"
+            enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <input type="hidden" name="updated_at" value="{{ $ticket->updated_at->toISOString() }}">
@@ -121,6 +131,21 @@
                 </div>
             @endif
 
+            <div>
+                <label for="store_id" class="block text-sm font-semibold text-slate-300 mb-2 flex items-center space-x-2">
+                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                    </svg>
+                    <span>Location</span>
+                    <span class="text-red-400">*</span>
+                </label>
+
+                <input type="text" id="store_id" name="store_id" required
+                    placeholder="Example: Laptop cannot connect to WiFi"
+                    class="w-full px-4 py-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    value="{{ old('store_id', $ticket->store?->name ?? 'Empty') }}" disabled>
+            </div>
             <div>
                 <label for="title" class="block text-sm font-semibold text-slate-300 mb-2 flex items-center space-x-2">
                     <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -149,10 +174,16 @@
                     <select id="category" name="category" required
                         class="select2 w-full bg-slate-800 border border-slate-700 rounded-xl text-white">
                         <option value="">Choose Categories...</option>
-                        <option value="Hardware & Software" {{ old('category', $ticket->category) == 'Hardware & Software' ? 'selected' : '' }}>Hardware & Software</option>
-                        <option value="Network" {{ old('category', $ticket->category) == 'Network' ? 'selected' : '' }}>Network</option>
-                        <option value="Account & Access" {{ old('category', $ticket->category) == 'Account & Access' ? 'selected' : '' }}>Account & Access</option>
-                        <option value="Others" {{ old('category', $ticket->category) == 'Others' ? 'selected' : '' }}>Others</option>
+                        <option value="Hardware & Software"
+                            {{ old('category', $ticket->category) == 'Hardware & Software' ? 'selected' : '' }}>Hardware &
+                            Software</option>
+                        <option value="Network" {{ old('category', $ticket->category) == 'Network' ? 'selected' : '' }}>
+                            Network</option>
+                        <option value="Account & Access"
+                            {{ old('category', $ticket->category) == 'Account & Access' ? 'selected' : '' }}>Account &
+                            Access</option>
+                        <option value="Others" {{ old('category', $ticket->category) == 'Others' ? 'selected' : '' }}>
+                            Others</option>
                     </select>
                 </div>
                 @error('category')
@@ -166,7 +197,7 @@
                     </p>
                 @enderror
             </div>
-             <div>
+            <div>
                 <label for="sub_category"
                     class="block text-sm font-semibold text-slate-300 mb-2 flex items-center space-x-2">
                     <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -180,29 +211,30 @@
                     <select id="sub_category" name="sub_category" required
                         class="select2 w-full bg-slate-800 border border-slate-700 rounded-xl text-white">
                         <option value="">Choose Sub Categories...</option>
-                         <option value="Hardware" {{ old('sub_category', $ticket->sub_category) == 'Hardware' ? 'selected' : '' }}>
+                        <option value="Hardware"
+                            {{ old('sub_category', $ticket->sub_category) == 'Hardware' ? 'selected' : '' }}>
                             Hardware
                         </option>
                         <option value="Software"
                             {{ old('sub_category', $ticket->sub_category) == 'Software' ? 'selected' : '' }}>
                             Software
                         </option>
-                       
+
                         <option value="Connectivity"
                             {{ old('sub_category', $ticket->sub_category) == 'Connectivity' ? 'selected' : '' }}>
                             Connectivity
                         </option>
-                       
+
                         <option value="Infrastructure"
                             {{ old('sub_category', $ticket->sub_category) == 'Infrastructure' ? 'selected' : '' }}>
                             Infrastructure
                         </option>
-                       
+
                         <option value="Account"
                             {{ old('sub_category', $ticket->sub_category) == 'Account' ? 'selected' : '' }}>
                             Account
                         </option>
-                       
+
                         <option value="Access"
                             {{ old('sub_category', $ticket->sub_category) == 'Access' ? 'selected' : '' }}>
                             Access
@@ -211,7 +243,8 @@
                             {{ old('sub_category', $ticket->sub_category) == 'General' ? 'selected' : '' }}>
                             General
                         </option>
-                        <option value="Others" {{ old('sub_category', $ticket->sub_category) == 'Others' ? 'selected' : '' }}>
+                        <option value="Others"
+                            {{ old('sub_category', $ticket->sub_category) == 'Others' ? 'selected' : '' }}>
                             Others
                         </option>
                     </select>
@@ -230,9 +263,11 @@
 
 
             <div>
-                <label for="description" class="block text-sm font-semibold text-slate-300 mb-2 flex items-center space-x-2">
+                <label for="description"
+                    class="block text-sm font-semibold text-slate-300 mb-2 flex items-center space-x-2">
                     <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h7" />
                     </svg>
                     <span>Problem Description</span>
                     <span class="text-red-400">*</span>
@@ -247,9 +282,11 @@
             </div>
 
             <div class="-mt-4">
-                <label for="notes_executor" class="block text-sm font-semibold text-slate-300 mb-2 flex items-center space-x-2">
+                <label for="notes_executor"
+                    class="block text-sm font-semibold text-slate-300 mb-2 flex items-center space-x-2">
                     <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h7" />
                     </svg>
                     <span>Notes Executor</span>
                     <span class="text-red-400">*</span>
@@ -393,22 +430,23 @@
             @endif
 
             @if ($ticket->status === 'Overdue')
-            <div>
-                <label for="statusSelect" class="block text-sm font-semibold text-slate-300 mb-2 flex items-center space-x-2">
-                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>Status</span>
-                    <span class="text-red-400">*</span>
-                </label>
-                <select id="statusSelect" name="status"
-                    class="select2-status w-full bg-slate-800 border border-slate-700 rounded-xl text-white">
-                    <option value="" disabled selected>Overdue — Choose action...</option>
-                    <option value="Progress">Back to Progress</option>
-                    <option value="Closed">Close this Ticket</option>
-                </select>
-            </div>
+                <div>
+                    <label for="statusSelect"
+                        class="block text-sm font-semibold text-slate-300 mb-2 flex items-center space-x-2">
+                        <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Status</span>
+                        <span class="text-red-400">*</span>
+                    </label>
+                    <select id="statusSelect" name="status"
+                        class="select2-status w-full bg-slate-800 border border-slate-700 rounded-xl text-white">
+                        <option value="" disabled selected>Overdue — Choose action...</option>
+                        <option value="Progress">Back to Progress</option>
+                        <option value="Closed">Close this Ticket</option>
+                    </select>
+                </div>
             @elseif (in_array($ticket->status, ['Progress']))
                 <input type="hidden" name="status" id="ticketStatusInput" value="Closed">
             @endif
@@ -422,30 +460,39 @@
                     <span>User Attachments</span>
                 </label>
                 <div class="border border-slate-700 rounded-xl p-4 bg-slate-800/40 min-h-[80px]">
+                   
                     @if ($ticket->attachments->count())
-                        <ul class="space-y-2">
-                            @foreach ($ticket->attachments as $file)
-                                <li class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M8 2a4 4 0 00-4 4v8a6 6 0 0012 0V6a2 2 0 10-4 0v7a1 1 0 102 0V6a4 4 0 00-8 0v8a4 4 0 008 0V6" />
-                                    </svg>
-                                    @if ($file->drive_file_id && $file->status === 'uploaded')
-                                        <button type="button"
-                                            onclick="openPreviewModal('https://drive.google.com/file/d/{{ $file->drive_file_id }}/preview', '{{ addslashes($file->original_name ?? $file->file_name) }}')"
-                                            class="text-sm text-blue-400 hover:underline text-left">
-                                            {{ $file->original_name ?? $file->file_name }}
-                                        </button>
-                                    @else
-                                        <span class="text-sm text-slate-400">
-                                            {{ $file->original_name ?? $file->file_name }}
-                                            <span class="text-xs text-yellow-500">(processing...)</span>
-                                        </span>
-                                    @endif
-                                </li>
-                            @endforeach
-                        </ul>
+                        <div class="border border-slate-700 rounded-xl p-4 bg-slate-800/40 mb-3"
+                            id="existing-attachments">
+                            <ul class="space-y-2" id="attachment-list">
+                                @foreach ($ticket->attachments as $file)
+                                    <li class="flex items-center justify-between gap-2"
+                                        id="attachment-item-{{ $file->id }}">
+                                        <div class="flex items-center gap-2 flex-1 min-w-0">
+                                            <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="currentColor"
+                                                viewBox="0 0 20 20">
+                                                <path
+                                                    d="M8 2a4 4 0 00-4 4v8a6 6 0 0012 0V6a2 2 0 10-4 0v7a1 1 0 102 0V6a4 4 0 00-8 0v8a4 4 0 008 0V6" />
+                                            </svg>
+                                            @if ($file->status === 'uploaded')
+                                                <button type="button" onclick="openSignedUrl('{{ $file->id }}')"
+                                                    class="text-sm text-blue-400 hover:underline text-left truncate">
+                                                    {{ $file->original_name ?? $file->file_name }}
+                                                </button>
+                                            @else
+                                                <span class="text-sm text-slate-400 truncate">
+                                                    {{ $file->original_name ?? $file->file_name }}
+                                                    <span class="text-xs text-yellow-500">(processing...)</span>
+                                                </span>
+                                            @endif
+                                        </div>
+
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
                     @else
-                        <p class="text-sm text-slate-500">No user attachments</p>
+                        <div id="existing-attachments" class="hidden"></div>
                     @endif
                 </div>
             </div>
@@ -460,40 +507,54 @@
                         <span>Executor Attachments</span>
                         @if (in_array($ticket->status, ['Progress', 'Overdue']))
                             <span class="text-red-400">*</span>
-                            <span class="text-xs text-slate-500">(wajib sebelum close ticket)</span>
+                            <span class="text-xs text-slate-500">(required before closing ticket)</span>
                         @endif
                     </label>
 
+                  
                     @if ($ticket->executorAttachments->count())
-                        <div class="border border-slate-700 rounded-xl p-4 bg-slate-800/40 mb-3">
-                            <ul class="space-y-2">
+                        <div class="border border-slate-700 rounded-xl p-4 bg-slate-800/40 mb-3"
+                            id="existing-attachments-for-executor">
+                            <ul class="space-y-2" id="attachment-list">
                                 @foreach ($ticket->executorAttachments as $file)
-                                    <li class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M8 2a4 4 0 00-4 4v8a6 6 0 0012 0V6a2 2 0 10-4 0v7a1 1 0 102 0V6a4 4 0 00-8 0v8a4 4 0 008 0V6" />
-                                        </svg>
-                                        @if ($file->drive_file_id && $file->status === 'uploaded')
-                                            <button type="button"
-                                                onclick="openPreviewModal('https://drive.google.com/file/d/{{ $file->drive_file_id }}/preview', '{{ addslashes($file->original_name ?? $file->file_name) }}')"
-                                                class="text-sm text-blue-400 hover:underline text-left">
-                                                {{ $file->original_name ?? $file->file_name }}
-                                            </button>
-                                        @else
-                                            <span class="text-sm text-slate-400">
-                                                {{ $file->original_name ?? $file->file_name }}
-                                                <span class="text-xs text-yellow-500">(processing...)</span>
-                                            </span>
-                                        @endif
+                                    <li class="flex items-center justify-between gap-2"
+                                        id="attachment-item-{{ $file->id }}">
+                                        <div class="flex items-center gap-2 flex-1 min-w-0">
+                                            <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="currentColor"
+                                                viewBox="0 0 20 20">
+                                                <path
+                                                    d="M8 2a4 4 0 00-4 4v8a6 6 0 0012 0V6a2 2 0 10-4 0v7a1 1 0 102 0V6a4 4 0 00-8 0v8a4 4 0 008 0V6" />
+                                            </svg>
+                                            @if ($file->status === 'uploaded')
+                                                <button type="button"
+                                                    onclick="openSignedUrlForExecutor('{{ $file->id }}')"
+                                                    class="text-sm text-blue-400 hover:underline text-left truncate">
+                                                    {{ $file->original_name ?? $file->file_name }}
+                                                </button>
+                                            @else
+                                                <span class="text-sm text-slate-400 truncate">
+                                                    {{ $file->original_name ?? $file->file_name }}
+                                                    <span class="text-xs text-yellow-500">(processing...)</span>
+                                                </span>
+                                            @endif
+                                        </div>
+                                        {{-- Tombol delete --}}
+                                        <button type="button"
+                                            onclick="deleteAttachmentForExecutor('{{ $file->id }}')"
+                                            class="flex-shrink-0 p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition"
+                                            title="Delete attachment">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
                                     </li>
                                 @endforeach
                             </ul>
                         </div>
                     @else
-                        @if (in_array($ticket->status, ['Progress', 'Overdue']))
-                            <div class="border border-slate-700 rounded-xl p-4 bg-slate-800/40 mb-3">
-                                <p class="text-sm text-slate-500">Belum ada attachment. Upload bukti pengerjaan sebelum menutup ticket.</p>
-                            </div>
-                        @endif
+                        <div id="existing-attachments-for-executor" class="hidden"></div>
                     @endif
 
                     @if (in_array($ticket->status, ['Progress', 'Overdue']))
@@ -510,7 +571,7 @@
                                 - Erase Attachment
                             </button>
                         </div>
-                        <p class="mt-2 text-xs text-slate-500">Max 10 files, 20MB each.</p>
+                        <p class="mt-2 text-xs text-slate-500">Max 10 files, 5MB each.</p>
                     @endif
                 </div>
             @endif
@@ -541,40 +602,69 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
-                        <span id="btn-close-label">{{ $ticket->status === 'Overdue' ? 'Choose Status First...' : 'Close this Ticket' }}</span>
+                        <span
+                            id="btn-close-label">{{ $ticket->status === 'Overdue' ? 'Choose Status First...' : 'Close this Ticket' }}</span>
                     </button>
                 @endif
             </div>
         </form>
 
-        <form id="admin-executor-attachments-form"
-            action="{{ route('executor.attachments.store', $ticket->id) }}"
+        <form id="admin-executor-attachments-form" action="{{ route('executor.attachments.store', $ticket->id) }}"
             method="POST" enctype="multipart/form-data" class="hidden">
             @csrf
         </form>
     </div>
 
-    <div id="executorSourceModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center" style="z-index:9999;">
+    <div id="executorSourceModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center"
+        style="z-index:9999;">
         <div class="bg-slate-900 rounded-xl p-6 w-80 text-center border border-slate-800 shadow-2xl">
             <h3 class="text-lg font-semibold mb-4 text-white">Pilih Sumber</h3>
-            <button type="button" id="executorOpenCamera" class="w-full mb-3 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition">Open Camera</button>
-            <button type="button" id="executorOpenFiles" class="w-full mb-3 px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white transition">Upload Files</button>
-            <button type="button" id="executorCloseSource" class="w-full px-4 py-2 text-slate-400 hover:text-white transition">Abort</button>
+            <button type="button" id="executorOpenCamera"
+                class="w-full mb-3 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition">Open
+                Camera</button>
+            <button type="button" id="executorOpenFiles"
+                class="w-full mb-3 px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white transition">Upload
+                Files</button>
+            <button type="button" id="executorCloseSource"
+                class="w-full px-4 py-2 text-slate-400 hover:text-white transition">Abort</button>
         </div>
     </div>
 
-    <div id="previewModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4" style="z-index:9999;">
-        <div class="bg-slate-900 rounded-2xl w-full max-w-3xl border border-slate-700 flex flex-col shadow-2xl" style="max-height:90vh;">
+    <div id="previewModalForExecutor" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4"
+        style="z-index:9999;">
+        <div class="bg-slate-900 rounded-2xl w-full max-w-3xl border border-slate-700 flex flex-col shadow-2xl"
+            style="max-height:90vh;">
             <div class="flex items-center justify-between p-4 border-b border-slate-700 flex-shrink-0">
-                <h3 id="previewModalTitle" class="text-sm font-semibold text-slate-200 truncate pr-4"></h3>
-                <button type="button" onclick="closePreviewModal()" class="text-slate-400 hover:text-white flex-shrink-0 transition">
+                <h3 id="previewModalForExecutorTitle" class="text-sm font-semibold text-slate-200 truncate pr-4"></h3>
+                <button type="button" onclick="closePreviewModalForExecutor()"
+                    class="text-slate-400 hover:text-white flex-shrink-0 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
             <div class="flex-1 overflow-hidden">
-                <iframe id="previewModalIframe" src="" class="w-full" style="height:75vh;" frameborder="0" allowfullscreen></iframe>
+                <iframe id="previewModalForExecutorIframe" src="" class="w-full" style="height:75vh;" frameborder="0"
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+    <div id="previewModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4"
+        style="z-index:9999;">
+        <div class="bg-slate-900 rounded-2xl w-full max-w-3xl border border-slate-700 flex flex-col shadow-2xl"
+            style="max-height:90vh;">
+            <div class="flex items-center justify-between p-4 border-b border-slate-700 flex-shrink-0">
+                <h3 id="previewModalTitle" class="text-sm font-semibold text-slate-200 truncate pr-4"></h3>
+                <button type="button" onclick="closePreviewModal()"
+                    class="text-slate-400 hover:text-white flex-shrink-0 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <iframe id="previewModalIframe" src="" class="w-full" style="height:75vh;" frameborder="0"
+                    allowfullscreen></iframe>
             </div>
         </div>
     </div>
@@ -586,9 +676,9 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
-            $(document).ready(function () {
+            $(document).ready(function() {
                 $('#category').select2({
                     placeholder: 'Choose Category...',
                     width: '100%',
@@ -601,49 +691,66 @@
                 });
 
                 @if ($ticket->status === 'Open')
-                $('#duration_type').select2({
-                    placeholder: 'Choose Type...',
-                    width: '100%',
-                    dropdownParent: $('#duration_type').parent(),
-                    minimumResultsForSearch: Infinity
-                });
+                    $('#duration_type').select2({
+                        placeholder: 'Choose Type...',
+                        width: '100%',
+                        dropdownParent: $('#duration_type').parent(),
+                        minimumResultsForSearch: Infinity
+                    });
 
-                $('#duration_type').on('change', function () {
-                    const event = new Event('change', { bubbles: true });
-                    document.getElementById('duration_type').dispatchEvent(event);
-                });
+                    $('#duration_type').on('change', function() {
+                        const event = new Event('change', {
+                            bubbles: true
+                        });
+                        document.getElementById('duration_type').dispatchEvent(event);
+                    });
                 @endif
 
                 @if ($ticket->status === 'Overdue')
-                $('#statusSelect').select2({
-                    placeholder: 'Overdue — Choose action...',
-                    width: '100%',
-                    dropdownParent: $('#statusSelect').parent(),
-                    minimumResultsForSearch: Infinity
-                });
+                    $('#statusSelect').select2({
+                        placeholder: 'Overdue — Choose action...',
+                        width: '100%',
+                        dropdownParent: $('#statusSelect').parent(),
+                        minimumResultsForSearch: Infinity
+                    });
                 @endif
             });
         </script>
 
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('DOMContentLoaded', function() {
                 const desc = document.getElementById('description');
                 const descCount = document.getElementById('descCharCount');
-                if (desc && descCount) { descCount.textContent = desc.value.length; desc.addEventListener('input', () => descCount.textContent = desc.value.length); }
+                if (desc && descCount) {
+                    descCount.textContent = desc.value.length;
+                    desc.addEventListener('input', () => descCount.textContent = desc.value.length);
+                }
 
                 const notes = document.getElementById('notes_executor');
                 const notesCount = document.getElementById('notesCharCount');
-                if (notes && notesCount) { notesCount.textContent = notes.value.length; notes.addEventListener('input', () => notesCount.textContent = notes.value.length); }
+                if (notes && notesCount) {
+                    notesCount.textContent = notes.value.length;
+                    notes.addEventListener('input', () => notesCount.textContent = notes.value.length);
+                }
             });
         </script>
 
         <script>
-            toastr.options = { closeButton: true, progressBar: true, positionClass: "toast-top-right", timeOut: "3000" };
-            @if (session('success')) toastr.success(@json(session('success'))); @endif
-            @if (session('error')) toastr.error(@json(session('error'))); @endif
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                positionClass: "toast-top-right",
+                timeOut: "3000"
+            };
+            @if (session('success'))
+                toastr.success(@json(session('success')));
+            @endif
+            @if (session('error'))
+                toastr.error(@json(session('error')));
+            @endif
         </script>
 
-      @if ($ticket->status === 'Open')
+        @if ($ticket->status === 'Open')
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     const durationType = document.getElementById('duration_type');
@@ -736,6 +843,7 @@
                         syncVal();
                         calcEnd();
                     });
+
                     function onDurationTypeChange() {
                         const type = durationType.value;
                         const select2Container = document.querySelector('#duration_value_select + .select2');
@@ -764,35 +872,45 @@
         @endif
 
         @if (in_array($ticket->status, ['Progress', 'Overdue']))
-        <script>
-            (function () {
-                const MAX_FILES      = 10;
-                const addBtn         = document.getElementById('admin-executor-add-btn');
-                const eraseBtn       = document.getElementById('admin-executor-erase-btn');
-                const container      = document.getElementById('admin-executor-attachment-container');
-                const sourceModal    = document.getElementById('executorSourceModal');
-                const openCameraBtn  = document.getElementById('executorOpenCamera');
-                const openFilesBtn   = document.getElementById('executorOpenFiles');
-                const closeSourceBtn = document.getElementById('executorCloseSource');
-                const btnClose       = document.getElementById('btn-close-ticket');
-                const CSRF           = document.querySelector('meta[name="csrf-token"]')?.content ?? document.querySelector('input[name="_token"]')?.value;
-                const UPLOAD_URL     = "{{ route('executor.attachments.store', $ticket->id) }}";
-                const existingCount  = {{ $ticket->executorAttachments->count() }};
+            <script>
+                (function() {
+                    const MAX_FILES = 10;
+                    const addBtn = document.getElementById('admin-executor-add-btn');
+                    const eraseBtn = document.getElementById('admin-executor-erase-btn');
+                    const container = document.getElementById('admin-executor-attachment-container');
+                    const sourceModal = document.getElementById('executorSourceModal');
+                    const openCameraBtn = document.getElementById('executorOpenCamera');
+                    const openFilesBtn = document.getElementById('executorOpenFiles');
+                    const closeSourceBtn = document.getElementById('executorCloseSource');
+                    const btnClose = document.getElementById('btn-close-ticket');
+                    const CSRF = document.querySelector('meta[name="csrf-token"]')?.content ?? document.querySelector(
+                        'input[name="_token"]')?.value;
+                    const UPLOAD_URL = "{{ route('attachmentsforexecutor.store', $ticket->id) }}";
+                    const existingCount = {{ $ticket->executorAttachments->count() }};
 
-                let attachmentCount = 0;
-                let uploadedCount   = 0;
-                let activeInputId   = null;
-                let isUploading     = false;
+                    let attachmentCount = 0;
+                    let uploadedCount = 0;
+                    let activeInputId = null;
+                    let isUploading = false;
 
-                const openModal  = () => { sourceModal.classList.remove('hidden'); sourceModal.classList.add('flex'); };
-                const closeModal = () => { sourceModal.classList.add('hidden'); sourceModal.classList.remove('flex'); };
+                    const openModal = () => {
+                        sourceModal.classList.remove('hidden');
+                        sourceModal.classList.add('flex');
+                    };
+                    const closeModal = () => {
+                        sourceModal.classList.add('hidden');
+                        sourceModal.classList.remove('flex');
+                    };
 
-                function addAttachment() {
-                    if (attachmentCount >= MAX_FILES) { toastr.warning('Maximum 10 files allowed.'); return; }
-                    attachmentCount++;
-                    const id = `exec_att_${attachmentCount}`;
-                    document.getElementById('admin-executor-empty-text')?.remove();
-                    container?.insertAdjacentHTML('beforeend', `
+                    function addAttachment() {
+                        if (attachmentCount >= MAX_FILES) {
+                            toastr.warning('Maximum 10 files allowed.');
+                            return;
+                        }
+                        attachmentCount++;
+                        const id = `exec_att_${attachmentCount}`;
+                        document.getElementById('admin-executor-empty-text')?.remove();
+                        container?.insertAdjacentHTML('beforeend', `
                         <div class="relative mb-3" id="wrap_${id}">
                             <input type="file" id="${id}" accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.zip,.txt" class="hidden">
                             <label class="flex items-center justify-center w-full px-4 py-8 bg-slate-800 border-2 border-dashed border-slate-700 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-slate-800/50 transition-all duration-200 group"
@@ -807,85 +925,116 @@
                                 </div>
                             </label>
                         </div>`);
-                    document.getElementById(id)?.addEventListener('change', () => handleChange(id));
-                }
-
-                function eraseAttachment() {
-                    if (attachmentCount <= 0) return;
-                    document.getElementById(`wrap_exec_att_${attachmentCount}`)?.remove();
-                    attachmentCount--;
-                    if (attachmentCount === 0 && container && !document.getElementById('admin-executor-empty-text'))
-                        container.insertAdjacentHTML('beforeend', '<p id="admin-executor-empty-text" class="text-sm text-slate-500">No files selected</p>');
-                }
-
-                window.showExecutorSourceModal = (id) => { activeInputId = id; openModal(); };
-
-                async function handleChange(id) {
-                    const input = document.getElementById(id);
-                    const label = document.getElementById(`fileName_${id}`);
-                    const prev  = document.getElementById(`prev_${id}`);
-                    if (!input?.files?.length) return;
-                    const file = input.files[0];
-                    if (label) label.textContent = file.name;
-                    if (prev)  prev.textContent  = 'Uploading...';
-                    await upload(file, prev);
-                }
-
-                async function upload(file, prevEl) {
-                    if (isUploading) { toastr.warning('Please wait, upload in progress.'); return; }
-                    isUploading = true;
-                    const fd = new FormData();
-                    fd.append('files[]', file);
-                    try {
-                        const res  = await fetch(UPLOAD_URL, { method:'POST', headers:{'X-CSRF-TOKEN':CSRF,'Accept':'application/json'}, body:fd, credentials:'same-origin' });
-                        const data = await res.json();
-                        if (!res.ok) throw new Error(data?.message || 'Upload failed.');
-                        if (prevEl) prevEl.textContent = '✅ Uploaded';
-                        uploadedCount++;
-                        toastr.success(data?.message || 'Upload successful!');
-                    } catch (err) {
-                        if (prevEl) prevEl.textContent = '❌ Upload failed';
-                        toastr.error(err.message || 'Upload failed.');
-                    } finally { isUploading = false; }
-                }
-
-                function submitWithAttachmentCheck() {
-                 
-                    btnClose.closest('form').submit();
-                }
-
-                @if ($ticket->status === 'Overdue')
-                const statusSelect = document.getElementById('statusSelect');
-                const btnLabel     = document.getElementById('btn-close-label');
-
-                $('#statusSelect').on('change', function () {
-                    if (this.value === 'Progress') {
-                        btnLabel.textContent = 'Back to Progress';
-                    } else if (this.value === 'Closed') {
-                        btnLabel.textContent = 'Close this Ticket';
+                        document.getElementById(id)?.addEventListener('change', () => handleChange(id));
                     }
-                });
 
-                btnClose?.addEventListener('click', function () {
-                    if (!statusSelect?.value) {
-                        toastr.error('Please choose a status first.');
-                        statusSelect?.scrollIntoView({ behavior: 'smooth' });
-                        return;
+                    function eraseAttachment() {
+                        if (attachmentCount <= 0) return;
+                        document.getElementById(`wrap_exec_att_${attachmentCount}`)?.remove();
+                        attachmentCount--;
+                        if (attachmentCount === 0 && container && !document.getElementById('admin-executor-empty-text'))
+                            container.insertAdjacentHTML('beforeend',
+                                '<p id="admin-executor-empty-text" class="text-sm text-slate-500">No files selected</p>');
                     }
-                    submitWithAttachmentCheck();
-                });
-                @else
-                btnClose?.addEventListener('click', submitWithAttachmentCheck);
-                @endif
 
-                addBtn?.addEventListener('click', addAttachment);
-                eraseBtn?.addEventListener('click', eraseAttachment);
-                openCameraBtn?.addEventListener('click', () => { const i=document.getElementById(activeInputId); i?.setAttribute('capture','environment'); i?.click(); closeModal(); });
-                openFilesBtn?.addEventListener('click',  () => { const i=document.getElementById(activeInputId); i?.removeAttribute('capture'); i?.click(); closeModal(); });
-                closeSourceBtn?.addEventListener('click', closeModal);
-                sourceModal?.addEventListener('click', (e) => { if (e.target===sourceModal) closeModal(); });
-            })();
-        </script>
+                    window.showExecutorSourceModal = (id) => {
+                        activeInputId = id;
+                        openModal();
+                    };
+
+                    async function handleChange(id) {
+                        const input = document.getElementById(id);
+                        const label = document.getElementById(`fileName_${id}`);
+                        const prev = document.getElementById(`prev_${id}`);
+                        if (!input?.files?.length) return;
+                        const file = input.files[0];
+                        if (label) label.textContent = file.name;
+                        if (prev) prev.textContent = 'Uploading...';
+                        await upload(file, prev);
+                    }
+
+                    async function upload(file, prevEl) {
+                        if (isUploading) {
+                            toastr.warning('Please wait, upload in progress.');
+                            return;
+                        }
+                        isUploading = true;
+                        const fd = new FormData();
+                        fd.append('files[]', file);
+                        try {
+                            const res = await fetch(UPLOAD_URL, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': CSRF,
+                                    'Accept': 'application/json'
+                                },
+                                body: fd,
+                                credentials: 'same-origin'
+                            });
+                            const data = await res.json();
+                            if (!res.ok) throw new Error(data?.message || 'Upload failed.');
+                            if (prevEl) prevEl.textContent = 'Uploaded';
+                            uploadedCount++;
+                            toastr.success(data?.message || 'Upload successful!');
+                        } catch (err) {
+                            if (prevEl) prevEl.textContent = 'Upload failed';
+                            toastr.error(err.message || 'Upload failed.');
+                        } finally {
+                            isUploading = false;
+                        }
+                    }
+
+                    function submitWithAttachmentCheck() {
+
+                        btnClose.closest('form').submit();
+                    }
+
+                    @if ($ticket->status === 'Overdue')
+                        const statusSelect = document.getElementById('statusSelect');
+                        const btnLabel = document.getElementById('btn-close-label');
+
+                        $('#statusSelect').on('change', function() {
+                            if (this.value === 'Progress') {
+                                btnLabel.textContent = 'Back to Progress';
+                            } else if (this.value === 'Closed') {
+                                btnLabel.textContent = 'Close this Ticket';
+                            }
+                        });
+
+                        btnClose?.addEventListener('click', function() {
+                            if (!statusSelect?.value) {
+                                toastr.error('Please choose a status first.');
+                                statusSelect?.scrollIntoView({
+                                    behavior: 'smooth'
+                                });
+                                return;
+                            }
+                            submitWithAttachmentCheck();
+                        });
+                    @else
+                        btnClose?.addEventListener('click', submitWithAttachmentCheck);
+                    @endif
+
+                    addBtn?.addEventListener('click', addAttachment);
+                    eraseBtn?.addEventListener('click', eraseAttachment);
+                    openCameraBtn?.addEventListener('click', () => {
+                        const i = document.getElementById(activeInputId);
+                        i?.setAttribute('capture', 'environment');
+                        i?.click();
+                        closeModal();
+                    });
+                    openFilesBtn?.addEventListener('click', () => {
+                        const i = document.getElementById(activeInputId);
+                        i?.removeAttribute('capture');
+                        i?.click();
+                        closeModal();
+                    });
+                    closeSourceBtn?.addEventListener('click', closeModal);
+                    sourceModal?.addEventListener('click', (e) => {
+                        if (e.target === sourceModal) closeModal();
+                    });
+                })();
+            </script>
         @endif
 
         <script>
@@ -893,14 +1042,117 @@
                 document.getElementById('previewModalTitle').textContent = name;
                 document.getElementById('previewModalIframe').src = url;
                 const m = document.getElementById('previewModal');
-                m.classList.remove('hidden'); m.classList.add('flex');
+                m.classList.remove('hidden');
+                m.classList.add('flex');
             }
+
             function closePreviewModal() {
                 const m = document.getElementById('previewModal');
-                m.classList.add('hidden'); m.classList.remove('flex');
+                m.classList.add('hidden');
+                m.classList.remove('flex');
                 document.getElementById('previewModalIframe').src = '';
             }
-            document.getElementById('previewModal')?.addEventListener('click', function(e) { if(e.target===this) closePreviewModal(); });
+            document.getElementById('previewModal')?.addEventListener('click', function(e) {
+                if (e.target === this) closePreviewModal();
+            });
         </script>
+
+        {{-- // via s3 --}}
+        <script>
+            // Signed URL preview
+            async function openSignedUrl(attachmentId) {
+                try {
+                    const res = await fetch(`/attachments/${attachmentId}/signed-url`, {
+                        headers: {
+                            'Accept': 'application/json'
+                        },
+                        credentials: 'same-origin',
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.message || 'Failed to get URL');
+                    window.open(data.url, '_blank');
+                } catch (e) {
+                    toastr.error(e.message || 'Failed to open file.');
+                }
+            }
+        </script>
+
+
+
+
+<script>
+    function openSignedUrlForExecutor(fileId) {
+        const url = `/attachmentsforexecutor/${fileId}/signed-url-for-executor`;
+        fetch(url, {
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
+            },
+            credentials: 'same-origin'
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.url) throw new Error('No URL returned');
+            document.getElementById('previewModalForExecutorTitle').textContent = data.file_name ?? 'Preview';
+            document.getElementById('previewModalForExecutorIframe').src = data.url;
+            const modal = document.getElementById('previewModalForExecutor');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        })
+        .catch(err => toastr.error(err.message || 'Failed to open preview.'));
+    }
+
+    function closePreviewModalForExecutor() {
+        const modal = document.getElementById('previewModalForExecutor');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.getElementById('previewModalForExecutorIframe').src = '';
+    }
+
+  
+    function deleteAttachmentForExecutor(fileId) {
+    Swal.fire({
+        title: 'Delete Attachment?',
+        text: 'This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#475569',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (!result.isConfirmed) return;
+
+        const CSRF = document.querySelector('meta[name="csrf-token"]')?.content;
+        fetch(`/attachmentsforexecutor/${fileId}`, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': CSRF
+            },
+            credentials: 'same-origin'
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) throw new Error(data.message || 'Delete failed.');
+            document.getElementById(`attachment-item-${fileId}`)?.remove();
+            toastr.success(data.message || 'Attachment deleted.');
+
+            const list = document.getElementById('attachment-list');
+            if (list && list.children.length === 0) {
+                document.getElementById('existing-attachments-for-executor')?.classList.add('hidden');
+            }
+        })
+        .catch(err => toastr.error(err.message || 'Delete failed.'));
+    });
+}
+
+    document.getElementById('previewModalForExecutor')?.addEventListener('click', function(e) {
+        if (e.target === this) closePreviewModalForExecutor();
+    });
+</script>
     @endpush
+
+
+
 @endsection

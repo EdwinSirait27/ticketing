@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>IT Departments Ticketing</title>
     {{-- <link rel="icon" type="image/x-icon" href="{{ asset('img/AsianBaylogomark.ico') }}"> --}}
-        <link rel="icon" type="image/png" href="{{ asset('img/AsianBay logomark.ico') }}">
+        {{-- <link rel="icon" type="image/png" href="{{ asset('img/AsianBay logomark.ico') }}"> --}}
+        <link rel="icon" type="image/png" href="{{ Storage::disk('s3')->url('logos/asianbay_logomark.ico') }}">
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -41,7 +42,10 @@
             </div>
             <div class="flex flex-col items-center space-y--1">
                 <div class="relative">
-                    <img src="{{ asset('img/AsianBay.png') }}" class="w-40 h-40 select-none pointer-events-none"
+                    {{-- <img src="{{ asset('img/AsianBay.png') }}" class="w-40 h-40 select-none pointer-events-none"
+                        draggable="false" alt="icon"> --}}
+                         <img src="{{ Storage::disk('s3')->url('logos/asianbay.png') }}"
+                                    class="w-40 h-40 select-none pointer-events-none"
                         draggable="false" alt="icon">
                 </div>
 
@@ -143,8 +147,10 @@
                     {{-- Company Info --}}
                     <div class="space-y-3">
                         <div class="flex items-center space-x-2">
-                            <img src="{{ asset('img/AsianBay.png') }}"
-                                class="w-10 h-10 select-none pointer-events-none" draggable="false" alt="icon">
+                            {{-- <img src="{{ asset('img/AsianBay.png') }}"
+                                class="w-10 h-10 select-none pointer-events-none" draggable="false" alt="icon"> --}}
+                                 <img src="{{ Storage::disk('s3')->url('logos/asianbay.png') }}"
+                                    class="w-10 h-10 select-none pointer-events-none" draggable="false" alt="icon">
                             <h3 class="text-sm font-bold text-slate-900 text-white">{{ __('auth.departemen') }}
                             </h3>
                         </div>

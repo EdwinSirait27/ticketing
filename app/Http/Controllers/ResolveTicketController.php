@@ -112,7 +112,7 @@ class ResolveTicketController extends Controller
             })
             ->orderColumn('employee_name', function ($query, $order) {})
             ->addColumn('action', function ($ticket) {
-                $idHashed = substr(hash('sha256', $ticket->id . env('APP_KEY')), 0, 8);
+                $idHashed = substr(hash('sha256', $ticket->id . config('app.key')), 0, 8);
 
                 $showBtn = '
                 <a href="' . route('showtickets', $idHashed) . '"

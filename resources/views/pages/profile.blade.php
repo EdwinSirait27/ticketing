@@ -25,7 +25,7 @@
                 <div class="flex-1">
                     <h2 class="text-xl font-bold text-white">{{ Auth::user()->Employee->employee_name ?? 'User Name' }}</h2>
                     <p class="text-sm text-slate-400 mt-0.5">Position :
-                        {{ Auth::user()->Employee->position->name ?? 'Edwgans' }}</p>
+                        {{ Auth::user()->Employee->position->first()?->name ?? 'Edwgans' }}</p>
                     <div class="flex items-center space-x-2 mt-2">
                         <span
                             class="px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-lg border border-blue-500/30">
@@ -104,7 +104,7 @@
                         <div>
                             <div class="text-xs text-slate-500">Department</div>
                             <div class="text-sm text-white font-medium">
-                                {{ Auth::user()->employee->department->department_name ?? ' +62 812-3456-9999' }}</div>
+                                {{ Auth::user()->employee->department->first()?->department_name ?? ' +62 812-3456-9999' }}</div>
                         </div>
                     </div>
 
@@ -119,11 +119,21 @@
                             </svg>
 
                         </div>
-                        <div>
+                        {{-- <div>
                             <div class="text-xs text-slate-500">Location</div>
                             <div class="text-sm text-white font-medium">
-                                {{ Auth::user()->employee->store->name ?? ' +62 812-3456-9999' }}</div>
-                        </div>
+                                {{ Auth::user()->employee->store->first()?->name ?? ' +62 812-3456-9999' }}</div>
+                        </div> --}}
+                        <div>
+    <div class="text-xs text-slate-500">Location</div>
+    <div class="text-sm text-white font-medium">
+        @if($user->employee?->store->isEmpty())
+            -
+        @else
+            {{ $user->employee->store->pluck('name')->join(', ') }}
+        @endif
+    </div>
+</div>
                     </div>
 
                 </a>

@@ -5,8 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>@yield('title', 'IT Departments Ticketing')</title>
-    <link rel="icon" type="image/png"
-        href="{{ asset('img/AsianBay logomark.ico') }}">
+    <link rel="icon" type="image/png" href="{{ Storage::disk('s3')->url('logos/asianbay_logomark.ico') }}">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
     <script>
         (function() {
@@ -19,7 +18,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css">
     @vite('resources/css/app.css')
     <meta name="theme-color" content="#0F172A">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -36,7 +35,7 @@
     <aside class="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
         <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-slate-900 border-r border-slate-800 px-6 pb-4">
             <div class="flex h-24 shrink-0 items-center border-b border-slate-800">
-                <img src="{{ asset('img/AsianBay.png') }}"
+                <img src="{{ Storage::disk('s3')->url('logos/asianbay.png') }}"
                     class="h-12 w-12 select-none pointer-events-none" draggable="false" alt="icon">
                 <div class="ml-3">
                     <h2 class="text-base font-bold text-white">IT Departments</h2>
@@ -62,24 +61,22 @@
                                 </a>
                             </li>
                             @role('admin|executor')
-                               
-                                  <li>
-                                <a href="{{ route('resolvetickets') }}"
-                                   class="group flex gap-x-3 rounded-lg p-3 text-sm leading-6 font-semibold transition-all
+                                <li>
+                                    <a href="{{ route('resolvetickets') }}"
+                                        class="group flex gap-x-3 rounded-lg p-3 text-sm leading-6 font-semibold transition-all
                                    {{ request()->routeIs('resolvetickets')
                                        ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-md'
                                        : 'text-slate-300 hover:bg-slate-800' }}">
-                                    <svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    Resolved Tickets
-                                </a>
-                            </li>
+                                        <svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        Resolved Tickets
+                                    </a>
+                                </li>
                             @endrole
                             @role('human')
-                              
                             @endrole
                             @role('admin')
                                 <li>
@@ -114,7 +111,7 @@
                                     </a>
                                 </li>
                             @endrole
-                          
+
                         </ul>
                     </li>
                     <li>
@@ -169,8 +166,6 @@
         </div>
     </aside>
     <div class="lg:pl-72">
-        {{-- <div
-            class="max-w-md lg:max-w-none mx-auto min-h-screen bg-slate-900 lg:bg-slate-950 shadow-2xl lg:shadow-none transition-colors duration-300"> --}}
         <div
             class="max-w-md lg:max-w-none mx-auto min-h-screen flex flex-col
          bg-slate-900 lg:bg-slate-950 shadow-2xl lg:shadow-none transition-colors duration-300">
@@ -180,7 +175,7 @@
                 <div class="px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
                     <div class="flex items-center justify-between mb-4 lg:hidden">
                         <div class="flex items-center space-x-3">
-                            <img src="{{ asset('img/AsianBay.png') }}"
+                            <img src="{{ Storage::disk('s3')->url('logos/asianbay.png') }}"
                                 class="w-16 h-16 select-none pointer-events-none" draggable="false" alt="icon">
                             <div>
                                 <h2 class="text-sm font-bold text-white">@yield('company', 'IT Departments')</h2>
@@ -223,23 +218,19 @@
                     </div>
                 </div>
             </header>
-            {{-- <main class="pb-24 lg:pb-8 pt-6 lg:pt-8 px-4 sm:px-6 lg:px-8"> --}}
             <main class="flex-1 pb-28 lg:pb-8 pt-6 lg:pt-8 px-4 sm:px-6 lg:px-8">
 
                 @yield('content')
             </main>
-            {{-- <footer class="bg-dark dark:bg-slate-900  mt-auto"> --}}
             <footer class="bg-dark dark:bg-slate-900 mt-auto mb-24 lg:mb-0">
 
                 <div class="px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-                        {{-- Company Info --}}
                         <div class="space-y-3">
                             <div class="flex items-center space-x-2">
-                                {{-- <img src="https://cloud.mjm-bali.co.id/index.php/s/fMMRXmq5cdkApNc/download"
-                                    class="w-8 h-8 select-none pointer-events-none" draggable="false" alt="icon"> --}}
-                                    <img src="{{ asset('img/AsianBay.png') }}"
-                                    class="w-12 h-12 select-none pointer-events-none" draggable="false" alt="icon">
+                                <img src="{{ Storage::disk('s3')->url('logos/asianbay.png') }}"
+                                    class="w-12 h-12 select-none pointer-events-none" draggable="false"
+                                    alt="icon">
                                 <h3 class="text-sm font-bold text-slate-900 text-white">{{ __('auth.departemen') }}
                                 </h3>
                             </div>
@@ -248,7 +239,6 @@
                             </p>
                         </div>
                     </div>
-                    {{-- Bottom Bar --}}
                     <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
                         <div class="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
                             <p class="text-xs text-slate-500 dark:text-slate-400">
@@ -279,9 +269,10 @@
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
     @stack('scripts')
 </body>
+
 </html>

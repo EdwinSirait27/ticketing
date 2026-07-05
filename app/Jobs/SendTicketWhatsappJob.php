@@ -58,17 +58,16 @@ class SendTicketWhatsappJob implements ShouldQueue
             $reviewTicketUrl = config('app.url') . '/reviewtickets/' . $hash;
             $user = User::with('employee.store')->find($ticket->user_id);
             $employee = $user?->employee;
-            $store    = $employee?->store;
+            $store    = $ticket->store?->name;
             $createdAt = optional($ticket->created_at)
                 ->timezone('Asia/Makassar')
                 ->format('d-m-Y H:i') ?? '-';
 
             $userName = $employee->employee_name
-                ?? $store->name
                 ?? $user?->username
                 ?? 'Unknown';
 
-            $locationName = $store->name ?? '-';
+            $locationName = $store ?? '-';
             $phoneNumber  = $employee->telp_number ?? '-';
 
             // =============================

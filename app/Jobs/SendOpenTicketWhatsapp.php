@@ -35,7 +35,7 @@ class SendOpenTicketWhatsapp implements ShouldQueue
         $user        = User::with('employee.store')->find($ticket->user_id);
         $adminUrl    = route('editopenticketforadmin', $hash);
         $employee    = $user?->employee;
-        $store       = $employee?->store;
+        $store       = $ticket->store?->name;
         $phoneNumber = $employee->telp_number ?? '-';
         $createdAt   = optional($ticket->created_at)
             ->timezone('Asia/Makassar')
@@ -49,7 +49,7 @@ class SendOpenTicketWhatsapp implements ShouldQueue
             "Date Created: {$createdAt}",
             "Hours Open: {$hoursOpen} jam",
             "User: {$employee->employee_name}",
-            "Location: {$store->name}",
+            "Location: {$store}",
             "Phone Number: {$phoneNumber}",
             "Title: {$ticket->title}",
             "Categories: {$ticket->category}",

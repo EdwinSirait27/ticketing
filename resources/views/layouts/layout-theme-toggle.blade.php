@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>@yield('title', 'IT Departments Ticketing')</title>
    <link rel="icon" type="image/png"
-        href="{{ asset('img/AsianBay logomark.ico') }}">
+        href="{{ Storage::disk('s3')->url('logos/asianbay_logomark.ico') }}">
     <!-- CRITICAL: Force dark mode IMMEDIATELY -->
     <script>
         (function() {

@@ -66,6 +66,39 @@
                     {{ $errors->first('conflict') }}
                 </div>
             @endif
+            <div>
+    <label for="store_id" class="block text-sm font-semibold text-slate-300 mb-2 flex items-center space-x-2">
+        <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        <span>Location</span>
+        <span class="text-red-400">*</span>
+    </label>
+    <select id="store_id" name="store_id" required
+        class="w-full px-4 py-3.5 bg-slate-800 border border-slate-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+        <option value="">Select Location</option>
+      @forelse($stores as $store)
+    <option value="{{ $store->id }}" {{ old('store_id', $ticket->store_id) === $store->id ? 'selected' : '' }}>
+        {{ $store->name }}
+    </option>
+@empty
+    <option value="" disabled>No location assigned to your account</option>
+@endforelse
+    </select>
+    @error('store_id')
+        <p class="mt-2 text-sm text-red-400 flex items-center space-x-1">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                    clip-rule="evenodd" />
+            </svg>
+            <span>{{ $message }}</span>
+        </p>
+    @enderror
+</div>
 
             <div>
                 <label for="title" class="block text-sm font-semibold text-slate-300 mb-2 flex items-center space-x-2">
@@ -232,7 +265,6 @@
                     </p>
                 @enderror
             </div>
-
             {{-- User Attachments --}}
             <div id="executor-attachments">
                 <label class="block text-sm font-semibold text-slate-300 mb-2 flex items-center space-x-2">
@@ -242,33 +274,46 @@
                     </svg>
                     <span>My Attachments</span>
                 </label>
-
                 {{-- Existing user attachments --}}
-                @if ($ticket->attachments->count())
-                    <div class="border border-slate-700 rounded-xl p-4 bg-slate-800/40 mb-3">
-                        <ul class="space-y-2">
-                            @foreach ($ticket->attachments as $file)
-                                <li class="flex items-center gap-2">
-                                    <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M8 2a4 4 0 00-4 4v8a6 6 0 0012 0V6a2 2 0 10-4 0v7a1 1 0 102 0V6a4 4 0 00-8 0v8a4 4 0 008 0V6" />
-                                    </svg>
-                                    @if ($file->drive_file_id && $file->status === 'uploaded')
-                                        <button type="button"
-                                            onclick="openPreviewModal('https://drive.google.com/file/d/{{ $file->drive_file_id }}/preview', '{{ addslashes($file->original_name ?? $file->file_name) }}')"
-                                            class="text-sm text-blue-400 hover:underline text-left">
-                                            {{ $file->original_name ?? $file->file_name }}
-                                        </button>
-                                    @else
-                                        <span class="text-sm text-slate-400">
-                                            {{ $file->original_name ?? $file->file_name }}
-                                            <span class="text-xs text-yellow-500">(processing...)</span>
-                                        </span>
-                                    @endif
-                                </li>
-                            @endforeach
-                        </ul>
+@if ($ticket->attachments->count())
+    <div class="border border-slate-700 rounded-xl p-4 bg-slate-800/40 mb-3" id="existing-attachments">
+        <ul class="space-y-2" id="attachment-list">
+            @foreach ($ticket->attachments as $file)
+                <li class="flex items-center justify-between gap-2" id="attachment-item-{{ $file->id }}">
+                    <div class="flex items-center gap-2 flex-1 min-w-0">
+                        <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M8 2a4 4 0 00-4 4v8a6 6 0 0012 0V6a2 2 0 10-4 0v7a1 1 0 102 0V6a4 4 0 00-8 0v8a4 4 0 008 0V6" />
+                        </svg>
+                        @if ($file->status === 'uploaded')
+                            <button type="button"
+                                onclick="openSignedUrl('{{ $file->id }}')"
+                                class="text-sm text-blue-400 hover:underline text-left truncate">
+                                {{ $file->original_name ?? $file->file_name }}
+                            </button>
+                        @else
+                            <span class="text-sm text-slate-400 truncate">
+                                {{ $file->original_name ?? $file->file_name }}
+                                <span class="text-xs text-yellow-500">(processing...)</span>
+                            </span>
+                        @endif
                     </div>
-                @endif
+                    {{-- Tombol delete --}}
+                    <button type="button"
+                        onclick="deleteAttachment('{{ $file->id }}')"
+                        class="flex-shrink-0 p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition"
+                        title="Delete attachment">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </button>
+                </li>
+            @endforeach
+        </ul>
+    </div>
+@else
+    <div id="existing-attachments" class="hidden"></div>
+@endif
 
                 {{-- Upload attachment baru --}}
                 <div id="user-attachment-container">
@@ -284,7 +329,7 @@
                         - Erase Attachment
                     </button>
                 </div>
-                <p class="mt-2 text-xs text-slate-500">Max 10 files, 20MB each.</p>
+                <p class="mt-2 text-xs text-slate-500">Max 10 files, 5MB each.</p>
             </div>
 
             {{-- Executor Attachments (hanya tampil jika status Closed) --}}
@@ -347,7 +392,7 @@
         </form>
 
         <form id="executor-attachments-form"
-            action="{{ route('attachments.store', $ticket->id) }}"
+            action="{{ route('attachmentsforexecutor.store', $ticket->id) }}"
             method="POST"
             enctype="multipart/form-data"
             class="hidden">
@@ -398,6 +443,8 @@
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
         <script>
             $(document).ready(function() {
@@ -493,7 +540,7 @@
                                         Click to upload file
                                     </p>
                                     <p class="text-xs text-slate-600 mt-1">
-                                        JPG, PNG, GIF, PDF, DOC, XLS, ZIP, TXT (Max. 20MB)
+                                        JPG, PNG, GIF, PDF, DOC, XLS, ZIP, TXT (Max. 5MB)
                                     </p>
                                     <div id="userPreview_${id}" class="mt-2 text-xs text-slate-400"></div>
                                 </div>
@@ -517,12 +564,10 @@
                         );
                     }
                 }
-
                 window.showUserSourceModal = function (id) {
                     activeInputId = id;
                     openSourceModal();
                 };
-
                 window.handleUserFileChange = async function (id) {
                     const input = document.getElementById(id);
                     const label = document.getElementById(`fileName_${id}`);
@@ -604,6 +649,87 @@
             document.getElementById('previewModal')?.addEventListener('click', function(e) {
                 if (e.target === this) closePreviewModal();
             });
+            // via s3
+            // Signed URL preview
+async function openSignedUrl(attachmentId) {
+    try {
+        const res = await fetch(`/attachments/${attachmentId}/signed-url`, {
+            headers: { 'Accept': 'application/json' },
+            credentials: 'same-origin',
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Failed to get URL');
+        window.open(data.url, '_blank');
+    } catch (e) {
+        toastr.error(e.message || 'Failed to open file.');
+    }
+}
+
+// Delete attachment
+// async function deleteAttachment(attachmentId) {
+//     if (!confirm('Are you sure you want to delete this attachment?')) return;
+
+//     const CSRF = document.querySelector('meta[name="csrf-token"]')?.content;
+
+//     try {
+//         const res = await fetch(`/attachments/${attachmentId}`, {
+//             method: 'DELETE',
+//             headers: {
+//                 'X-CSRF-TOKEN': CSRF,
+//                 'Accept': 'application/json',
+//             },
+//             credentials: 'same-origin',
+//         });
+//         const data = await res.json();
+//         if (!res.ok) throw new Error(data.message || 'Delete failed');
+
+//         // Hapus dari DOM
+//         const item = document.getElementById(`attachment-item-${attachmentId}`);
+//         if (item) item.remove();
+
+//         toastr.success('Attachment deleted.');
+//     } catch (e) {
+//         toastr.error(e.message || 'Failed to delete attachment.');
+//     }
+// }
+async function deleteAttachment(attachmentId) {
+    const result = await Swal.fire({
+        title: 'Delete Attachment?',
+        text: 'This action cannot be undone. The file will be permanently deleted.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#475569',
+        confirmButtonText: 'Yes, delete it',
+        cancelButtonText: 'Cancel',
+        background: '#0f172a',
+        color: '#e2e8f0',
+    });
+
+    if (!result.isConfirmed) return;
+
+    const CSRF = document.querySelector('meta[name="csrf-token"]')?.content;
+
+    try {
+        const res = await fetch(`/attachments/${attachmentId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': CSRF,
+                'Accept': 'application/json',
+            },
+            credentials: 'same-origin',
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Delete failed');
+
+        const item = document.getElementById(`attachment-item-${attachmentId}`);
+        if (item) item.remove();
+
+        toastr.success('Attachment deleted successfully.');
+    } catch (e) {
+        toastr.error(e.message || 'Failed to delete attachment.');
+    }
+}
         </script>
     @endpush
 @endsection
