@@ -16,4 +16,10 @@ class StorageHelper
             $url
         );
     }
+
+    public static function publicUrl(string $path): string
+    {
+        $endpoint = rtrim(config('filesystems.disks.s3.url'), '/');
+        return $endpoint . '/' . ltrim($path, '/');
+    }
 }

@@ -183,7 +183,8 @@ public function signedUrl(string $attachmentId)
         abort(403);
     }
 
-    $url = StorageHelper::temporaryPublicUrl($attachment->file_path, 5);
+    // $url = StorageHelper::temporaryPublicUrl($attachment->file_path, 5);
+$url = StorageHelper::publicUrl($attachment->file_path);
 
     return response()->json([
         'url'       => $url,
