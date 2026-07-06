@@ -719,8 +719,8 @@ $stores = Store::orderBy('name')->get();
 
     $validated = $request->validate([
         'status'         => $isOverdueStatus ? 'required|in:Progress,Closed' : 'nullable',
-        'category'       => 'required|in:Plumbing,Building,Mechanical Engineering,Others',
-        'sub_category'   => 'required|in:Maintenance,Renovation,Others',
+        'category'       => 'required|in:Hardware & Software,Network,Account & Access,Others',
+        'sub_category'   => 'required|in:Hardware,Software,Connectivity,Infrastructure,Account,Access,General,Others',
         'notes_executor' => 'required|string|min:5|max:500',
         'finished'       => 'nullable|date',
         'estimation'     => 'nullable|date',
