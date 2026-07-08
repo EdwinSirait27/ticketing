@@ -288,11 +288,15 @@
                             <button type="button"
                                 onclick="openSignedUrl('{{ $file->id }}')"
                                 class="text-sm text-blue-400 hover:underline text-left truncate">
-                                {{ $file->original_name ?? $file->file_name }}
+                                {{-- {{ $file->original_name ?? $file->file_name }} --}}
+                                                {{ $file->file_name }}
+
                             </button>
                         @else
                             <span class="text-sm text-slate-400 truncate">
-                                {{ $file->original_name ?? $file->file_name }}
+                                {{-- {{ $file->original_name ?? $file->file_name }} --}}
+                                                {{ $file->file_name }}
+
                                 <span class="text-xs text-yellow-500">(processing...)</span>
                             </span>
                         @endif
@@ -343,7 +347,7 @@
                         <span>Executor Attachments</span>
                     </label>
                     <div class="border border-slate-700 rounded-xl p-5 bg-slate-800/40 min-h-[80px]">
-                        @if ($ticket->executorAttachments->count())
+                        {{-- @if ($ticket->executorAttachments->count())
                             <ul class="space-y-2 text-sm text-slate-300">
                                 @foreach ($ticket->executorAttachments as $file)
                                     <li class="flex items-center gap-2">
@@ -368,7 +372,35 @@
                             </ul>
                         @else
                             <p class="text-sm text-slate-500">No executor attachments yet</p>
-                        @endif
+                        @endif --}}
+                         @if ($ticket->executorAttachments->count())
+    <ul class="space-y-2 text-sm text-slate-300">
+        @foreach ($ticket->executorAttachments as $file)
+            <li class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M8 2a4 4 0 00-4 4v8a6 6 0 0012 0V6a2 2 0 10-4 0v7a1 1 0 102 0V6a4 4 0 00-8 0v8a4 4 0 008 0V6" />
+                </svg>
+                @if ($file->status === 'uploaded')
+                    <button type="button"
+                        onclick="openSignedUrlForExecutor('{{ $file->id }}')"
+                        class="text-sm text-blue-400 hover:underline text-left truncate">
+                        {{ $file->file_name }}
+                    </button>
+                @else
+                    <span class="text-sm text-slate-400 truncate">
+                        {{ $file->file_name }}
+                        <span class="text-xs text-yellow-500">(processing...)</span>
+                    </span>
+                @endif
+                @if (!empty($file->human_size))
+                    <span class="text-xs text-slate-500 flex-shrink-0">({{ $file->human_size }})</span>
+                @endif
+            </li>
+        @endforeach
+    </ul>
+@else
+    <p class="text-sm text-slate-500">No executor attachments yet</p>
+@endif
                     </div>
                 </div>
             @endif

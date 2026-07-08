@@ -145,31 +145,7 @@ class TicketAttachmentController extends Controller
         ]);
     }
    
-//     public function signedUrl(string $attachmentId)
-// {
-//     /** @var \App\Models\User $user */
-//     $user = Auth::user();
 
-//     $attachment = Ticketattachments::where('id', $attachmentId)
-//         ->where('status', 'uploaded')
-//         ->firstOrFail();
-
-//     // Boleh akses kalau: pemilik attachment, atau admin/executor
-//     if ($attachment->user_id !== $user->id && !$user->hasAnyRole(['admin', 'executor'])) {
-//         abort(403);
-//     }
-
-//     $url = Storage::disk('s3')->temporaryUrl(
-//         $attachment->file_path,
-//         now()->addMinutes(5)
-//     );
-
-//     return response()->json([
-//         'url'       => $url,
-//         'file_name' => $attachment->original_name ?? $attachment->file_name,
-//         'mime_type' => $attachment->mime_type,
-//     ]);
-// }
 public function signedUrl(string $attachmentId)
 {
     /** @var \App\Models\User $user */

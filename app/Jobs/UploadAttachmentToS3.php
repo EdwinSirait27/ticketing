@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class UploadAttachmentToS3 implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public int $tries = 3;
     public int $backoff = 10;
@@ -24,6 +24,7 @@ class UploadAttachmentToS3 implements ShouldQueue
         private string $s3Folder,
         private string $fileName,
     ) {}
+
 
    public function handle(): void
 {
